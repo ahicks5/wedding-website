@@ -6,27 +6,29 @@ import FadeIn from "@/components/animations/FadeIn";
 interface Person {
   name: string;
   role: string;
+  /** how this person is connected to the couple (e.g. "College friend") */
+  relation?: string;
   photo: string; // filename in /public/images/photos/wedding-party/
 }
 
 const BRIDESMAIDS: Person[] = [
-  { name: "Chrislyn Herring", role: "Maid of Honor", photo: "chrislyn.png" },
-  { name: "Kayla Sager", role: "Matron of Honor", photo: "kayla.png" },
-  { name: "Rebecca Wright", role: "Bridesmaid", photo: "rebecca.jpg" },
-  { name: "Bailey Cannon", role: "Bridesmaid", photo: "bailey.jpg" },
-  { name: "Gabby Kendrick", role: "Bridesmaid", photo: "gabby.png" },
-  { name: "Nicole Hicks", role: "Bridesmaid", photo: "nicole.jpg" },
-  { name: "Abby Sager", role: "Bridesmaid", photo: "abby.png" },
+  { name: "Chrislyn Herring", role: "Maid of Honor", relation: "Best friend", photo: "chrislyn.png" },
+  { name: "Kayla Sager", role: "Matron of Honor", relation: "Sister-in-law of the bride", photo: "kayla.png" },
+  { name: "Rebecca Wright", role: "Bridesmaid", relation: "Childhood friend", photo: "rebecca.jpg" },
+  { name: "Bailey Cannon", role: "Bridesmaid", relation: "High school friend", photo: "bailey.jpg" },
+  { name: "Gabby Kendrick", role: "Bridesmaid", relation: "College friend", photo: "gabby.png" },
+  { name: "Nicole Hicks", role: "Bridesmaid", relation: "Sister of the groom", photo: "nicole.jpg" },
+  { name: "Abby Sager", role: "Bridesmaid", relation: "Sister-in-law of the bride", photo: "abby.png" },
 ];
 
 const GROOMSMEN: Person[] = [
-  { name: "Matthew Hicks", role: "Best Man", photo: "matthew.jpg" },
-  { name: "Connor Sloan", role: "Groomsman", photo: "connor-sloan.png" },
-  { name: "Patrick Hollander", role: "Groomsman", photo: "pat.png" },
-  { name: "Jonathan Sager", role: "Groomsman", photo: "jonathan.jpg" },
-  { name: "Connor Sager", role: "Groomsman", photo: "connor-sager.jpg" },
-  { name: "Joe Calamore", role: "Groomsman", photo: "joe.png" },
-  { name: "Zach Agcaoili", role: "Groomsman", photo: "zach.png" },
+  { name: "Matthew Hicks", role: "Best Man", relation: "Brother of the groom", photo: "matthew.jpg" },
+  { name: "Connor Sloan", role: "Groomsman", relation: "College friend", photo: "connor-sloan.png" },
+  { name: "Patrick Hollander", role: "Groomsman", relation: "College friend", photo: "pat.png" },
+  { name: "Jonathan Sager", role: "Groomsman", relation: "Brother of the bride", photo: "jonathan.jpg" },
+  { name: "Connor Sager", role: "Groomsman", relation: "Brother of the bride", photo: "connor-sager.jpg" },
+  { name: "Joe Calamore", role: "Groomsman", relation: "High school friend", photo: "joe.png" },
+  { name: "Zach Agcaoili", role: "Groomsman", relation: "High school friend", photo: "zach.png" },
 ];
 
 const RING_BEARERS: Person[] = [
@@ -81,6 +83,15 @@ function PersonCard({
           >
             {person.role}
           </p>
+          {person.relation && (
+            <p
+              className={`mt-1 font-serif italic text-warm-gray ${
+                small ? "text-xs" : "text-sm"
+              }`}
+            >
+              {person.relation}
+            </p>
+          )}
         </div>
       </div>
     </FadeIn>
@@ -121,9 +132,14 @@ export default function WeddingPartyContent() {
             </div>
           </FadeIn>
 
-          <div className="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-10 flex flex-wrap justify-center gap-5">
             {BRIDESMAIDS.map((person, i) => (
-              <PersonCard key={person.name} person={person} delay={i * 0.06} />
+              <div
+                key={person.name}
+                className="w-[calc(50%-0.625rem)] sm:w-[calc(33.333%-0.834rem)] lg:w-[calc(25%-0.9375rem)] lg:max-w-[16rem]"
+              >
+                <PersonCard person={person} delay={i * 0.06} />
+              </div>
             ))}
           </div>
         </div>
@@ -141,9 +157,14 @@ export default function WeddingPartyContent() {
             </div>
           </FadeIn>
 
-          <div className="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-10 flex flex-wrap justify-center gap-5">
             {GROOMSMEN.map((person, i) => (
-              <PersonCard key={person.name} person={person} delay={i * 0.06} />
+              <div
+                key={person.name}
+                className="w-[calc(50%-0.625rem)] sm:w-[calc(33.333%-0.834rem)] lg:w-[calc(25%-0.9375rem)] lg:max-w-[16rem]"
+              >
+                <PersonCard person={person} delay={i * 0.06} />
+              </div>
             ))}
           </div>
         </div>

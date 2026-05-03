@@ -6,8 +6,81 @@ import {
   TIMELINE,
   type MilestoneItem,
   type PhotoItem,
+  type TimelineItem,
 } from "./milestones";
+import gallery from "@/lib/gallery.generated.json";
 import { cn } from "@/lib/utils";
+
+// Sprinkle gallery photos (sorted by EXIF date by the sync-gallery script)
+// across the curated TIMELINE based on where their dates fall between
+// milestones. Sides auto-alternate so the layout stays balanced.
+function buildRenderItems(): TimelineItem[] {
+  const galleryQueue = (gallery as Array<{ src: string; alt: string; date: string }>).slice();
+  if (galleryQueue.length === 0) return [...TIMELINE];
+
+  // Find the next milestone in the curated TIMELINE so we know when to
+  // stop sprinkling pre-milestone gallery photos.
+  const result: TimelineItem[] = [];
+  let nextSide: "left" | "right" = "right";
+
+  const flushPhotosBefore = (cutoffMs: number) => {
+    while (
+      galleryQueue.length > 0 &&
+      Date.parse(galleryQueue[0].date) <= cutoffMs
+    ) {
+      const photo = galleryQueue.shift()!;
+      result.push({
+        type: "photo",
+        src: photo.src,
+        alt: photo.alt,
+        side: nextSide,
+        aspect: "portrait",
+      });
+      nextSide = nextSide === "left" ? "right" : "left";
+    }
+  };
+
+  for (const item of TIMELINE) {
+    if (item.type === "milestone") {
+      flushPhotosBefore(parseMilestoneDate(item.date).getTime());
+      result.push(item);
+      // Track side rhythm against the milestone's own side so photos
+      // visually alternate around it
+      nextSide = item.side === "left" ? "right" : "left";
+    } else {
+      result.push(item);
+    }
+  }
+
+  // Anything dated after the last milestone goes at the end
+  flushPhotosBefore(Number.POSITIVE_INFINITY);
+
+  return result;
+}
+
+const MONTHS = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
+
+function parseMilestoneDate(d: string): Date {
+  // Handles "July 5, 2021", "August 2021", "May 2022".
+  const tokens = d.replace(/,/g, "").split(/\s+/);
+  const monthIdx = MONTHS.indexOf((tokens[0] || "").toLowerCase());
+  const year = parseInt(tokens[tokens.length - 1] || "2025", 10);
+  const day = tokens.length === 3 ? parseInt(tokens[1] || "15", 10) : 15;
+  return new Date(year, monthIdx === -1 ? 0 : monthIdx, isNaN(day) ? 15 : day);
+}
 
 const ASPECT_CLASS = {
   portrait: "aspect-[4/5]",
@@ -32,15 +105,11 @@ export default function Timeline() {
         <div className="absolute bottom-0 left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-gold/40 to-transparent lg:block" />
 
         <div className="relative space-y-8 sm:space-y-10 lg:space-y-14">
-          {TIMELINE.map((item, idx) =>
+          {buildRenderItems().map((item, idx) =>
             item.type === "milestone" ? (
               <Milestone key={item.id} item={item} index={idx} />
             ) : (
-              <PhotoFloat
-                key={`photo-${idx}`}
-                item={item}
-                index={idx}
-              />
+              <PhotoFloat key={`photo-${idx}-${item.src}`} item={item} index={idx} />
             )
           )}
         </div>
