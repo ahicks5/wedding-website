@@ -92,21 +92,18 @@ export default function FaqContent() {
         </div>
       </section>
 
-      {/* Still have questions CTA */}
+      {/* More details coming */}
       <section className="section-padding bg-cream">
         <div className="mx-auto max-w-2xl px-6 text-center">
           <FadeIn>
             <h2 className="font-serif text-3xl text-charcoal">
-              Still Have Questions?
+              More Details Coming Soon
             </h2>
             <div className="divider-gold" />
             <p className="mt-4 font-sans text-sm leading-relaxed text-charcoal-light">
-              Don&apos;t hesitate to reach out — we&apos;re happy to help with
-              anything you need.
+              We&apos;ll keep adding to this page as we get closer to the big
+              day. Be sure to check back for the latest information.
             </p>
-            <a href="/contact" className="btn-primary mt-8 inline-flex">
-              Contact Us
-            </a>
           </FadeIn>
         </div>
       </section>

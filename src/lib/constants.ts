@@ -40,7 +40,6 @@ export const NAV_LINKS = [
   { label: "Accommodations", href: "/accommodations" },
   { label: "Registry", href: "/registry" },
   { label: "RSVP", href: "/rsvp" },
-  { label: "Contact", href: "/contact" },
 ] as const;
 
 export const SCHEDULE = [

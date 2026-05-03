@@ -107,23 +107,6 @@ export default function RegistryContent() {
         </div>
       </section>
 
-      {/* Sweet Note */}
-      <section className="section-padding bg-cream">
-        <div className="mx-auto max-w-2xl px-6 text-center">
-          <FadeIn>
-            <Heart className="mx-auto h-6 w-6 text-gold" />
-            <p className="mt-6 font-serif text-lg italic leading-relaxed text-charcoal-light">
-              We feel so fortunate to have you in our lives. Whether you give us
-              your presence, your well-wishes, or a gift from our registry —
-              know that it all means the absolute world to us. Thank you for
-              being part of our story.
-            </p>
-            <p className="mt-6 font-serif text-xl text-sage">
-              — Lyndsey &amp; Andrew
-            </p>
-          </FadeIn>
-        </div>
-      </section>
     </>
   );
 }

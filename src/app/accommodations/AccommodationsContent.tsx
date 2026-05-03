@@ -114,7 +114,7 @@ export default function AccommodationsContent() {
                 rates — August is a popular travel month!
               </p>
               <a
-                href="https://www.google.com/travel/flights?q=flights+to+AUS"
+                href="https://www.google.com/travel/flights?q=flights%20to%20AUS%20on%202026-08-14%20through%202026-08-16"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-6 inline-flex items-center gap-2 rounded-full bg-sage px-6 py-2.5 font-sans text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:bg-sage-dark"
@@ -269,7 +269,7 @@ export default function AccommodationsContent() {
           <FadeIn delay={0.4}>
             <div className="mt-10 text-center">
               <a
-                href="https://www.google.com/travel/hotels/Austin%20TX?q=hotels+in+austin+tx"
+                href="https://www.google.com/travel/hotels?q=hotels%20in%20Austin%20TX%20on%202026-08-14%20through%202026-08-16"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-outline inline-flex items-center gap-2"

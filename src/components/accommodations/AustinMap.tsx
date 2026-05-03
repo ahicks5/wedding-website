@@ -10,21 +10,22 @@ const C = {
   charcoal: "#2C2C2C",
   warmGray: "#7A7068",
   river: "#C8D8E4",
+  park: "#A3BDD1",
 };
 
 type PinId = 1 | 2 | 3;
 
 const PINS: Array<{
   id: PinId;
-  short: string;
+  name: string;
   fill: string;
   x: number;
   y: number;
-  labelOffsetY?: number;
+  labelDy?: number;
 }> = [
-  { id: 1, short: "Airport (AUS)", fill: C.sage, x: 685, y: 395 },
-  { id: 2, short: "Ceremony", fill: C.gold, x: 110, y: 165 },
-  { id: 3, short: "Reception", fill: C.charcoal, x: 405, y: 130 },
+  { id: 1, name: "AUS Airport", fill: C.sage, x: 685, y: 380 },
+  { id: 2, name: "St. John Neumann", fill: C.gold, x: 110, y: 165 },
+  { id: 3, name: "Hotel Ella", fill: C.charcoal, x: 410, y: 130 },
 ];
 
 export default function AustinMap() {
@@ -34,7 +35,7 @@ export default function AustinMap() {
         viewBox="0 0 800 500"
         xmlns="http://www.w3.org/2000/svg"
         role="img"
-        aria-label="Illustrated map of Austin showing the airport, ceremony, and reception locations"
+        aria-label="Illustrated map of Austin showing AUS Airport, St. John Neumann Catholic Church, and Hotel Ella, with surrounding streets and landmarks"
         className="block h-auto w-full"
       >
         <defs>
@@ -69,16 +70,108 @@ export default function AustinMap() {
         <rect width="800" height="500" fill="url(#map-grid)" />
         <rect width="800" height="500" fill="url(#map-vignette)" />
 
-        {/* Highways — very faint, dashed */}
-        {/* I-35 (rough N-S, downtown's east side) */}
-        <line x1="500" y1="20" x2="555" y2="480" stroke={C.linen} strokeWidth="2.5" strokeDasharray="8 5" />
+        {/* Parks — sit beneath the road network */}
+        {/* Zilker Park (south of lake, west of Congress) */}
+        <ellipse cx="370" cy="345" rx="48" ry="16" fill={C.park} opacity="0.22" />
+        <text
+          x="370"
+          y="349"
+          fill={C.warmGray}
+          fontSize="9"
+          fontFamily="serif"
+          fontStyle="italic"
+          textAnchor="middle"
+          opacity="0.85"
+        >
+          Zilker Park
+        </text>
+
+        {/* UT Austin (north of Hotel Ella) */}
+        <rect x="385" y="80" width="70" height="32" rx="3" fill={C.park} opacity="0.18" />
+        <text
+          x="420"
+          y="100"
+          fill={C.warmGray}
+          fontSize="9"
+          fontFamily="serif"
+          fontStyle="italic"
+          textAnchor="middle"
+          opacity="0.85"
+        >
+          UT Austin
+        </text>
+
+        {/* Highways — major, dashed */}
+        {/* I-35 */}
+        <line x1="500" y1="20" x2="555" y2="480" stroke={C.linen} strokeWidth="2.6" strokeDasharray="8 5" />
         <text x="552" y="50" fill={C.warmGray} fontSize="10" fontFamily="serif" fontStyle="italic">
           I-35
         </text>
-        {/* MoPac (rough N-S, central west) */}
-        <line x1="285" y1="20" x2="320" y2="480" stroke={C.linen} strokeWidth="2.5" strokeDasharray="8 5" />
-        <text x="290" y="50" fill={C.warmGray} fontSize="10" fontFamily="serif" fontStyle="italic">
+        {/* MoPac */}
+        <line x1="225" y1="20" x2="275" y2="480" stroke={C.linen} strokeWidth="2.6" strokeDasharray="8 5" />
+        <text x="232" y="50" fill={C.warmGray} fontSize="10" fontFamily="serif" fontStyle="italic">
           MoPac
+        </text>
+
+        {/* Surface streets — N-S */}
+        {/* S. Lamar Blvd */}
+        <line x1="335" y1="120" x2="365" y2="480" stroke={C.linen} strokeWidth="1.6" strokeDasharray="5 4" />
+        <text
+          x="345"
+          y="200"
+          fill={C.warmGray}
+          fontSize="9"
+          fontFamily="serif"
+          fontStyle="italic"
+          opacity="0.8"
+        >
+          S. Lamar
+        </text>
+
+        {/* Congress Avenue */}
+        <line x1="450" y1="180" x2="465" y2="480" stroke={C.linen} strokeWidth="1.9" strokeDasharray="6 4" />
+        <text
+          x="453"
+          y="210"
+          fill={C.warmGray}
+          fontSize="9.5"
+          fontFamily="serif"
+          fontStyle="italic"
+          opacity="0.85"
+        >
+          Congress Ave
+        </text>
+
+        {/* Surface streets — E-W */}
+        {/* Bee Cave Rd (passes through church) */}
+        <line x1="55" y1="170" x2="190" y2="170" stroke={C.linen} strokeWidth="1.4" strokeDasharray="4 3" />
+        <text
+          x="62"
+          y="160"
+          fill={C.warmGray}
+          fontSize="9"
+          fontFamily="serif"
+          fontStyle="italic"
+          opacity="0.8"
+        >
+          Bee Cave Rd
+        </text>
+
+        {/* University Ave (passes through Hotel Ella) */}
+        <line x1="365" y1="135" x2="455" y2="135" stroke={C.linen} strokeWidth="1.3" strokeDasharray="4 3" />
+
+        {/* 6th Street (downtown E-W) */}
+        <line x1="390" y1="245" x2="510" y2="245" stroke={C.linen} strokeWidth="1.4" strokeDasharray="4 3" />
+        <text
+          x="395"
+          y="240"
+          fill={C.warmGray}
+          fontSize="9"
+          fontFamily="serif"
+          fontStyle="italic"
+          opacity="0.8"
+        >
+          6th St
         </text>
 
         {/* Lady Bird Lake / Colorado River — flowing curve */}
@@ -100,30 +193,46 @@ export default function AustinMap() {
           strokeLinecap="round"
         />
         <text
-          x="395"
-          y="335"
+          x="200"
+          y="272"
           fill={C.warmGray}
           fontSize="11"
           fontFamily="serif"
           fontStyle="italic"
-          textAnchor="middle"
           letterSpacing="1"
         >
           Lady Bird Lake
         </text>
 
-        {/* Area labels — subtle context */}
-        <text x="60" y="220" fill={C.warmGray} fontSize="10" fontFamily="serif" letterSpacing="2.5" opacity="0.75">
+        {/* Texas Capitol — small marker between Hotel Ella and the river */}
+        <g transform="translate(458, 195)">
+          <rect x="-5" y="-6" width="10" height="12" fill={C.charcoal} opacity="0.45" />
+          <path d="M -6 -6 L 0 -11 L 6 -6 Z" fill={C.charcoal} opacity="0.45" />
+        </g>
+        <text
+          x="470"
+          y="200"
+          fill={C.warmGray}
+          fontSize="9"
+          fontFamily="serif"
+          fontStyle="italic"
+          opacity="0.85"
+        >
+          Capitol
+        </text>
+
+        {/* Area labels — region context */}
+        <text x="60" y="220" fill={C.warmGray} fontSize="10" fontFamily="serif" letterSpacing="2.5" opacity="0.7">
           WESTLAKE
         </text>
-        <text x="395" y="220" fill={C.warmGray} fontSize="10" fontFamily="serif" letterSpacing="2.5" textAnchor="middle" opacity="0.75">
+        <text x="395" y="295" fill={C.warmGray} fontSize="10" fontFamily="serif" letterSpacing="2.5" textAnchor="middle" opacity="0.7">
           DOWNTOWN
         </text>
-        <text x="685" y="455" fill={C.warmGray} fontSize="10" fontFamily="serif" letterSpacing="2.5" textAnchor="middle" opacity="0.75">
+        <text x="685" y="455" fill={C.warmGray} fontSize="10" fontFamily="serif" letterSpacing="2.5" textAnchor="middle" opacity="0.7">
           SOUTH AUSTIN
         </text>
 
-        {/* Connecting routes between pins (Hotel ↔ Church, Hotel ↔ Airport) */}
+        {/* Connecting routes (Hotel ↔ Church, Hotel ↔ Airport) */}
         <line
           x1={PINS[2].x}
           y1={PINS[2].y}
@@ -132,7 +241,7 @@ export default function AustinMap() {
           stroke={C.warmGray}
           strokeWidth="1.5"
           strokeDasharray="3 5"
-          opacity="0.55"
+          opacity="0.6"
         />
         <line
           x1={PINS[2].x}
@@ -142,7 +251,7 @@ export default function AustinMap() {
           stroke={C.warmGray}
           strokeWidth="1.5"
           strokeDasharray="3 5"
-          opacity="0.55"
+          opacity="0.6"
         />
 
         {/* Distance pills */}
@@ -152,7 +261,7 @@ export default function AustinMap() {
           label="~10 mi · 20 min"
         />
         <DistancePill
-          x={(PINS[2].x + PINS[0].x) / 2 + 24}
+          x={(PINS[2].x + PINS[0].x) / 2 + 28}
           y={(PINS[2].y + PINS[0].y) / 2}
           label="~17 mi · 25 min"
         />
@@ -173,27 +282,27 @@ export default function AustinMap() {
             </text>
             {/* Label below pin with cream halo for legibility */}
             <text
-              y={pin.labelOffsetY ?? 42}
+              y={pin.labelDy ?? 42}
               fill={C.cream}
               stroke={C.cream}
               strokeWidth="4"
               strokeLinejoin="round"
               fontSize="12"
               fontFamily="serif"
-              fontWeight="500"
+              fontWeight="600"
               textAnchor="middle"
             >
-              {pin.short}
+              {pin.name}
             </text>
             <text
-              y={pin.labelOffsetY ?? 42}
+              y={pin.labelDy ?? 42}
               fill={C.charcoal}
               fontSize="12"
               fontFamily="serif"
-              fontWeight="500"
+              fontWeight="600"
               textAnchor="middle"
             >
-              {pin.short}
+              {pin.name}
             </text>
           </g>
         ))}
