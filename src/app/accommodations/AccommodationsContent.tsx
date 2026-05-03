@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
+import AustinMap from "@/components/accommodations/AustinMap";
 
 const HOTELS = [
   {
@@ -332,23 +333,13 @@ export default function AccommodationsContent() {
             </div>
           </FadeIn>
 
-          {/* Embedded Google Maps */}
+          {/* Illustrated Austin map */}
           <FadeIn delay={0.2}>
-            <div className="mt-6 overflow-hidden rounded-lg border border-linen shadow-soft">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d110559!2d-97.82!3d30.31!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sst+john+neumann+catholic+church+austin+tx+%7C+hotel+ella+austin+tx+%7C+austin+bergstrom+airport!5e0!3m2!1sen!2sus"
-                width="100%"
-                height="450"
-                style={{ border: 0, minHeight: "400px" }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Wedding venue locations in Austin, TX"
-                className="w-full"
-              />
+            <div className="mt-6">
+              <AustinMap />
             </div>
             <p className="mt-3 text-center font-sans text-xs text-warm-gray">
-              All three locations are within 25 minutes of each other. Click the cards below for turn-by-turn directions.
+              All three locations are within 25 minutes of each other. Tap the cards below for turn-by-turn directions.
             </p>
           </FadeIn>
 
