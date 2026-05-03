@@ -169,7 +169,7 @@ export const TIMELINE: TimelineItem[] = [
     date: "September 13, 2025",
     title: "Texas A&M at Notre Dame",
     description:
-      "Round two in South Bend — came down to the final play.",
+      "Round two in South Bend — came down to the final play. Texas A&M 41, Notre Dame 40.",
     side: "left",
   },
   {
