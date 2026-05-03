@@ -30,6 +30,7 @@ const SECTIONS: Section[] = [
       { name: "Summer Moon Coffee", query: "Summer Moon Coffee Austin TX" },
       { name: "Joe's Coffee on 2nd", query: "Joe's Coffee 2nd Street Austin TX" },
       { name: "Sorrento's Coffee", query: "Sorrento's Coffee Austin TX" },
+      { name: "Desnudo Coffee", query: "Desnudo Coffee Austin TX" },
     ],
   },
   {
@@ -59,6 +60,10 @@ const SECTIONS: Section[] = [
     iconColor: "gold",
     places: [
       { name: "Upstairs at Caroline's", query: "Upstairs at Caroline's Austin TX" },
+      { name: "The Roosevelt Room", query: "The Roosevelt Room Austin TX" },
+      { name: "Arriba Abajo", query: "Arriba Abajo Austin TX downtown" },
+      { name: "Cockfight", query: "Cockfight ATX Austin TX" },
+      { name: "Zanzibar", query: "Zanzibar Austin TX" },
     ],
   },
   {
