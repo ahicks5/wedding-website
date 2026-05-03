@@ -10,7 +10,7 @@ import {
   Clock,
 } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
-import AustinMap from "@/components/accommodations/AustinMap";
+import AustinInteractiveMap from "@/components/accommodations/AustinInteractiveMap";
 
 const HOTELS = [
   {
@@ -311,13 +311,13 @@ export default function AccommodationsContent() {
             </div>
           </FadeIn>
 
-          {/* Illustrated Austin map */}
+          {/* Interactive Austin map */}
           <FadeIn delay={0.2}>
             <div className="mt-6">
-              <AustinMap />
+              <AustinInteractiveMap />
             </div>
             <p className="mt-3 text-center font-sans text-xs text-warm-gray">
-              All three locations are within 25 minutes of each other. Tap the cards below for turn-by-turn directions.
+              Tap a pin for directions. All three locations are within 25 minutes of each other.
             </p>
           </FadeIn>
 
