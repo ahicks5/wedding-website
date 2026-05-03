@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { TIMELINE, type MilestoneItem } from "./milestones";
 import gallery from "@/lib/gallery.generated.json";
 
@@ -84,7 +85,7 @@ const MONTH_TICKS: number[] = (() => {
 })();
 
 const NAV_HEIGHT = 64;
-const BAR_HEIGHT = 96;
+const BAR_HEIGHT = 108;
 
 // Dusty blue (sage-light from the palette)
 const PLAYHEAD_COLOR = "#A3BDD1";
@@ -140,35 +141,51 @@ export default function HorizontalTimelineGallery() {
   const Bar = (
     <div className="border-b border-linen bg-cream/95 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4 pb-3 pt-3 sm:px-6">
-        <div className="flex items-center gap-3">
-          {/* Left — stacked Mon / 'YY */}
-          <div className="flex w-12 shrink-0 flex-col items-start font-serif leading-none">
-            <span
-              className="text-lg sm:text-xl"
-              style={{ color: "#2C2C2C", fontWeight: 500 }}
+        {/* Crossfade container — fixed min-height so the absolutely
+            positioned old/new copies overlay cleanly during transition */}
+        <div className="relative min-h-[44px] sm:min-h-[48px]">
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={active.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="absolute inset-0 flex items-center gap-3"
             >
-              {abbrevMonth(active.date)}
-            </span>
-            <span className="mt-0.5 font-serif text-xs italic text-warm-gray sm:text-sm">
-              {shortYear(active.date)}
-            </span>
-          </div>
+              {/* Left — stacked Mon / 'YY */}
+              <div className="flex w-14 shrink-0 flex-col items-start font-serif leading-none">
+                <span
+                  className="text-lg sm:text-xl"
+                  style={{ color: "#2C2C2C", fontWeight: 500 }}
+                >
+                  {abbrevMonth(active.date)}
+                </span>
+                <span
+                  className="mt-0.5 font-serif text-base italic text-warm-gray sm:text-lg"
+                  style={{ fontWeight: 500 }}
+                >
+                  {shortYear(active.date)}
+                </span>
+              </div>
 
-          {/* Center — title + blurb */}
-          <div className="flex-1 text-center">
-            <h3
-              className="font-serif text-xs leading-tight sm:text-sm"
-              style={{ color: "#2C2C2C", fontWeight: 600 }}
-            >
-              {active.title}
-            </h3>
-            <p className="mt-0.5 font-serif text-[10px] italic leading-tight text-warm-gray sm:text-xs">
-              {active.description}
-            </p>
-          </div>
+              {/* Center — title + blurb (truncated to 1 line on mobile) */}
+              <div className="min-w-0 flex-1 text-center">
+                <h3
+                  className="truncate font-serif text-sm leading-tight sm:overflow-visible sm:whitespace-normal sm:text-base"
+                  style={{ color: "#2C2C2C", fontWeight: 600 }}
+                >
+                  {active.title}
+                </h3>
+                <p className="mt-0.5 truncate font-serif text-[11px] italic leading-tight text-warm-gray sm:overflow-visible sm:whitespace-normal sm:text-xs">
+                  {active.description}
+                </p>
+              </div>
 
-          {/* Right spacer to balance the date column for true centering */}
-          <div className="w-12 shrink-0" />
+              {/* Right spacer for true center */}
+              <div className="w-14 shrink-0" />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Ruler — tight gap above */}
