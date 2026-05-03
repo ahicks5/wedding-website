@@ -2,8 +2,10 @@
 
 import {
   Coffee,
+  Croissant,
   Utensils,
   Wine,
+  Moon,
   Compass,
   ArrowUpRight,
   type LucideIcon,
@@ -27,25 +29,44 @@ const SECTIONS: Section[] = [
     places: [
       { name: "Summer Moon Coffee", query: "Summer Moon Coffee Austin TX" },
       { name: "Joe's Coffee on 2nd", query: "Joe's Coffee 2nd Street Austin TX" },
+      { name: "Sorrento's Coffee", query: "Sorrento's Coffee Austin TX" },
     ],
   },
   {
-    title: "Bites & Eats",
-    icon: Utensils,
+    title: "Breakfast",
+    icon: Croissant,
     iconColor: "gold",
     places: [
       { name: "Rosen's Bagels", query: "Rosen's Bagels Austin TX" },
+      { name: "Phoebe's", query: "Phoebe's Diner Austin TX" },
+    ],
+  },
+  {
+    title: "Lunch & Dinner",
+    icon: Utensils,
+    iconColor: "sage",
+    places: [
       { name: "Cabo Bob's", query: "Cabo Bob's Austin TX" },
       { name: "Jewboy Burgers", query: "Jewboy Burgers Austin TX" },
       { name: "One Taco", query: "One Taco Austin TX" },
+      { name: "Terry Black's BBQ", query: "Terry Black's Barbecue Austin TX" },
+      { name: "Banger's", query: "Banger's Sausage House Austin TX" },
     ],
   },
   {
     title: "Drinks",
     icon: Wine,
-    iconColor: "sage",
+    iconColor: "gold",
     places: [
       { name: "Upstairs at Caroline's", query: "Upstairs at Caroline's Austin TX" },
+    ],
+  },
+  {
+    title: "Late Night",
+    icon: Moon,
+    iconColor: "sage",
+    places: [
+      { name: "P. Terry's", query: "P. Terry's Burger Stand Austin TX" },
     ],
   },
   {
