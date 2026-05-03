@@ -1,12 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
 
+// Server-only Supabase client. The service-role key bypasses RLS and must
+// never be exposed to the browser. All call sites are Next.js API routes
+// (src/app/api/**), which run on the server.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
-// Returns a real Supabase client if env vars are set, null otherwise
 export const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
+  supabaseUrl && supabaseServiceKey
+    ? createClient(supabaseUrl, supabaseServiceKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      })
     : null;
 
 export function isSupabaseConfigured(): boolean {

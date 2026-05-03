@@ -49,7 +49,10 @@ create index idx_guests_party_id on guests(party_id);
 create index idx_guests_last_name on guests(lower(last_name));
 create index idx_guests_rsvp_status on guests(rsvp_status);
 
--- Row Level Security (enable when ready)
--- alter table parties enable row level security;
--- alter table guests enable row level security;
--- alter table contact_messages enable row level security;
+-- Row Level Security: lock down the anon/public role.
+-- All app reads/writes go through Next.js API routes using the service-role
+-- key, which bypasses RLS. Enabling RLS with no public policies means the
+-- anon key (if it ever leaked or got swapped in) cannot read guest data.
+alter table parties enable row level security;
+alter table guests enable row level security;
+alter table contact_messages enable row level security;
