@@ -38,6 +38,7 @@ export const NAV_LINKS = [
   { label: "Wedding Party", href: "/wedding-party" },
   { label: "FAQ", href: "/faq" },
   { label: "Accommodations", href: "/accommodations" },
+  { label: "Things to Do", href: "/things-to-do" },
   { label: "Registry", href: "/registry" },
   { label: "RSVP", href: "/rsvp" },
 ] as const;

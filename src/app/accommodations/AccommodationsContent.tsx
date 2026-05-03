@@ -8,7 +8,6 @@ import {
   Car,
   ExternalLink,
   Clock,
-  Sparkles,
 } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import AustinMap from "@/components/accommodations/AustinMap";
@@ -86,8 +85,8 @@ export default function AccommodationsContent() {
             </h1>
             <div className="divider-gold" />
             <p className="mt-4 font-serif text-lg italic text-charcoal-light">
-              Everything you need to plan your trip to Austin — from flights to
-              favorite spots.
+              Everything you need to plan your trip to Austin — flights, hotels,
+              and getting around.
             </p>
           </FadeIn>
         </div>
@@ -277,27 +276,6 @@ export default function AccommodationsContent() {
                 Explore More Hotels
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Section 4: Our Favorite Spots (Placeholder) */}
-      <section className="section-padding bg-white">
-        <div className="mx-auto max-w-4xl px-6">
-          <FadeIn>
-            <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gold/10">
-                <Sparkles className="h-6 w-6 text-gold" />
-              </div>
-              <h2 className="mt-4 font-serif text-3xl text-charcoal sm:text-4xl">
-                Our Favorite Austin Spots
-              </h2>
-              <div className="divider-gold" />
-              <p className="mt-4 font-serif text-lg italic text-charcoal-light">
-                Coming soon — we&apos;ll share our favorite restaurants, bars,
-                and things to do!
-              </p>
             </div>
           </FadeIn>
         </div>
