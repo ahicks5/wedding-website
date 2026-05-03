@@ -5,7 +5,6 @@ import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TIMELINE, type MilestoneItem } from "./milestones";
 import gallery from "@/lib/gallery.generated.json";
-import { cn } from "@/lib/utils";
 
 const MILESTONES = TIMELINE.filter(
   (item): item is MilestoneItem => item.type === "milestone"
