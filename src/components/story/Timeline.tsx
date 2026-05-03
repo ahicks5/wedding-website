@@ -31,7 +31,7 @@ export default function Timeline() {
         {/* Desktop center line */}
         <div className="absolute bottom-0 left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-gold/40 to-transparent lg:block" />
 
-        <div className="relative space-y-10 sm:space-y-14 lg:space-y-20">
+        <div className="relative space-y-8 sm:space-y-10 lg:space-y-14">
           {TIMELINE.map((item, idx) =>
             item.type === "milestone" ? (
               <Milestone key={item.id} item={item} index={idx} />
@@ -58,34 +58,40 @@ function Milestone({ item, index }: { item: MilestoneItem; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.55, delay: (index % 3) * 0.05 }}
-      className="relative grid grid-cols-1 lg:grid-cols-2 lg:gap-x-16"
+      className="relative grid grid-cols-1 lg:grid-cols-2 lg:gap-x-3"
     >
       {/* Dot on the line */}
       <div
         aria-hidden
         className={cn(
-          "absolute h-3.5 w-3.5 rounded-full bg-gold ring-4 ring-cream",
-          "left-10 top-2 -translate-x-1/2",
-          "lg:left-1/2 lg:top-2.5"
+          "absolute h-2.5 w-2.5 rounded-full bg-gold ring-4 ring-cream",
+          "left-10 top-1.5 -translate-x-1/2",
+          "lg:left-1/2 lg:top-2"
         )}
       />
 
-      {/* Content card */}
+      {/* Content — sits tight to the line */}
       <div
         className={cn(
-          "pl-16 lg:pl-0",
+          "pl-14 lg:pl-0",
           isLeft
-            ? "lg:col-start-1 lg:pr-2 lg:text-right"
-            : "lg:col-start-2 lg:pl-2"
+            ? "lg:col-start-1 lg:pr-4 lg:text-right"
+            : "lg:col-start-2 lg:pl-4"
         )}
       >
-        <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">
+        <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
           {item.date}
         </p>
-        <h3 className="mt-2 font-serif text-2xl text-charcoal sm:text-3xl">
+        <h3 className="mt-1.5 font-serif text-lg text-charcoal sm:text-xl">
           {item.title}
         </h3>
-        <p className="mt-3 max-w-md font-serif text-base leading-relaxed text-charcoal-light sm:text-lg lg:max-w-none lg:inline-block">
+        <p
+          className={cn(
+            "mt-1.5 font-serif text-sm leading-snug text-charcoal-light",
+            isLeft ? "lg:ml-auto" : "",
+            "lg:max-w-[18rem]"
+          )}
+        >
           {item.description}
         </p>
       </div>
