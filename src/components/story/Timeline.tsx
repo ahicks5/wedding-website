@@ -1,36 +1,141 @@
 "use client";
 
-import { MILESTONES, PARALLAX_PHOTOS } from "./milestones";
-import TimelineMilestone from "./TimelineMilestone";
-import ParallaxBreak from "./ParallaxBreak";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import {
+  TIMELINE,
+  type MilestoneItem,
+  type PhotoItem,
+} from "./milestones";
+import { cn } from "@/lib/utils";
+
+const ASPECT_CLASS = {
+  portrait: "aspect-[4/5]",
+  square: "aspect-square",
+  landscape: "aspect-[3/2]",
+};
+
+function resolveSrc(src: string) {
+  // Allow either a remote URL (Unsplash placeholder) or a relative path
+  // under /public/images/photos/.
+  return src.startsWith("http") ? src : `/images/photos/${src}`;
+}
 
 export default function Timeline() {
-  // Build an interleaved list of milestones and parallax breaks
-  const elements: React.ReactNode[] = [];
+  return (
+    <section className="bg-cream py-20 sm:py-28">
+      <div className="relative mx-auto max-w-5xl px-6">
+        {/* Mobile vertical line — pinned to the left rail */}
+        <div className="absolute bottom-0 left-10 top-0 w-px bg-gradient-to-b from-transparent via-gold/40 to-transparent lg:hidden" />
 
-  MILESTONES.forEach((milestone, index) => {
-    elements.push(
-      <TimelineMilestone key={milestone.title} milestone={milestone} index={index} />
-    );
+        {/* Desktop center line */}
+        <div className="absolute bottom-0 left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-gold/40 to-transparent lg:block" />
 
-    // Check if a parallax break should appear after this milestone
-    const parallax = PARALLAX_PHOTOS.find((p) => p.after === index);
-    if (parallax) {
-      elements.push(
-        <ParallaxBreak
-          key={`parallax-${index}`}
-          image={parallax.image}
-          alt={parallax.alt}
-          quote={parallax.quote}
-          attribution={parallax.attribution}
-        />
-      );
-    }
-  });
+        <div className="relative space-y-10 sm:space-y-14 lg:space-y-20">
+          {TIMELINE.map((item, idx) =>
+            item.type === "milestone" ? (
+              <Milestone key={item.id} item={item} index={idx} />
+            ) : (
+              <PhotoFloat
+                key={`photo-${idx}`}
+                item={item}
+                index={idx}
+              />
+            )
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Milestone({ item, index }: { item: MilestoneItem; index: number }) {
+  const isLeft = item.side === "left";
 
   return (
-    <section className="section-padding bg-cream">
-      <div className="mx-auto max-w-5xl px-6">{elements}</div>
-    </section>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.55, delay: (index % 3) * 0.05 }}
+      className="relative grid grid-cols-1 lg:grid-cols-2 lg:gap-x-16"
+    >
+      {/* Dot on the line */}
+      <div
+        aria-hidden
+        className={cn(
+          "absolute h-3.5 w-3.5 rounded-full bg-gold ring-4 ring-cream",
+          "left-10 top-2 -translate-x-1/2",
+          "lg:left-1/2 lg:top-2.5"
+        )}
+      />
+
+      {/* Content card */}
+      <div
+        className={cn(
+          "pl-16 lg:pl-0",
+          isLeft
+            ? "lg:col-start-1 lg:pr-2 lg:text-right"
+            : "lg:col-start-2 lg:pl-2"
+        )}
+      >
+        <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">
+          {item.date}
+        </p>
+        <h3 className="mt-2 font-serif text-2xl text-charcoal sm:text-3xl">
+          {item.title}
+        </h3>
+        <p className="mt-3 max-w-md font-serif text-base leading-relaxed text-charcoal-light sm:text-lg lg:max-w-none lg:inline-block">
+          {item.description}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+function PhotoFloat({ item, index }: { item: PhotoItem; index: number }) {
+  const isLeft = item.side === "left";
+  const aspectClass = ASPECT_CLASS[item.aspect ?? "portrait"];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.7, delay: 0.1 }}
+      className="relative grid grid-cols-1 lg:grid-cols-2 lg:gap-x-16"
+    >
+      <div
+        className={cn(
+          "pl-16 lg:pl-0",
+          isLeft
+            ? "lg:col-start-1 lg:flex lg:justify-end lg:pr-4"
+            : "lg:col-start-2 lg:pl-4"
+        )}
+      >
+        <div
+          className="w-full max-w-xs sm:max-w-sm"
+          style={{
+            transform: item.tilt ? `rotate(${item.tilt}deg)` : undefined,
+          }}
+        >
+          <div
+            className={cn(
+              "relative overflow-hidden rounded-md bg-ivory shadow-medium",
+              aspectClass
+            )}
+          >
+            <Image
+              src={resolveSrc(item.src)}
+              alt={item.alt}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 80vw, 30vw"
+              priority={index < 3}
+            />
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

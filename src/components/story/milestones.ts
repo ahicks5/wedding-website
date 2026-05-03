@@ -1,106 +1,225 @@
 // ============================================
-// RELATIONSHIP MILESTONES — All placeholder content
-// TODO: Replace with real dates, descriptions, and photos
+// RELATIONSHIP TIMELINE — Andrew & Lyndsey
+// ============================================
+// Items render top-to-bottom in this order. Each item is either a
+// milestone (date + title + short description) or a photo. On desktop,
+// the `side` field places it left or right of the center line. On
+// mobile everything stacks on a single left-line layout.
+// Photos do NOT need to align thematically with the date next to them
+// — they're decorative side-rail content.
 // ============================================
 
-export interface Milestone {
+export type MilestoneItem = {
+  type: "milestone";
+  id: string;
   date: string;
   title: string;
   description: string;
-  image: string;
-  imageAlt: string;
-}
+  side: "left" | "right";
+};
 
-export const MILESTONES: Milestone[] = [
-  {
-    date: "Growing Up",
-    title: "Where It All Started",
-    description:
-      "Before their paths ever crossed, Andrew grew up in Texas with a love for the outdoors and an easy laugh that could fill any room. Lyndsey was raised with warmth and grace, the kind of person who lights up every gathering she walks into. Two stories unfolding separately — but headed toward the same destination.",
-    // TODO: Replace with childhood/individual photos
-    image:
-      "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&q=80",
-    imageAlt: "Where it all started",
-  },
-  {
-    date: "The Day They Met",
-    title: "A Chance Encounter",
-    description:
-      "Some moments change everything. When Lyndsey and Andrew first met, there was an instant connection — the kind of easy conversation that makes hours feel like minutes. Neither of them knew it yet, but this was the beginning of something extraordinary.",
-    // TODO: Replace with real photo
-    image:
-      "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80",
-    imageAlt: "The day they met",
-  },
-  {
-    date: "The First Date",
-    title: "Butterflies & Good Coffee",
-    description:
-      "Nervous energy, stolen glances, and the kind of conversation that flows effortlessly. Their first date was everything a first date should be — and the beginning of a thousand more. By the end of the night, they both knew they'd found something special.",
-    // TODO: Replace with real photo
-    image:
-      "https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=800&q=80",
-    imageAlt: "Their first date",
-  },
-  {
-    date: "Falling in Love",
-    title: "Adventures Together",
-    description:
-      "What started as a spark quickly grew into something deeper. Road trips with the windows down, lazy Sunday mornings, inside jokes that no one else would understand, and the quiet comfort of knowing you've found your person. Every day together felt like a gift.",
-    // TODO: Replace with real photo
-    image:
-      "https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=800&q=80",
-    imageAlt: "Adventures together",
-  },
-  {
-    date: "A Big Step",
-    title: "Building a Life Together",
-    description:
-      "As their love deepened, so did their commitment. Moving in together, adopting routines, navigating life's challenges side by side — they were building something real. Through every up and down, one thing never wavered: they were better together.",
-    // TODO: Replace with real photo
-    image:
-      "https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?w=800&q=80",
-    imageAlt: "Building a life together",
-  },
-  {
-    date: "The Proposal",
-    title: "The Question of a Lifetime",
-    description:
-      "With a heart full of love and a ring in his pocket, Andrew planned the perfect moment to ask the most important question of his life. It was intimate, heartfelt, and absolutely them. And of course — she said yes.",
-    // TODO: Replace with proposal photo
-    image:
-      "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800&q=80",
-    imageAlt: "The proposal",
-  },
-  {
-    date: "Engaged!",
-    title: "The Celebration Begins",
-    description:
-      "With a ring on her finger and joy in their hearts, Lyndsey and Andrew began planning the next chapter. Surrounded by the love of family and friends, the engagement season has been filled with excitement, laughter, and a whole lot of wedding planning.",
-    // TODO: Replace with engagement photo
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
-    imageAlt: "Engaged and celebrating",
-  },
-];
+export type PhotoItem = {
+  type: "photo";
+  /** path under /images/photos/, e.g. "engagement/01.jpg" */
+  src: string;
+  alt: string;
+  side: "left" | "right";
+  aspect?: "portrait" | "square" | "landscape";
+  /** small visual rotation in degrees, optional */
+  tilt?: number;
+};
 
-export const PARALLAX_PHOTOS = [
+export type TimelineItem = MilestoneItem | PhotoItem;
+
+// Unsplash placeholders — swap these out with real photo paths
+// (e.g. "engagement/01.jpg") once images are uploaded.
+const PH = {
+  candid1:
+    "https://images.unsplash.com/photo-1529636798458-92182e662485?w=900&q=80",
+  candid2:
+    "https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=900&q=80",
+  candid3:
+    "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=900&q=80",
+  candid4:
+    "https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=900&q=80",
+  candid5:
+    "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=900&q=80",
+  candid6:
+    "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=900&q=80",
+};
+
+export const TIMELINE: TimelineItem[] = [
   {
-    // Shown between milestone 2 and 3
-    after: 1,
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80",
-    alt: "Lyndsey and Andrew together",
-    quote: "I have found the one whom my soul loves.",
-    attribution: "Song of Solomon 3:4",
+    type: "milestone",
+    id: "met",
+    date: "July 5, 2021",
+    title: "How we met",
+    description: "A summer evening in Austin. The first hello.",
+    side: "left",
   },
   {
-    // Shown between milestone 5 and 6
-    after: 4,
-    image:
-      "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=1920&q=80",
-    alt: "A beautiful moment",
-    quote: "In all the world, there is no heart for me like yours.",
-    attribution: "Maya Angelou",
+    type: "photo",
+    src: PH.candid1,
+    alt: "Lyndsey and Andrew",
+    side: "right",
+    aspect: "portrait",
+    tilt: -1.5,
+  },
+  {
+    type: "milestone",
+    id: "first-date",
+    date: "August 15, 2021",
+    title: "First date",
+    description:
+      "Five years to the day before we'd say I do — though we didn't know it yet.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "shreveport-move",
+    date: "August 2021",
+    title: "Lyndsey moves to Shreveport",
+    description: "A long-distance start to whatever this was becoming.",
+    side: "left",
+  },
+  {
+    type: "photo",
+    src: PH.candid2,
+    alt: "Together",
+    side: "left",
+    aspect: "landscape",
+    tilt: 1,
+  },
+  {
+    type: "milestone",
+    id: "first-shreveport",
+    date: "October 2021",
+    title: "First trip to Shreveport",
+    description: "Andrew makes the drive. The long-distance felt shorter.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "official",
+    date: "January 7, 2022",
+    title: "Officially together",
+    description: "Andrew asked. Lyndsey said yes.",
+    side: "left",
+  },
+  {
+    type: "photo",
+    src: PH.candid3,
+    alt: "A moment",
+    side: "right",
+    aspect: "square",
+    tilt: -2,
+  },
+  {
+    type: "milestone",
+    id: "graduations",
+    date: "May 2022",
+    title: "Two graduations",
+    description:
+      "Andrew finishes at Notre Dame and Lyndsey completes her dietetic internship — Lyndsey's first trip to South Bend included.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "tough-mudder",
+    date: "October 2022",
+    title: "Tough Mudder",
+    description: "Mud, walls, ice baths — all in.",
+    side: "left",
+  },
+  {
+    type: "photo",
+    src: PH.candid4,
+    alt: "Adventures",
+    side: "left",
+    aspect: "portrait",
+    tilt: 2,
+  },
+  {
+    type: "milestone",
+    id: "california",
+    date: "November 2022",
+    title: "Meeting the Hicks family",
+    description: "Lyndsey's first trip to California to meet Andrew's family.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "eras",
+    date: "March 31, 2023",
+    title: "Taylor Swift · Eras Tour",
+    description: "Friendship bracelets, three hours of singing, no regrets.",
+    side: "left",
+  },
+  {
+    type: "photo",
+    src: PH.candid5,
+    alt: "Date night",
+    side: "right",
+    aspect: "landscape",
+    tilt: -1,
+  },
+  {
+    type: "milestone",
+    id: "austin-fc",
+    date: "July 2023",
+    title: "First Austin FC game",
+    description: "Verde and Black at Q2 Stadium together.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "lyndsey-austin",
+    date: "April 2024",
+    title: "Lyndsey moves to Austin",
+    description: "Same city, same zip code, same coffee shop.",
+    side: "left",
+  },
+  {
+    type: "photo",
+    src: PH.candid6,
+    alt: "Together in Austin",
+    side: "left",
+    aspect: "square",
+    tilt: 1.5,
+  },
+  {
+    type: "milestone",
+    id: "nd-am-2024",
+    date: "August 31, 2024",
+    title: "Notre Dame at Texas A&M",
+    description:
+      "Andrew's Irish vs. Aggieland on opening day — Notre Dame 23, Texas A&M 13.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "nd-am-2025",
+    date: "September 13, 2025",
+    // TODO: Verify final score for the 2025 ND vs Texas A&M game
+    title: "Texas A&M at Notre Dame",
+    description: "Round two — this time in South Bend.",
+    side: "left",
+  },
+  {
+    type: "milestone",
+    id: "engaged",
+    date: "December 14, 2025",
+    title: "Engaged",
+    description: "He asked. She said yes. Again.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "wedding",
+    date: "August 15, 2026",
+    title: "Our wedding day",
+    description:
+      "Five years to the day after our first date — full circle, in Austin.",
+    side: "left",
   },
 ];
