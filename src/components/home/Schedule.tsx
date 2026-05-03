@@ -54,25 +54,27 @@ export default function Schedule() {
                       }}
                       className="relative flex flex-col items-center pb-8 text-center last:pb-0"
                     >
-                      {/* Timeline dot */}
-                      <div className="mb-3 h-2.5 w-2.5 rounded-full bg-gold ring-4 ring-gold/10" />
-
-                      {/* Connecting line */}
+                      {/* Connecting line — sits behind dot + text */}
                       {eventIdx < day.events.length - 1 && (
-                        <div className="absolute top-5 h-full w-px bg-linen" />
+                        <div className="absolute top-5 left-1/2 z-0 h-full w-px -translate-x-1/2 bg-linen" />
                       )}
 
-                      <p className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-                        {event.time}
-                      </p>
-                      <h4 className="mt-1 font-serif text-lg text-charcoal sm:text-xl">
-                        {event.title}
-                      </h4>
-                      <div className="mt-1 flex items-center justify-center gap-1.5">
-                        <MapPin className="h-3 w-3 text-warm-gray" />
-                        <span className="font-sans text-xs text-warm-gray">
-                          {event.location}
-                        </span>
+                      {/* Timeline dot */}
+                      <div className="relative z-10 mb-3 h-2.5 w-2.5 rounded-full bg-gold ring-4 ring-gold/10" />
+
+                      <div className="relative z-10">
+                        <p className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                          {event.time}
+                        </p>
+                        <h4 className="mt-1 font-serif text-lg text-charcoal sm:text-xl">
+                          {event.title}
+                        </h4>
+                        <div className="mt-1 flex items-center justify-center gap-1.5">
+                          <MapPin className="h-3 w-3 text-warm-gray" />
+                          <span className="font-sans text-xs text-warm-gray">
+                            {event.location}
+                          </span>
+                        </div>
                       </div>
                     </motion.div>
                   ))}

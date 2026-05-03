@@ -8,10 +8,15 @@ import { Menu, X } from "lucide-react";
 import { NAV_LINKS, WEDDING } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+// Pages whose top section has a dark/photo hero — nav text must go white
+// here when at the top of the page; everywhere else stays charcoal.
+const DARK_HERO_ROUTES = ["/", "/our-story"];
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const onDarkHero = DARK_HERO_ROUTES.includes(pathname) && !scrolled;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -46,7 +51,7 @@ export default function Nav() {
             href="/"
             className={cn(
               "font-serif text-xl tracking-wide transition-colors hover:text-gold",
-              scrolled ? "text-charcoal" : "text-white"
+              onDarkHero ? "text-white" : "text-charcoal"
             )}
           >
             {WEDDING.brideFirstName}
@@ -64,9 +69,9 @@ export default function Nav() {
                     "relative font-sans text-xs font-medium uppercase tracking-[0.15em] transition-colors",
                     pathname === link.href
                       ? "text-gold"
-                      : scrolled
-                        ? "text-charcoal-light hover:text-gold"
-                        : "text-white/80 hover:text-gold"
+                      : onDarkHero
+                        ? "text-white/80 hover:text-gold"
+                        : "text-charcoal-light hover:text-gold"
                   )}
                 >
                   {link.label}
@@ -91,7 +96,7 @@ export default function Nav() {
             {mobileOpen ? (
               <X className="h-6 w-6 text-charcoal" />
             ) : (
-              <Menu className={cn("h-6 w-6", scrolled ? "text-charcoal" : "text-white")} />
+              <Menu className={cn("h-6 w-6", onDarkHero ? "text-white" : "text-charcoal")} />
             )}
           </button>
         </nav>
