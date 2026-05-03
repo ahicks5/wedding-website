@@ -15,7 +15,8 @@
 // ============================================
 
 import exifr from "exifr";
-import { readdir, writeFile, stat } from "node:fs/promises";
+import { imageSize } from "image-size";
+import { readdir, writeFile, stat, readFile } from "node:fs/promises";
 import { join, extname } from "node:path";
 
 const GALLERY_DIR = "public/images/photos/gallery";
@@ -68,11 +69,26 @@ async function main() {
       }
     }
 
+    let width = 1200;
+    let height = 1500;
+    try {
+      const buf = await readFile(fullPath);
+      const dims = imageSize(buf);
+      if (dims.width && dims.height) {
+        width = dims.width;
+        height = dims.height;
+      }
+    } catch {
+      // fall back to default portrait dimensions
+    }
+
     photos.push({
       src: `gallery/${file}`,
       alt: "Andrew & Lyndsey",
       date: isoDate,
       source,
+      width,
+      height,
     });
   }
 

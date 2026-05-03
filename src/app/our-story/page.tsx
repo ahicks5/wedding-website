@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import StoryHero from "@/components/story/StoryHero";
-import Timeline from "@/components/story/Timeline";
+import HorizontalTimelineGallery from "@/components/story/HorizontalTimelineGallery";
 import NextChapter from "@/components/story/NextChapter";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default function OurStoryPage() {
   return (
     <>
       <StoryHero />
-      <Timeline />
+      <HorizontalTimelineGallery />
       <NextChapter />
     </>
   );
