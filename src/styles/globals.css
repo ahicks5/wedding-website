@@ -75,16 +75,20 @@ body {
   color: var(--color-charcoal);
   background-color: var(--color-cream);
   line-height: 1.7;
-  overflow-x: hidden;
+  /* `clip` instead of `hidden` so descendants can use position: sticky.
+     overflow-x:hidden on body breaks sticky in every modern browser. */
+  overflow-x: clip;
 }
 
 /* ---- Typography Base ---- */
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--color-charcoal);
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--color-charcoal);
+  }
 }
 
 h1 { font-size: var(--font-size-h1); }
