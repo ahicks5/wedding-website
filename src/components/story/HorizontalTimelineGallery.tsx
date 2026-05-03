@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { TIMELINE, type MilestoneItem } from "./milestones";
 import gallery from "@/lib/gallery.generated.json";
 
@@ -22,8 +21,7 @@ type GalleryEntry = {
 const PHOTOS = gallery as GalleryEntry[];
 
 // ============================================
-// Date math — convert milestone date strings into timestamps and percent
-// positions on a single time axis from earliest -> latest milestone.
+// Date math
 // ============================================
 
 const MONTH_NAMES = [
@@ -42,12 +40,22 @@ const MONTH_NAMES = [
 ];
 
 function parseMilestoneDate(d: string): Date {
-  // Handles "July 5, 2021", "August 2021", "May 2022".
   const tokens = d.replace(/,/g, "").split(/\s+/);
   const monthIdx = MONTH_NAMES.indexOf((tokens[0] || "").toLowerCase());
   const year = parseInt(tokens[tokens.length - 1] || "2025", 10);
   const day = tokens.length === 3 ? parseInt(tokens[1] || "15", 10) : 15;
   return new Date(year, monthIdx === -1 ? 0 : monthIdx, isNaN(day) ? 15 : day);
+}
+
+function abbrevMonth(d: string): string {
+  const t = d.replace(/,/g, "").split(/\s+/)[0] || "";
+  return t.slice(0, 3);
+}
+
+function shortYear(d: string): string {
+  const tokens = d.replace(/,/g, "").split(/\s+/);
+  const y = tokens[tokens.length - 1] || "";
+  return `'${y.slice(-2)}`;
 }
 
 const MILESTONE_TICKS = MILESTONES.map((m) => ({
@@ -63,7 +71,7 @@ function pct(ts: number) {
   return ((ts - MIN_TS) / SPAN) * 100;
 }
 
-// One tick per month between the earliest and latest milestone.
+// One tick per month between earliest and latest milestone.
 const MONTH_TICKS: number[] = (() => {
   const out: number[] = [];
   const start = new Date(MIN_TS);
@@ -75,17 +83,21 @@ const MONTH_TICKS: number[] = (() => {
   return out;
 })();
 
-// Pixels of nav offset from the top of the viewport.
 const NAV_HEIGHT = 64;
-// Reserved height for the bar so the photo grid doesn't jump under it.
-const BAR_HEIGHT = 116;
+const BAR_HEIGHT = 96;
+
+// Dusty blue (sage-light from the palette)
+const PLAYHEAD_COLOR = "#A3BDD1";
 
 export default function HorizontalTimelineGallery() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [playheadPct, setPlayheadPct] = useState(0);
   const [pinned, setPinned] = useState(false);
 
   useEffect(() => {
+    const milestonePcts = MILESTONE_TICKS.map((m) => pct(m.ts));
+
     const handleScroll = () => {
       const node = sectionRef.current;
       if (!node) return;
@@ -99,13 +111,23 @@ export default function HorizontalTimelineGallery() {
       const scrollableHeight = rect.height - BAR_HEIGHT;
       const progress =
         scrollableHeight > 0
-          ? Math.max(0, Math.min(0.999, scrolledPast / scrollableHeight))
+          ? Math.max(0, Math.min(1, scrolledPast / scrollableHeight))
           : 0;
-      const idx = Math.min(
-        MILESTONES.length - 1,
-        Math.floor(progress * MILESTONES.length)
-      );
-      setActiveIdx(idx);
+
+      const newPct = progress * 100;
+      setPlayheadPct(newPct);
+
+      // Active = milestone whose tick is closest to the playhead.
+      let best = 0;
+      let bestDist = Math.abs(milestonePcts[0] - newPct);
+      for (let i = 1; i < milestonePcts.length; i++) {
+        const d = Math.abs(milestonePcts[i] - newPct);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      }
+      setActiveIdx(best);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -117,77 +139,90 @@ export default function HorizontalTimelineGallery() {
 
   const Bar = (
     <div className="border-b border-linen bg-cream/95 backdrop-blur-md">
-      <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 sm:py-4">
-        {/* Active milestone label */}
-        <div className="mb-3 text-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active.id}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2 }}
+      <div className="mx-auto max-w-6xl px-4 pb-3 pt-3 sm:px-6">
+        <div className="flex items-center gap-3">
+          {/* Left — stacked Mon / 'YY */}
+          <div className="flex w-12 shrink-0 flex-col items-start font-serif leading-none">
+            <span
+              className="text-lg sm:text-xl"
+              style={{ color: "#2C2C2C", fontWeight: 500 }}
             >
-              <p className="font-sans text-[10px] font-bold uppercase tracking-[0.25em] text-gold sm:text-[11px]">
-                {active.date}
-              </p>
-              <h3
-                className="mt-0.5 font-serif text-sm leading-tight sm:text-base"
-                style={{ color: "#2C2C2C", fontWeight: 600 }}
-              >
-                {active.title}
-              </h3>
-            </motion.div>
-          </AnimatePresence>
+              {abbrevMonth(active.date)}
+            </span>
+            <span className="mt-0.5 font-serif text-xs italic text-warm-gray sm:text-sm">
+              {shortYear(active.date)}
+            </span>
+          </div>
+
+          {/* Center — title + blurb */}
+          <div className="flex-1 text-center">
+            <h3
+              className="font-serif text-xs leading-tight sm:text-sm"
+              style={{ color: "#2C2C2C", fontWeight: 600 }}
+            >
+              {active.title}
+            </h3>
+            <p className="mt-0.5 font-serif text-[10px] italic leading-tight text-warm-gray sm:text-xs">
+              {active.description}
+            </p>
+          </div>
+
+          {/* Right spacer to balance the date column for true centering */}
+          <div className="w-12 shrink-0" />
         </div>
 
-        {/* Ruler */}
-        <div className="relative h-7">
+        {/* Ruler — tight gap above */}
+        <div className="relative mt-2 h-7">
           {/* Baseline */}
           <div
             aria-hidden
             className="absolute bottom-0 left-0 right-0 h-px bg-linen"
           />
 
-          {/* Monthly ticks — render first so milestones sit on top */}
+          {/* Monthly ticks */}
           {MONTH_TICKS.map((ts) => (
             <div
               key={`mo-${ts}`}
               aria-hidden
-              className="absolute bottom-0 w-px bg-warm-gray/35"
-              style={{
-                left: `${pct(ts)}%`,
-                height: 6,
-              }}
+              className="absolute bottom-0 w-px bg-warm-gray/30"
+              style={{ left: `${pct(ts)}%`, height: 6 }}
             />
           ))}
 
-          {/* Milestone ticks */}
+          {/* Milestone ticks — uniform; opacity dims for upcoming */}
           {MILESTONE_TICKS.map((m, i) => {
-            const isActive = i === activeIdx;
-            const isPast = i < activeIdx;
+            const isPast = i <= activeIdx;
             return (
               <div
                 key={m.id}
                 title={`${m.date} — ${m.title}`}
-                className="absolute bottom-0 -translate-x-1/2 transition-all duration-300 ease-out"
+                aria-hidden
+                className="absolute bottom-0 -translate-x-1/2 transition-opacity duration-300 ease-out"
                 style={{
                   left: `${pct(m.ts)}%`,
-                  width: isActive ? 3 : 2,
-                  height: isActive ? 26 : 14,
-                  background: isActive
-                    ? "#D4B85C"
-                    : isPast
-                      ? "#D4B85C"
-                      : "rgba(212, 184, 92, 0.55)",
-                  boxShadow: isActive
-                    ? "0 0 10px rgba(212,184,92,0.55)"
-                    : "none",
+                  width: 2,
+                  height: 14,
+                  background: "#D4B85C",
+                  opacity: isPast ? 1 : 0.4,
                   borderRadius: 1,
                 }}
               />
             );
           })}
+
+          {/* Playhead — continuous dusty blue, glides as you scroll */}
+          <div
+            aria-hidden
+            className="absolute bottom-0 -translate-x-1/2"
+            style={{
+              left: `${playheadPct}%`,
+              width: 3,
+              height: 26,
+              background: PLAYHEAD_COLOR,
+              boxShadow: "0 0 14px rgba(163, 189, 209, 0.75)",
+              borderRadius: 2,
+            }}
+          />
         </div>
       </div>
     </div>
@@ -195,11 +230,8 @@ export default function HorizontalTimelineGallery() {
 
   return (
     <section ref={sectionRef} className="relative bg-cream">
-      {/* Inline copy — sits at the top of the section while it's still
-          below the nav. Hidden once we pin. */}
       {!pinned && Bar}
 
-      {/* Fixed copy — pins under the nav while the section is in view. */}
       {pinned && (
         <div
           className="fixed left-0 right-0 z-30"
@@ -209,7 +241,6 @@ export default function HorizontalTimelineGallery() {
         </div>
       )}
 
-      {/* Spacer reserves the bar's height so photos don't jump. */}
       {pinned && <div style={{ height: `${BAR_HEIGHT}px` }} />}
 
       {/* Photo gallery — vertical scroll */}
