@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { MapPin, Clock, Navigation } from "lucide-react";
 import { motion } from "framer-motion";
 import { WEDDING } from "@/lib/constants";
@@ -57,6 +58,24 @@ function VenueCard({ type, name, address, time, mapUrl, image, delay = 0 }: Venu
               </span>
             </div>
           </div>
+
+          {type === "ceremony" && (
+            <div className="mt-6 rounded-md border border-gold/40 bg-gold/5 px-4 py-3">
+              <p className="font-sans text-[11px] font-bold uppercase tracking-[0.18em] text-charcoal">
+                Dress code applies
+              </p>
+              <p className="mt-1.5 font-sans text-xs leading-relaxed text-charcoal-light">
+                The church has specific attire guidelines. Please review them on our{" "}
+                <Link
+                  href="/faq"
+                  className="font-semibold text-sage underline decoration-gold/60 underline-offset-2 transition-colors hover:text-gold hover:decoration-gold"
+                >
+                  FAQ page
+                </Link>{" "}
+                before the ceremony.
+              </p>
+            </div>
+          )}
 
           <a
             href={mapUrl}
