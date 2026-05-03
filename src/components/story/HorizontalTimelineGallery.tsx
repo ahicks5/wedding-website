@@ -72,7 +72,6 @@ function pct(ts: number) {
   return ((ts - MIN_TS) / SPAN) * 100;
 }
 
-// One tick per month between earliest and latest milestone.
 const MONTH_TICKS: number[] = (() => {
   const out: number[] = [];
   const start = new Date(MIN_TS);
@@ -85,16 +84,16 @@ const MONTH_TICKS: number[] = (() => {
 })();
 
 const NAV_HEIGHT = 64;
-const BAR_HEIGHT = 116;
-
-// Dusty blue (sage-light from the palette)
+// Used only for playhead progress math (so the playhead is at 0% when
+// the section's top hits the nav and at 100% when its bottom reaches
+// the nav). Doesn't drive layout.
+const BAR_HEIGHT_FOR_MATH = 120;
 const PLAYHEAD_COLOR = "#A3BDD1";
 
 export default function HorizontalTimelineGallery() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const [playheadPct, setPlayheadPct] = useState(0);
-  const [pinned, setPinned] = useState(false);
 
   useEffect(() => {
     const milestonePcts = MILESTONE_TICKS.map((m) => pct(m.ts));
@@ -104,12 +103,8 @@ export default function HorizontalTimelineGallery() {
       if (!node) return;
       const rect = node.getBoundingClientRect();
 
-      const isPinned =
-        rect.top <= NAV_HEIGHT && rect.bottom > NAV_HEIGHT + BAR_HEIGHT;
-      setPinned(isPinned);
-
       const scrolledPast = NAV_HEIGHT - rect.top;
-      const scrollableHeight = rect.height - BAR_HEIGHT;
+      const scrollableHeight = rect.height - BAR_HEIGHT_FOR_MATH;
       const progress =
         scrollableHeight > 0
           ? Math.max(0, Math.min(1, scrolledPast / scrollableHeight))
@@ -118,7 +113,6 @@ export default function HorizontalTimelineGallery() {
       const newPct = progress * 100;
       setPlayheadPct(newPct);
 
-      // Active = milestone whose tick is closest to the playhead.
       let best = 0;
       let bestDist = Math.abs(milestonePcts[0] - newPct);
       for (let i = 1; i < milestonePcts.length; i++) {
@@ -138,127 +132,109 @@ export default function HorizontalTimelineGallery() {
 
   const active = MILESTONES[activeIdx];
 
-  const Bar = (
-    <div className="border-b border-linen bg-cream/95 backdrop-blur-md">
-      <div className="mx-auto max-w-6xl px-4 pb-3 pt-5 sm:px-6 sm:pt-6">
-        {/* Crossfade container — fixed min-height so the absolutely
-            positioned old/new copies overlay cleanly during transition */}
-        <div className="relative min-h-[44px] sm:min-h-[48px]">
-          <AnimatePresence initial={false}>
-            <motion.div
-              key={active.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.28, ease: "easeOut" }}
-              className="absolute inset-0 flex items-center gap-3"
-            >
-              {/* Left — stacked Mon / 'YY */}
-              <div className="flex w-14 shrink-0 flex-col items-start font-serif leading-none">
-                <span
-                  className="text-lg sm:text-xl"
-                  style={{ color: "#2C2C2C", fontWeight: 500 }}
-                >
-                  {abbrevMonth(active.date)}
-                </span>
-                <span
-                  className="mt-0.5 font-serif text-base italic text-warm-gray sm:text-lg"
-                  style={{ fontWeight: 500 }}
-                >
-                  {shortYear(active.date)}
-                </span>
-              </div>
-
-              {/* Center — title + blurb (truncated to 1 line on mobile) */}
-              <div className="min-w-0 flex-1 text-center">
-                <h3
-                  className="truncate font-serif text-sm leading-tight sm:overflow-visible sm:whitespace-normal sm:text-base"
-                  style={{ color: "#2C2C2C", fontWeight: 600 }}
-                >
-                  {active.title}
-                </h3>
-                <p className="mt-0.5 font-serif text-[11px] italic leading-tight text-warm-gray sm:text-xs">
-                  {active.description}
-                </p>
-              </div>
-
-              {/* Right spacer for true center */}
-              <div className="w-14 shrink-0" />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Ruler — tight gap above */}
-        <div className="relative mt-2 h-7">
-          {/* Baseline */}
-          <div
-            aria-hidden
-            className="absolute bottom-0 left-0 right-0 h-px bg-linen"
-          />
-
-          {/* Monthly ticks */}
-          {MONTH_TICKS.map((ts) => (
-            <div
-              key={`mo-${ts}`}
-              aria-hidden
-              className="absolute bottom-0 w-px bg-warm-gray/30"
-              style={{ left: `${pct(ts)}%`, height: 6 }}
-            />
-          ))}
-
-          {/* Milestone ticks — uniform; opacity dims for upcoming */}
-          {MILESTONE_TICKS.map((m, i) => {
-            const isPast = i <= activeIdx;
-            return (
-              <div
-                key={m.id}
-                title={`${m.date} — ${m.title}`}
-                aria-hidden
-                className="absolute bottom-0 -translate-x-1/2 transition-opacity duration-300 ease-out"
-                style={{
-                  left: `${pct(m.ts)}%`,
-                  width: 2,
-                  height: 14,
-                  background: "#D4B85C",
-                  opacity: isPast ? 1 : 0.4,
-                  borderRadius: 1,
-                }}
-              />
-            );
-          })}
-
-          {/* Playhead — continuous dusty blue, glides as you scroll */}
-          <div
-            aria-hidden
-            className="absolute bottom-0 -translate-x-1/2"
-            style={{
-              left: `${playheadPct}%`,
-              width: 3,
-              height: 26,
-              background: PLAYHEAD_COLOR,
-              boxShadow: "0 0 14px rgba(163, 189, 209, 0.75)",
-              borderRadius: 2,
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <section ref={sectionRef} className="relative bg-cream">
-      {!pinned && Bar}
+      {/* Single sticky bar — the browser handles the pin transition,
+          so no jump when the bar reaches the top of the viewport. */}
+      <div className="sticky top-16 z-30 border-b border-linen bg-cream/95 backdrop-blur-md">
+        <div className="mx-auto max-w-6xl px-4 pb-4 pt-6 sm:px-6 sm:pb-5 sm:pt-7">
+          {/* Crossfade label container */}
+          <div className="relative min-h-[44px] sm:min-h-[48px]">
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={active.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.28, ease: "easeOut" }}
+                className="absolute inset-0 flex items-center gap-3"
+              >
+                {/* Left — stacked Mon / 'YY */}
+                <div className="flex w-14 shrink-0 flex-col items-start font-serif leading-none">
+                  <span
+                    className="text-lg sm:text-xl"
+                    style={{ color: "#2C2C2C", fontWeight: 500 }}
+                  >
+                    {abbrevMonth(active.date)}
+                  </span>
+                  <span
+                    className="mt-0.5 font-serif text-base italic text-warm-gray sm:text-lg"
+                    style={{ fontWeight: 500 }}
+                  >
+                    {shortYear(active.date)}
+                  </span>
+                </div>
 
-      {pinned && (
-        <div
-          className="fixed left-0 right-0 z-30"
-          style={{ top: `${NAV_HEIGHT}px` }}
-        >
-          {Bar}
+                {/* Center — title + blurb */}
+                <div className="min-w-0 flex-1 text-center">
+                  <h3
+                    className="font-serif text-sm leading-tight sm:text-base"
+                    style={{ color: "#2C2C2C", fontWeight: 600 }}
+                  >
+                    {active.title}
+                  </h3>
+                  <p className="mt-0.5 font-serif text-[11px] italic leading-tight text-warm-gray sm:text-xs">
+                    {active.description}
+                  </p>
+                </div>
+
+                {/* Right spacer for true center */}
+                <div className="w-14 shrink-0" />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Ruler */}
+          <div className="relative mt-3 h-7">
+            <div
+              aria-hidden
+              className="absolute bottom-0 left-0 right-0 h-px bg-linen"
+            />
+
+            {MONTH_TICKS.map((ts) => (
+              <div
+                key={`mo-${ts}`}
+                aria-hidden
+                className="absolute bottom-0 w-px bg-warm-gray/30"
+                style={{ left: `${pct(ts)}%`, height: 6 }}
+              />
+            ))}
+
+            {MILESTONE_TICKS.map((m, i) => {
+              const isPast = i <= activeIdx;
+              return (
+                <div
+                  key={m.id}
+                  title={`${m.date} — ${m.title}`}
+                  aria-hidden
+                  className="absolute bottom-0 -translate-x-1/2 transition-opacity duration-300 ease-out"
+                  style={{
+                    left: `${pct(m.ts)}%`,
+                    width: 2,
+                    height: 14,
+                    background: "#D4B85C",
+                    opacity: isPast ? 1 : 0.4,
+                    borderRadius: 1,
+                  }}
+                />
+              );
+            })}
+
+            <div
+              aria-hidden
+              className="absolute bottom-0 -translate-x-1/2"
+              style={{
+                left: `${playheadPct}%`,
+                width: 3,
+                height: 26,
+                background: PLAYHEAD_COLOR,
+                boxShadow: "0 0 14px rgba(163, 189, 209, 0.75)",
+                borderRadius: 2,
+              }}
+            />
+          </div>
         </div>
-      )}
-
-      {pinned && <div style={{ height: `${BAR_HEIGHT}px` }} />}
+      </div>
 
       {/* Photo gallery — vertical scroll */}
       <div className="mx-auto max-w-2xl px-4 py-10 sm:py-14">
