@@ -20,8 +20,7 @@ const HOTELS = [
     driveToElla: "~8 min to Hotel Ella",
     driveToChurch: "~18 min to SJN Church",
     priceRange: "$$",
-    image:
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+    image: "/images/photos/hotel/marriott.jpeg",
     url: "https://www.marriott.com/en-us/hotels/ausdt-austin-marriott-downtown/",
   },
   {
@@ -31,8 +30,7 @@ const HOTELS = [
     driveToElla: "~12 min to Hotel Ella",
     driveToChurch: "~20 min to SJN Church",
     priceRange: "$$",
-    image:
-      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
+    image: "/images/photos/hotel/hyatt.jpeg",
     url: "https://www.hyatt.com/hyatt-regency/en-US/ausra-hyatt-regency-austin",
   },
   {
@@ -42,8 +40,7 @@ const HOTELS = [
     driveToElla: "~10 min to Hotel Ella",
     driveToChurch: "~20 min to SJN Church",
     priceRange: "$$",
-    image:
-      "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&q=80",
+    image: "/images/photos/hotel/hilton.jpeg",
     url: "https://www.hilton.com/en/hotels/auscvhh-hilton-austin/",
   },
   {
@@ -53,8 +50,7 @@ const HOTELS = [
     driveToElla: "~12 min to Hotel Ella",
     driveToChurch: "~22 min to SJN Church",
     priceRange: "$$$",
-    image:
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
+    image: "/images/photos/hotel/fairmont.jpg",
     url: "https://www.fairmont.com/austin/",
   },
   {
@@ -64,8 +60,7 @@ const HOTELS = [
     driveToElla: "~10 min to Hotel Ella",
     driveToChurch: "~20 min to SJN Church",
     priceRange: "$$$",
-    image:
-      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80",
+    image: "/images/photos/hotel/driskil.jpeg",
     url: "https://www.hyatt.com/en-US/hotel/texas/the-driskill/drial",
   },
 ];
