@@ -5,8 +5,9 @@
 // milestone (date + title + short description) or a photo. On desktop,
 // the `side` field places it left or right of the center line. On
 // mobile everything stacks on a single left-line layout.
-// Photos do NOT need to align thematically with the date next to them
-// — they're decorative side-rail content.
+// Gallery photos (from public/images/photos/gallery/, after running
+// `npm run sync-gallery`) are auto-sprinkled by EXIF date — see
+// Timeline.tsx for that logic.
 // ============================================
 
 export type MilestoneItem = {
@@ -31,17 +32,6 @@ export type PhotoItem = {
 
 export type TimelineItem = MilestoneItem | PhotoItem;
 
-// Real engagement photos — referenced via paths under
-// /public/images/photos/. Swap freely as more photos arrive.
-const PH = {
-  candid1: "engagement/proposal-1.jpg",
-  candid2: "engagement/IMG_1611.jpg",
-  candid3: "engagement/proposal-9.jpg",
-  candid4: "engagement/IMG_1625.jpg",
-  candid5: "engagement/proposal-18.jpg",
-  candid6: "engagement/IMG_1641.jpg",
-};
-
 export const TIMELINE: TimelineItem[] = [
   {
     type: "milestone",
@@ -50,14 +40,6 @@ export const TIMELINE: TimelineItem[] = [
     title: "How we met",
     description: "A summer evening in Austin. The first hello.",
     side: "left",
-  },
-  {
-    type: "photo",
-    src: PH.candid1,
-    alt: "Lyndsey and Andrew",
-    side: "right",
-    aspect: "portrait",
-    tilt: -1.5,
   },
   {
     type: "milestone",
@@ -77,14 +59,6 @@ export const TIMELINE: TimelineItem[] = [
     side: "left",
   },
   {
-    type: "photo",
-    src: PH.candid2,
-    alt: "Together",
-    side: "left",
-    aspect: "landscape",
-    tilt: 1,
-  },
-  {
     type: "milestone",
     id: "first-shreveport",
     date: "October 2021",
@@ -96,26 +70,25 @@ export const TIMELINE: TimelineItem[] = [
     type: "milestone",
     id: "official",
     date: "January 7, 2022",
-    title: "Officially together",
-    description: "Andrew asked. Lyndsey said yes.",
+    title: "Boyfriend & girlfriend",
+    description: "Officially together.",
     side: "left",
   },
   {
-    type: "photo",
-    src: PH.candid3,
-    alt: "A moment",
+    type: "milestone",
+    id: "andrew-graduation",
+    date: "May 2022",
+    title: "Andrew's graduation",
+    description: "Notre Dame — and Lyndsey's first trip to South Bend.",
     side: "right",
-    aspect: "square",
-    tilt: -2,
   },
   {
     type: "milestone",
-    id: "graduations",
+    id: "lyndsey-graduation",
     date: "May 2022",
-    title: "Two graduations",
-    description:
-      "Andrew finishes at Notre Dame and Lyndsey completes her dietetic internship — Lyndsey's first trip to South Bend included.",
-    side: "right",
+    title: "Lyndsey's graduation",
+    description: "Capping off her dietetic graduate program.",
+    side: "left",
   },
   {
     type: "milestone",
@@ -123,47 +96,31 @@ export const TIMELINE: TimelineItem[] = [
     date: "October 2022",
     title: "Tough Mudder",
     description: "Mud, walls, ice baths — all in.",
-    side: "left",
-  },
-  {
-    type: "photo",
-    src: PH.candid4,
-    alt: "Adventures",
-    side: "left",
-    aspect: "portrait",
-    tilt: 2,
+    side: "right",
   },
   {
     type: "milestone",
-    id: "california",
+    id: "hometown",
     date: "November 2022",
-    title: "Meeting the Hicks family",
-    description: "Lyndsey's first trip to California to meet Andrew's family.",
-    side: "right",
+    title: "Andrew's hometown",
+    description: "Lyndsey's first trip out west to where Andrew grew up.",
+    side: "left",
   },
   {
     type: "milestone",
     id: "eras",
     date: "March 31, 2023",
     title: "Taylor Swift · Eras Tour",
-    description: "Friendship bracelets, three hours of singing, no regrets.",
-    side: "left",
-  },
-  {
-    type: "photo",
-    src: PH.candid5,
-    alt: "Date night",
+    description: "Andrew surprised Lyndsey with seats neither of us will forget.",
     side: "right",
-    aspect: "landscape",
-    tilt: -1,
   },
   {
     type: "milestone",
     id: "austin-fc",
     date: "July 2023",
     title: "First Austin FC game",
-    description: "Verde and Black at Q2 Stadium together.",
-    side: "right",
+    description: "Last-second tickets, impromptu date night at Q2.",
+    side: "left",
   },
   {
     type: "milestone",
@@ -171,32 +128,48 @@ export const TIMELINE: TimelineItem[] = [
     date: "April 2024",
     title: "Lyndsey moves to Austin",
     description: "Same city, same zip code, same coffee shop.",
-    side: "left",
-  },
-  {
-    type: "photo",
-    src: PH.candid6,
-    alt: "Together in Austin",
-    side: "left",
-    aspect: "square",
-    tilt: 1.5,
+    side: "right",
   },
   {
     type: "milestone",
     id: "nd-am-2024",
     date: "August 31, 2024",
     title: "Notre Dame at Texas A&M",
+    description: "Kyle Field season opener — Notre Dame 23, Texas A&M 13.",
+    side: "left",
+  },
+  {
+    type: "milestone",
+    id: "nyc",
+    date: "November 2024",
+    title: "Trip to New York City",
     description:
-      "Andrew's Irish vs. Aggieland on opening day — Notre Dame 23, Texas A&M 13.",
+      "Lyndsey's first time in NYC — visiting Pat & Ellie and catching a Saturday football game.",
+    side: "right",
+  },
+  {
+    type: "milestone",
+    id: "christmas-kc",
+    date: "December 2024",
+    title: "Christmas in Kansas City",
+    description: "Where Andrew's parents now call home.",
+    side: "left",
+  },
+  {
+    type: "milestone",
+    id: "ring-shopping",
+    date: "September 2025",
+    title: "Ring shopping",
+    description: "A hint of what was coming.",
     side: "right",
   },
   {
     type: "milestone",
     id: "nd-am-2025",
     date: "September 13, 2025",
-    // TODO: Verify final score for the 2025 ND vs Texas A&M game
     title: "Texas A&M at Notre Dame",
-    description: "Round two — this time in South Bend.",
+    description:
+      "Round two in South Bend — came down to the final play.",
     side: "left",
   },
   {
@@ -204,7 +177,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "engaged",
     date: "December 14, 2025",
     title: "Engaged",
-    description: "He asked. She said yes. Again.",
+    description: "The yes.",
     side: "right",
   },
   {

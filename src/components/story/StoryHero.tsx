@@ -12,8 +12,13 @@ export default function StoryHero() {
   });
 
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [0.4, 0.65]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [0.55, 0.75]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  // Drop shadow on the text so it stays legible regardless of how
+  // light or dark the photo behind it happens to be.
+  const textShadow =
+    "0 2px 14px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.5)";
 
   return (
     <section
@@ -32,9 +37,16 @@ export default function StoryHero() {
         />
       </motion.div>
 
+      {/* Charcoal scrim — fades in as you scroll */}
       <motion.div
         className="absolute inset-0 bg-charcoal"
         style={{ opacity: overlayOpacity }}
+      />
+
+      {/* Vertical gradient — extra darkness behind the text band */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-black/45 to-black/30"
       />
 
       <motion.div
@@ -45,6 +57,7 @@ export default function StoryHero() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
+          style={{ textShadow }}
           className="font-sans text-[10px] font-medium uppercase tracking-[0.3em] text-cream sm:text-xs sm:tracking-[0.35em]"
         >
           How it all began
@@ -55,7 +68,7 @@ export default function StoryHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
           className="mt-5 font-serif text-4xl text-white sm:text-5xl md:text-6xl lg:text-7xl"
-          style={{ fontWeight: 400 }}
+          style={{ fontWeight: 400, textShadow }}
         >
           Our Story
         </motion.h1>
@@ -71,6 +84,7 @@ export default function StoryHero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.3 }}
+          style={{ textShadow }}
           className="mt-4 max-w-md font-serif text-base italic text-cream sm:mt-6 sm:text-lg"
         >
           Every love story is beautiful, but ours is our favorite.
