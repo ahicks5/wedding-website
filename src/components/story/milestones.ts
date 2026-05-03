@@ -38,7 +38,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "met",
     date: "July 5, 2021",
     title: "How we met",
-    description: "A summer evening in Austin. The first hello.",
+    description: "A summer night in Austin.",
     side: "left",
   },
   {
@@ -46,8 +46,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "first-date",
     date: "August 15, 2021",
     title: "First date",
-    description:
-      "Five years to the day before we'd say I do — though we didn't know it yet.",
+    description: "Five years before our wedding day.",
     side: "right",
   },
   {
@@ -55,7 +54,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "shreveport-move",
     date: "August 2021",
     title: "Lyndsey moves to Shreveport",
-    description: "A long-distance start to whatever this was becoming.",
+    description: "Long-distance begins.",
     side: "left",
   },
   {
@@ -63,7 +62,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "first-shreveport",
     date: "October 2021",
     title: "First trip to Shreveport",
-    description: "Andrew makes the drive. The long-distance felt shorter.",
+    description: "Andrew makes the drive.",
     side: "right",
   },
   {
@@ -79,7 +78,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "andrew-graduation",
     date: "May 2022",
     title: "Andrew's graduation",
-    description: "Notre Dame — and Lyndsey's first trip to South Bend.",
+    description: "Notre Dame, class of 2022.",
     side: "right",
   },
   {
@@ -87,7 +86,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "lyndsey-graduation",
     date: "May 2022",
     title: "Lyndsey's graduation",
-    description: "Capping off her dietetic graduate program.",
+    description: "Dietetic internship complete.",
     side: "left",
   },
   {
@@ -95,7 +94,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "tough-mudder",
     date: "October 2022",
     title: "Tough Mudder",
-    description: "Mud, walls, ice baths — all in.",
+    description: "Mud, walls, ice baths.",
     side: "right",
   },
   {
@@ -103,7 +102,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "hometown",
     date: "November 2022",
     title: "Andrew's hometown",
-    description: "Lyndsey's first trip out west to where Andrew grew up.",
+    description: "First trip out west.",
     side: "left",
   },
   {
@@ -111,7 +110,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "eras",
     date: "March 31, 2023",
     title: "Taylor Swift · Eras Tour",
-    description: "Andrew surprised Lyndsey with seats neither of us will forget.",
+    description: "A surprise neither will forget.",
     side: "right",
   },
   {
@@ -119,7 +118,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "austin-fc",
     date: "July 2023",
     title: "First Austin FC game",
-    description: "Last-second tickets, impromptu date night at Q2.",
+    description: "Last-second tickets at Q2.",
     side: "left",
   },
   {
@@ -127,7 +126,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "lyndsey-austin",
     date: "April 2024",
     title: "Lyndsey moves to Austin",
-    description: "Same city, same zip code, same coffee shop.",
+    description: "Same city, finally.",
     side: "right",
   },
   {
@@ -135,7 +134,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "nd-am-2024",
     date: "August 31, 2024",
     title: "Notre Dame at Texas A&M",
-    description: "Kyle Field season opener — Notre Dame 23, Texas A&M 13.",
+    description: "ND 23, A&M 13 at Kyle Field.",
     side: "left",
   },
   {
@@ -143,8 +142,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "nyc",
     date: "November 2024",
     title: "Trip to New York City",
-    description:
-      "Lyndsey's first time in NYC — visiting Pat & Ellie and catching a Saturday football game.",
+    description: "Lyndsey's first time in NYC.",
     side: "right",
   },
   {
@@ -152,7 +150,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "christmas-kc",
     date: "December 2024",
     title: "Christmas in Kansas City",
-    description: "Where Andrew's parents now call home.",
+    description: "Christmas with the Hicks family.",
     side: "left",
   },
   {
@@ -168,8 +166,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "nd-am-2025",
     date: "September 13, 2025",
     title: "Texas A&M at Notre Dame",
-    description:
-      "Round two in South Bend — came down to the final play. Texas A&M 41, Notre Dame 40.",
+    description: "A&M 41, ND 40 — final play.",
     side: "left",
   },
   {
@@ -185,8 +182,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "wedding",
     date: "August 15, 2026",
     title: "Our wedding day",
-    description:
-      "Five years to the day after our first date — full circle, in Austin.",
+    description: "Full circle, in Austin.",
     side: "left",
   },
 ];

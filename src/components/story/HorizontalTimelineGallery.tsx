@@ -85,7 +85,7 @@ const MONTH_TICKS: number[] = (() => {
 })();
 
 const NAV_HEIGHT = 64;
-const BAR_HEIGHT = 108;
+const BAR_HEIGHT = 116;
 
 // Dusty blue (sage-light from the palette)
 const PLAYHEAD_COLOR = "#A3BDD1";
@@ -140,7 +140,7 @@ export default function HorizontalTimelineGallery() {
 
   const Bar = (
     <div className="border-b border-linen bg-cream/95 backdrop-blur-md">
-      <div className="mx-auto max-w-6xl px-4 pb-3 pt-3 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pb-3 pt-5 sm:px-6 sm:pt-6">
         {/* Crossfade container — fixed min-height so the absolutely
             positioned old/new copies overlay cleanly during transition */}
         <div className="relative min-h-[44px] sm:min-h-[48px]">
@@ -177,7 +177,7 @@ export default function HorizontalTimelineGallery() {
                 >
                   {active.title}
                 </h3>
-                <p className="mt-0.5 truncate font-serif text-[11px] italic leading-tight text-warm-gray sm:overflow-visible sm:whitespace-normal sm:text-xs">
+                <p className="mt-0.5 font-serif text-[11px] italic leading-tight text-warm-gray sm:text-xs">
                   {active.description}
                 </p>
               </div>
