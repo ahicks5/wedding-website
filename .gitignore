@@ -34,3 +34,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python virtualenv (used for local guest-import scripts)
+.venv/
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+
+# Claude Code personal settings (keep shared settings.json if/when added)
+.claude/settings.local.json

@@ -1,0 +1,363 @@
+@import "tailwindcss";
+
+/* ============================================
+   WEDDING SITE DESIGN SYSTEM — Tailwind CSS 4
+   ============================================ */
+
+@theme {
+  /* ---- Color Palette ---- */
+  /* Dusty blue + calm yellow wedding palette */
+  --color-cream: #F8F9FA;
+  --color-ivory: #F0F3F5;
+  --color-linen: #E4E9ED;
+  --color-sage: #7F9DB5;
+  --color-sage-light: #A3BDD1;
+  --color-sage-dark: #5A7F99;
+  --color-olive: #4A6E85;
+  --color-gold: #D4B85C;
+  --color-gold-light: #DFC97A;
+  --color-gold-dark: #B89E3A;
+  --color-charcoal: #2C2C2C;
+  --color-charcoal-light: #3D3D3D;
+  --color-warm-gray: #7A7068;
+  --color-blush: #C8D8E4;
+  --color-white: #FFFFFF;
+
+  /* ---- Font Families ---- */
+  --font-serif: "Cormorant Garamond", "Georgia", serif;
+  --font-sans: "Montserrat", "Helvetica Neue", sans-serif;
+
+  /* ---- Font Sizes (editorial scale) ---- */
+  --font-size-display: 4.5rem;
+  --font-size-h1: 3.5rem;
+  --font-size-h2: 2.5rem;
+  --font-size-h3: 1.75rem;
+  --font-size-h4: 1.25rem;
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+  --font-size-xs: 0.75rem;
+
+  /* ---- Spacing ---- */
+  --spacing-section: 8rem;
+  --spacing-section-mobile: 4rem;
+
+  /* ---- Transitions ---- */
+  --ease-elegant: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ---- Shadows ---- */
+  --shadow-soft: 0 2px 20px rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --shadow-gold: 0 2px 20px rgba(212, 184, 92, 0.15);
+
+  /* ---- Border Radius ---- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+
+  /* ---- Breakpoints ---- */
+  --breakpoint-xs: 480px;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-charcoal);
+  background-color: var(--color-cream);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ---- Typography Base ---- */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--color-charcoal);
+}
+
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+h4 { font-size: var(--font-size-h4); }
+
+p {
+  font-size: var(--font-size-body);
+  line-height: 1.8;
+  color: var(--color-charcoal-light);
+}
+
+@layer base {
+  a {
+    color: var(--color-sage);
+    text-decoration: none;
+    transition: color 0.3s var(--ease-elegant);
+  }
+
+  a:hover {
+    color: var(--color-gold);
+  }
+}
+
+::selection {
+  background-color: var(--color-gold-light);
+  color: var(--color-charcoal);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+@utility font-serif {
+  font-family: var(--font-serif);
+}
+
+@utility font-sans {
+  font-family: var(--font-sans);
+}
+
+@utility text-display {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-display);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+@utility text-editorial {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+}
+
+@utility section-padding {
+  padding-top: var(--spacing-section-mobile);
+  padding-bottom: var(--spacing-section-mobile);
+  @media (min-width: 768px) {
+    padding-top: var(--spacing-section);
+    padding-bottom: var(--spacing-section);
+  }
+}
+
+/* ---- Gold Accent Divider ---- */
+@utility divider-gold {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  margin: 1.5rem auto;
+}
+
+/* ---- Magnetic Button Base ---- */
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2.5rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-cream);
+  background-color: var(--color-sage);
+  border: 2px solid var(--color-sage);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.4s var(--ease-elegant);
+  &:hover {
+    background-color: var(--color-sage-dark);
+    border-color: var(--color-sage-dark);
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+@utility btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2.5rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-charcoal);
+  background-color: transparent;
+  border: 2px solid var(--color-sage);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.4s var(--ease-elegant);
+  &:hover {
+    background-color: var(--color-sage);
+    color: var(--color-cream);
+    border-color: var(--color-sage);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+@utility btn-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2.5rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-charcoal);
+  background-color: var(--color-cream);
+  border: 2px solid var(--color-cream);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.4s var(--ease-elegant);
+  &:hover {
+    background-color: var(--color-white);
+    border-color: var(--color-white);
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+}
+
+/* Reusable shadow utility for text overlaid on imagery */
+@utility hero-text-shadow {
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.85), 0 0 60px rgba(0, 0, 0, 0.6);
+}
+
+@utility hero-text-shadow-sm {
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-ivory);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-warm-gray);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-sage);
+}
+
+/* ============================================
+   PAGE TRANSITION OVERLAY
+   ============================================ */
+
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: var(--color-cream);
+  pointer-events: none;
+}
+
+/* ============================================
+   CUSTOM CURSOR — hide native on desktop
+   ============================================ */
+
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+/* ============================================
+   FOCUS STYLES — Accessibility
+   ============================================ */
+
+*:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Remove outline for mouse clicks */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   REDUCED MOTION — Accessibility
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================ */
+
+@media (max-width: 640px) {
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.375rem; }
+
+  /* Better touch targets on mobile */
+  button, a[role="button"], .btn-primary, .btn-outline, .btn-light {
+    min-height: 44px;
+  }
+
+  /* Responsive iframe embeds */
+  iframe {
+    max-width: 100%;
+  }
+}
+
+/* ============================================
+   IMAGE HOVER EFFECTS
+   ============================================ */
+
+.image-hover-zoom {
+  overflow: hidden;
+}
+
+.image-hover-zoom img {
+  transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.image-hover-zoom:hover img {
+  transform: scale(1.05);
+}
