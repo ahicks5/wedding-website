@@ -68,10 +68,10 @@ function PersonCard({
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         </div>
-        <div className={`text-center ${small ? "px-3 py-4" : "px-4 py-5"}`}>
+        <div className={`text-center ${small ? "px-2 py-4" : "px-4 py-5"}`}>
           <h3
-            className={`font-serif text-charcoal ${
-              small ? "text-base" : "text-lg"
+            className={`font-serif leading-tight text-charcoal ${
+              small ? "text-sm sm:text-base" : "text-lg"
             }`}
           >
             {person.name}
