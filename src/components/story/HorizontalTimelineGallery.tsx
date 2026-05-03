@@ -22,33 +22,80 @@ type GalleryEntry = {
 
 const PHOTOS = gallery as GalleryEntry[];
 
+// ============================================
+// Date math — convert milestone date strings into timestamps and percent
+// positions on a single time axis from earliest -> latest milestone.
+// ============================================
+
+const MONTH_NAMES = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
+
+function parseMilestoneDate(d: string): Date {
+  // Handles "July 5, 2021", "August 2021", "May 2022".
+  const tokens = d.replace(/,/g, "").split(/\s+/);
+  const monthIdx = MONTH_NAMES.indexOf((tokens[0] || "").toLowerCase());
+  const year = parseInt(tokens[tokens.length - 1] || "2025", 10);
+  const day = tokens.length === 3 ? parseInt(tokens[1] || "15", 10) : 15;
+  return new Date(year, monthIdx === -1 ? 0 : monthIdx, isNaN(day) ? 15 : day);
+}
+
+const MILESTONE_TICKS = MILESTONES.map((m) => ({
+  ...m,
+  ts: parseMilestoneDate(m.date).getTime(),
+}));
+
+const MIN_TS = MILESTONE_TICKS[0].ts;
+const MAX_TS = MILESTONE_TICKS[MILESTONE_TICKS.length - 1].ts;
+const SPAN = Math.max(1, MAX_TS - MIN_TS);
+
+function pct(ts: number) {
+  return ((ts - MIN_TS) / SPAN) * 100;
+}
+
+// One tick per month between the earliest and latest milestone.
+const MONTH_TICKS: number[] = (() => {
+  const out: number[] = [];
+  const start = new Date(MIN_TS);
+  let cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+  while (cursor.getTime() <= MAX_TS) {
+    out.push(cursor.getTime());
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+  }
+  return out;
+})();
+
 // Pixels of nav offset from the top of the viewport.
 const NAV_HEIGHT = 64;
-// Reserved space at the top of the section for the fixed bar to overlay.
-const BAR_HEIGHT = 110;
+// Reserved height for the bar so the photo grid doesn't jump under it.
+const BAR_HEIGHT = 116;
 
 export default function HorizontalTimelineGallery() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const [pinned, setPinned] = useState(false);
 
-  // Track scroll position relative to the section. We're not using
-  // framer-motion's useScroll here because position:sticky was getting
-  // killed upstream by overflow-x styling — running the math ourselves
-  // and using position:fixed guarantees the bar pins as expected.
   useEffect(() => {
     const handleScroll = () => {
       const node = sectionRef.current;
       if (!node) return;
       const rect = node.getBoundingClientRect();
 
-      // Pin once the top of the section reaches the bottom of the nav.
-      // Unpin again once the bottom of the section is above that line.
       const isPinned =
         rect.top <= NAV_HEIGHT && rect.bottom > NAV_HEIGHT + BAR_HEIGHT;
       setPinned(isPinned);
 
-      // Distance scrolled past the section's pinning point.
       const scrolledPast = NAV_HEIGHT - rect.top;
       const scrollableHeight = rect.height - BAR_HEIGHT;
       const progress =
@@ -68,27 +115,25 @@ export default function HorizontalTimelineGallery() {
   }, []);
 
   const active = MILESTONES[activeIdx];
-  const progressPct =
-    MILESTONES.length > 1 ? (activeIdx / (MILESTONES.length - 1)) * 100 : 0;
 
   const Bar = (
     <div className="border-b border-linen bg-cream/95 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 sm:py-4">
         {/* Active milestone label */}
-        <div className="mb-3 text-center sm:mb-4">
+        <div className="mb-3 text-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={active.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.25 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
             >
               <p className="font-sans text-[10px] font-bold uppercase tracking-[0.25em] text-gold sm:text-[11px]">
                 {active.date}
               </p>
               <h3
-                className="mt-1 font-serif text-base leading-tight sm:text-lg"
+                className="mt-0.5 font-serif text-sm leading-tight sm:text-base"
                 style={{ color: "#2C2C2C", fontWeight: 600 }}
               >
                 {active.title}
@@ -97,35 +142,53 @@ export default function HorizontalTimelineGallery() {
           </AnimatePresence>
         </div>
 
-        {/* Dots track */}
-        <div className="relative px-1">
+        {/* Ruler */}
+        <div className="relative h-7">
+          {/* Baseline */}
           <div
             aria-hidden
-            className="absolute left-1 right-1 top-1/2 h-px -translate-y-1/2 bg-linen"
+            className="absolute bottom-0 left-0 right-0 h-px bg-linen"
           />
-          <div
-            aria-hidden
-            className="absolute left-1 top-1/2 h-px -translate-y-1/2 bg-gold transition-all duration-500 ease-out"
-            style={{
-              width: `calc(${progressPct}% - 0.5rem * ${progressPct / 100})`,
-            }}
-          />
-          <div className="relative flex items-center justify-between">
-            {MILESTONES.map((m, i) => (
+
+          {/* Monthly ticks — render first so milestones sit on top */}
+          {MONTH_TICKS.map((ts) => (
+            <div
+              key={`mo-${ts}`}
+              aria-hidden
+              className="absolute bottom-0 w-px bg-warm-gray/35"
+              style={{
+                left: `${pct(ts)}%`,
+                height: 6,
+              }}
+            />
+          ))}
+
+          {/* Milestone ticks */}
+          {MILESTONE_TICKS.map((m, i) => {
+            const isActive = i === activeIdx;
+            const isPast = i < activeIdx;
+            return (
               <div
                 key={m.id}
                 title={`${m.date} — ${m.title}`}
-                className={cn(
-                  "rounded-full transition-all duration-300 ease-out",
-                  i === activeIdx
-                    ? "h-3 w-3 bg-gold shadow-[0_0_0_4px_rgba(212,184,92,0.25)]"
-                    : i < activeIdx
-                      ? "h-2 w-2 bg-gold"
-                      : "h-2 w-2 border border-warm-gray/40 bg-cream"
-                )}
+                className="absolute bottom-0 -translate-x-1/2 transition-all duration-300 ease-out"
+                style={{
+                  left: `${pct(m.ts)}%`,
+                  width: isActive ? 3 : 2,
+                  height: isActive ? 26 : 14,
+                  background: isActive
+                    ? "#D4B85C"
+                    : isPast
+                      ? "#D4B85C"
+                      : "rgba(212, 184, 92, 0.55)",
+                  boxShadow: isActive
+                    ? "0 0 10px rgba(212,184,92,0.55)"
+                    : "none",
+                  borderRadius: 1,
+                }}
               />
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -133,9 +196,8 @@ export default function HorizontalTimelineGallery() {
 
   return (
     <section ref={sectionRef} className="relative bg-cream">
-      {/* Inline copy of the bar — sits at the top of the section while
-          you're still above it. Disappears once we pin the fixed copy
-          so it doesn't double up. */}
+      {/* Inline copy — sits at the top of the section while it's still
+          below the nav. Hidden once we pin. */}
       {!pinned && Bar}
 
       {/* Fixed copy — pins under the nav while the section is in view. */}
@@ -148,8 +210,7 @@ export default function HorizontalTimelineGallery() {
         </div>
       )}
 
-      {/* Spacer so the photo grid starts below where the bar would be
-          when pinned — keeps layout stable when we toggle. */}
+      {/* Spacer reserves the bar's height so photos don't jump. */}
       {pinned && <div style={{ height: `${BAR_HEIGHT}px` }} />}
 
       {/* Photo gallery — vertical scroll */}
