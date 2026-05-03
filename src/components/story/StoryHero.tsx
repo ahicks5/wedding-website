@@ -22,10 +22,9 @@ export default function StoryHero() {
     >
       {/* Parallax Background */}
       <motion.div className="absolute inset-0" style={{ y: imageY }}>
-        {/* TODO: Replace with real couple photo */}
         <Image
-          src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1920&q=80"
-          alt="Lyndsey and Andrew's story"
+          src="/images/photos/engagement/proposal-4.jpg"
+          alt="Lyndsey and Andrew — the proposal"
           fill
           className="object-cover"
           priority

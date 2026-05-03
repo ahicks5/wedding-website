@@ -31,21 +31,15 @@ export type PhotoItem = {
 
 export type TimelineItem = MilestoneItem | PhotoItem;
 
-// Unsplash placeholders — swap these out with real photo paths
-// (e.g. "engagement/01.jpg") once images are uploaded.
+// Real engagement photos — referenced via paths under
+// /public/images/photos/. Swap freely as more photos arrive.
 const PH = {
-  candid1:
-    "https://images.unsplash.com/photo-1529636798458-92182e662485?w=900&q=80",
-  candid2:
-    "https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=900&q=80",
-  candid3:
-    "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=900&q=80",
-  candid4:
-    "https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=900&q=80",
-  candid5:
-    "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=900&q=80",
-  candid6:
-    "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=900&q=80",
+  candid1: "engagement/proposal-1.jpg",
+  candid2: "engagement/IMG_1611.jpg",
+  candid3: "engagement/proposal-9.jpg",
+  candid4: "engagement/IMG_1625.jpg",
+  candid5: "engagement/proposal-18.jpg",
+  candid6: "engagement/IMG_1641.jpg",
 };
 
 export const TIMELINE: TimelineItem[] = [
