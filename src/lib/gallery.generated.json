@@ -36,6 +36,15 @@
     "height": 2532
   },
   {
+    "src": "gallery/IMG_1897.jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2022-05-15T12:00:00.000Z",
+    "source": "manual-override",
+    "milestoneId": null,
+    "width": 1206,
+    "height": 2208
+  },
+  {
     "src": "gallery/andrew grad.jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2022-05-21T12:00:00.000Z",
@@ -49,6 +58,15 @@
     "alt": "Andrew & Lyndsey",
     "date": "2022-06-18T19:56:49.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "src": "gallery/IMG_2909.jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2022-10-15T12:00:00.000Z",
+    "source": "manual-override",
     "milestoneId": null,
     "width": 1536,
     "height": 2048
@@ -261,6 +279,15 @@
     "height": 2048
   },
   {
+    "src": "gallery/IMG_0073.jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2025-06-15T12:00:00.000Z",
+    "source": "manual-override",
+    "milestoneId": null,
+    "width": 1179,
+    "height": 2008
+  },
+  {
     "src": "gallery/ring shopping.jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2025-09-05T12:00:00.000Z",
@@ -331,33 +358,6 @@
     "milestoneId": null,
     "width": 1179,
     "height": 2081
-  },
-  {
-    "src": "gallery/IMG_0073.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2026-05-04T00:09:51.019Z",
-    "source": "mtime",
-    "milestoneId": null,
-    "width": 1179,
-    "height": 2008
-  },
-  {
-    "src": "gallery/IMG_1897.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2026-05-04T00:09:51.241Z",
-    "source": "mtime",
-    "milestoneId": null,
-    "width": 1206,
-    "height": 2208
-  },
-  {
-    "src": "gallery/IMG_2909.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2026-05-04T00:09:51.343Z",
-    "source": "mtime",
-    "milestoneId": null,
-    "width": 1536,
-    "height": 2048
   },
   {
     "src": "gallery/our wedding day.jpg",

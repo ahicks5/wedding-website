@@ -52,6 +52,15 @@ const FILENAME_TO_MILESTONE = {
   "our wedding day.jpg": "wedding",
 };
 
+// Manual date overrides for photos that have no EXIF metadata (e.g.
+// screenshots, exports). Filename → "YYYY-MM-DD". Wins over EXIF, so
+// don't add a file here unless you really mean to override.
+const MANUAL_DATES = {
+  "IMG_1897.jpg": "2022-05-15",
+  "IMG_2909.jpg": "2022-10-15",
+  "IMG_0073.jpg": "2025-06-15",
+};
+
 // Canonical milestone dates used to override a labeled photo's date when
 // its EXIF is missing or unreliable. Keep in sync with milestones.ts.
 const MILESTONE_DATES = {
@@ -116,6 +125,13 @@ async function main() {
     if (milestoneId && MILESTONE_DATES[milestoneId]) {
       isoDate = new Date(`${MILESTONE_DATES[milestoneId]}T12:00:00Z`).toISOString();
       source = "milestone-override";
+    }
+
+    // Manual per-filename override beats both EXIF and mtime. Used for
+    // photos with no usable metadata.
+    if (MANUAL_DATES[file]) {
+      isoDate = new Date(`${MANUAL_DATES[file]}T12:00:00Z`).toISOString();
+      source = "manual-override";
     }
 
     if (!isoDate) {
