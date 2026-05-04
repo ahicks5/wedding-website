@@ -29,7 +29,7 @@ const SECTIONS: Section[] = [
     iconColor: "sage",
     places: [
       { name: "Summer Moon Coffee", query: "Summer Moon Coffee Austin TX" },
-      { name: "Joe's Coffee on 2nd", query: "Joe's Coffee 2nd Street Austin TX" },
+      { name: "Jo's Coffee on 2nd", query: "Jo's Coffee 2nd Street Austin TX" },
       { name: "Sorrento's Coffee", query: "Sorrento's Coffee Austin TX" },
       { name: "Desnudo Coffee", query: "Desnudo Coffee Austin TX" },
     ],
