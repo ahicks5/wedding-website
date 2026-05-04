@@ -19,11 +19,11 @@ interface VenueCardProps {
 
 function VenueCard({ type, name, address, time, mapUrl, image, delay = 0 }: VenueCardProps) {
   return (
-    <FadeIn delay={delay} className="flex-1">
+    <FadeIn delay={delay} className="flex flex-1">
       <motion.div
         whileHover={{ y: -4 }}
         transition={{ duration: 0.3 }}
-        className="group relative overflow-hidden rounded-lg border border-linen bg-white shadow-soft transition-shadow hover:shadow-medium"
+        className="group relative flex w-full flex-col overflow-hidden rounded-lg border border-linen bg-white shadow-soft transition-shadow hover:shadow-medium"
       >
         {/* Venue Image */}
         <div className="relative h-40 overflow-hidden sm:h-48">
@@ -36,7 +36,7 @@ function VenueCard({ type, name, address, time, mapUrl, image, delay = 0 }: Venu
           />
         </div>
 
-        <div className="p-6 sm:p-8 md:p-10">
+        <div className="flex flex-1 flex-col p-6 sm:p-8 md:p-10">
           {/* Top Accent */}
           <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">
             The {type}
@@ -81,7 +81,7 @@ function VenueCard({ type, name, address, time, mapUrl, image, delay = 0 }: Venu
             href={mapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center gap-2 font-sans text-xs font-medium uppercase tracking-[0.15em] text-sage transition-colors hover:text-gold"
+            className="mt-auto inline-flex items-center gap-2 pt-6 font-sans text-xs font-medium uppercase tracking-[0.15em] text-sage transition-colors hover:text-gold"
           >
             <Navigation className="h-3.5 w-3.5" />
             Get Directions
@@ -108,7 +108,7 @@ export default function VenueCards() {
           </div>
         </FadeIn>
 
-        <div className="mt-8 flex flex-col gap-4 sm:mt-12 sm:gap-6 md:flex-row md:gap-8">
+        <div className="mt-8 flex flex-col items-stretch gap-4 sm:mt-12 sm:gap-6 md:flex-row md:gap-8">
           <VenueCard
             type="ceremony"
             name={WEDDING.ceremony.name}

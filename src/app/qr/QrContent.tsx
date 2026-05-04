@@ -5,6 +5,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Download } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import { WEDDING } from "@/lib/constants";
+import FluffHero from "@/components/layout/FluffHero";
 
 export default function QrContent() {
   const svgContainerRef = useRef<HTMLDivElement>(null);
@@ -38,22 +39,13 @@ export default function QrContent() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-ivory px-6 pb-20 pt-32">
-      <FadeIn>
-        <div className="text-center">
-          <p className="font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
-            For your invitations
-          </p>
-          <h1 className="mt-3 font-serif text-4xl text-charcoal sm:text-5xl">
-            QR Code
-          </h1>
-          <div className="divider-gold" />
-          <p className="mt-4 font-serif text-lg italic text-charcoal-light">
-            Scan to visit our wedding website
-          </p>
-        </div>
-      </FadeIn>
-
+    <>
+      <FluffHero
+        eyebrow="For your invitations"
+        title="QR Code"
+        subtitle="Scan to visit our wedding website"
+      />
+      <div className="flex flex-col items-center justify-center bg-ivory px-6 pb-20 pt-16 sm:pt-20">
       <FadeIn delay={0.2}>
         <div className="mt-8 rounded-2xl border border-linen bg-white p-6 shadow-soft sm:mt-10 sm:p-10">
           <div ref={svgContainerRef} className="flex items-center justify-center">
@@ -87,6 +79,7 @@ export default function QrContent() {
           instantly.
         </p>
       </FadeIn>
-    </div>
+      </div>
+    </>
   );
 }

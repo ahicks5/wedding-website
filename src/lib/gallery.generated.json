@@ -1,9 +1,28 @@
 [
   {
-    "src": "gallery/IMG_0946.jpg",
+    "src": "gallery/first date.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2022-01-09T01:44:51.000Z",
-    "source": "DateTimeOriginal",
+    "date": "2021-08-15T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "first-date",
+    "width": 1170,
+    "height": 2532
+  },
+  {
+    "src": "gallery/shreveport .jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2021-10-15T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "first-shreveport",
+    "width": 750,
+    "height": 1334
+  },
+  {
+    "src": "gallery/boyfriend girlfriend.jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2022-01-07T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "official",
     "width": 1170,
     "height": 2532
   },
@@ -12,46 +31,70 @@
     "alt": "Andrew & Lyndsey",
     "date": "2022-02-12T20:39:37.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1170,
     "height": 2532
   },
   {
-    "src": "gallery/IMG_1466.jpg",
+    "src": "gallery/andrew grad.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2022-04-02T22:23:16.000Z",
-    "source": "DateTimeOriginal",
-    "width": 1170,
-    "height": 2532
+    "date": "2022-05-21T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "andrew-graduation",
+    "width": 2048,
+    "height": 1536
   },
   {
     "src": "gallery/IMG_2135.jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2022-06-18T19:56:49.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
   {
-    "src": "gallery/68884776755__BCB94AC4-A918-4DEE-AE75-A8AE569F3EA3.jpg",
+    "src": "gallery/tough mudder.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2022-10-30T18:36:07.000Z",
-    "source": "DateTimeOriginal",
+    "date": "2022-10-15T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "tough-mudder",
     "width": 1536,
     "height": 2048
+  },
+  {
+    "src": "gallery/corona.HEIC",
+    "alt": "Andrew & Lyndsey",
+    "date": "2022-11-23T18:55:49.000Z",
+    "source": "DateTimeOriginal",
+    "milestoneId": null,
+    "width": 4032,
+    "height": 3024
   },
   {
     "src": "gallery/IMG_3374.jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2022-12-25T00:26:14.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
+  },
+  {
+    "src": "gallery/taylor swift.JPG",
+    "alt": "Andrew & Lyndsey",
+    "date": "2023-03-31T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "eras",
+    "width": 1440,
+    "height": 1800
   },
   {
     "src": "gallery/IMG_4463.jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2023-05-29T00:07:26.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1448,
     "height": 2171
   },
@@ -60,22 +103,16 @@
     "alt": "Andrew & Lyndsey",
     "date": "2023-05-29T00:07:45.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1466,
     "height": 2145
   },
   {
-    "src": "gallery/IMG_4725.jpg",
+    "src": "gallery/first AFC game.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2023-07-16T02:37:28.000Z",
-    "source": "DateTimeOriginal",
-    "width": 1536,
-    "height": 2048
-  },
-  {
-    "src": "gallery/IMG_5028.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2023-08-31T11:52:41.000Z",
-    "source": "DateTimeOriginal",
+    "date": "2023-07-15T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "austin-fc",
     "width": 1536,
     "height": 2048
   },
@@ -84,6 +121,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2023-08-31T23:19:36.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -92,6 +130,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2023-11-03T22:54:16.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -100,6 +139,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2023-11-23T16:38:20.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -108,6 +148,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2023-11-23T21:03:39.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1537,
     "height": 2049
   },
@@ -116,6 +157,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2024-03-22T23:00:08.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 2048,
     "height": 1536
   },
@@ -124,6 +166,16 @@
     "alt": "Andrew & Lyndsey",
     "date": "2024-03-23T21:39:48.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "src": "gallery/lyndsey moved to atx.jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2024-04-15T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "lyndsey-austin",
     "width": 1536,
     "height": 2048
   },
@@ -132,14 +184,16 @@
     "alt": "Andrew & Lyndsey",
     "date": "2024-08-10T15:32:46.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
   {
-    "src": "gallery/IMG_8101.jpg",
+    "src": "gallery/IMG_8101 (1).jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2024-08-10T15:47:13.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 2306,
     "height": 1406
   },
@@ -148,14 +202,16 @@
     "alt": "Andrew & Lyndsey",
     "date": "2024-08-11T21:28:02.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
   {
-    "src": "gallery/IMG_7342.jpg",
+    "src": "gallery/TAMU vs ND cstat.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2024-08-31T19:39:45.000Z",
-    "source": "DateTimeOriginal",
+    "date": "2024-08-31T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "nd-am-2024",
     "width": 1536,
     "height": 2048
   },
@@ -164,22 +220,25 @@
     "alt": "Andrew & Lyndsey",
     "date": "2024-08-31T20:27:05.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
   {
-    "src": "gallery/IMG_7051.jpg",
+    "src": "gallery/nyc.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2024-10-25T17:55:22.000Z",
-    "source": "DateTimeOriginal",
+    "date": "2024-11-15T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "nyc",
     "width": 1536,
     "height": 2048
   },
   {
-    "src": "gallery/IMG_7511.jpg",
+    "src": "gallery/xmas in kc.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2024-12-01T18:50:56.000Z",
-    "source": "DateTimeOriginal",
+    "date": "2024-12-22T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "christmas-kc",
     "width": 1536,
     "height": 2048
   },
@@ -188,6 +247,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2024-12-25T00:25:21.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -196,6 +256,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2025-03-08T18:52:36.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -204,14 +265,25 @@
     "alt": "Andrew & Lyndsey",
     "date": "2025-05-22T01:52:52.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
   {
-    "src": "gallery/IMG_0748.jpg",
+    "src": "gallery/ring shopping.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2025-09-12T16:50:00.000Z",
-    "source": "DateTimeOriginal",
+    "date": "2025-09-05T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "ring-shopping",
+    "width": 1067,
+    "height": 1600
+  },
+  {
+    "src": "gallery/notre dame vs tamu2.jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2025-09-13T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "nd-am-2025",
     "width": 1646,
     "height": 2048
   },
@@ -220,6 +292,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2025-10-11T23:29:13.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -228,14 +301,25 @@
     "alt": "Andrew & Lyndsey",
     "date": "2025-10-25T19:29:47.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
+  },
+  {
+    "src": "gallery/proposal.jpg",
+    "alt": "Andrew & Lyndsey",
+    "date": "2025-12-14T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "engaged",
+    "width": 1067,
+    "height": 1600
   },
   {
     "src": "gallery/IMG_1884.jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2026-01-11T03:10:54.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -244,6 +328,7 @@
     "alt": "Andrew & Lyndsey",
     "date": "2026-03-08T22:31:56.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1536,
     "height": 2048
   },
@@ -252,55 +337,44 @@
     "alt": "Andrew & Lyndsey",
     "date": "2026-04-13T00:00:57.000Z",
     "source": "DateTimeOriginal",
+    "milestoneId": null,
     "width": 1179,
     "height": 2081
   },
   {
-    "src": "gallery/IMG_3583.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2026-05-02T20:33:30.000Z",
-    "source": "DateTimeOriginal",
-    "width": 1536,
-    "height": 2048
-  },
-  {
     "src": "gallery/IMG_0073.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2026-05-03T20:26:58.513Z",
+    "date": "2026-05-04T00:09:51.019Z",
     "source": "mtime",
+    "milestoneId": null,
     "width": 1179,
     "height": 2008
   },
   {
-    "src": "gallery/IMG_2909.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2026-05-03T20:26:58.818Z",
-    "source": "mtime",
-    "width": 1536,
-    "height": 2048
-  },
-  {
     "src": "gallery/IMG_1897.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2026-05-03T20:26:58.874Z",
+    "date": "2026-05-04T00:09:51.241Z",
     "source": "mtime",
+    "milestoneId": null,
     "width": 1206,
     "height": 2208
   },
   {
-    "src": "gallery/IMG_0185.jpg",
+    "src": "gallery/IMG_2909.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2026-05-03T20:26:58.957Z",
+    "date": "2026-05-04T00:09:51.343Z",
     "source": "mtime",
-    "width": 750,
-    "height": 1334
+    "milestoneId": null,
+    "width": 1536,
+    "height": 2048
   },
   {
-    "src": "gallery/IMG_2058.jpg",
+    "src": "gallery/our wedding day.jpg",
     "alt": "Andrew & Lyndsey",
-    "date": "2026-05-03T20:26:59.367Z",
-    "source": "mtime",
-    "width": 2048,
-    "height": 1536
+    "date": "2026-08-15T12:00:00.000Z",
+    "source": "milestone-override",
+    "milestoneId": "wedding",
+    "width": 1536,
+    "height": 2048
   }
 ]

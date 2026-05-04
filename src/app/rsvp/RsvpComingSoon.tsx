@@ -3,25 +3,14 @@
 import { Mail, Sparkles } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import { WEDDING } from "@/lib/constants";
+import FluffHero from "@/components/layout/FluffHero";
 
 export default function RsvpComingSoon() {
   return (
     <>
-      <section className="bg-ivory pb-8 pt-32 sm:pt-40">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <FadeIn>
-            <p className="font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
-              Save the date
-            </p>
-            <h1 className="mt-3 font-serif text-4xl text-charcoal sm:text-5xl">
-              RSVP Coming Soon
-            </h1>
-            <div className="divider-gold" />
-          </FadeIn>
-        </div>
-      </section>
+      <FluffHero eyebrow="Save the date" title="RSVP Coming Soon" />
 
-      <section className="bg-ivory px-6 pb-24">
+      <section className="bg-ivory px-6 pb-24 pt-16 sm:pt-20">
         <div className="mx-auto max-w-2xl">
           <FadeIn delay={0.15}>
             <div className="rounded-lg border border-linen bg-white p-8 text-center shadow-soft sm:p-12">

@@ -9,9 +9,9 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <VenueCards />
       <Countdown />
       <WelcomeMessage />
-      <VenueCards />
       <Schedule />
       <RsvpCta />
     </>

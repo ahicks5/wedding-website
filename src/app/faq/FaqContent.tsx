@@ -2,6 +2,7 @@
 
 import FadeIn from "@/components/animations/FadeIn";
 import Accordion from "@/components/ui/Accordion";
+import FluffHero from "@/components/layout/FluffHero";
 
 const FAQ_ITEMS = [
   {
@@ -54,26 +55,14 @@ const FAQ_ITEMS = [
 export default function FaqContent() {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-ivory pb-4 pt-32 sm:pt-40">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <FadeIn>
-            <p className="font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
-              Got questions?
-            </p>
-            <h1 className="mt-3 font-serif text-4xl text-charcoal sm:text-5xl">
-              Frequently Asked Questions
-            </h1>
-            <div className="divider-gold" />
-            <p className="mt-4 font-serif text-lg italic text-charcoal-light">
-              Everything you need to know about our big day.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+      <FluffHero
+        eyebrow="Got questions?"
+        title="Frequently Asked Questions"
+        subtitle="Everything you need to know about our big day."
+      />
 
       {/* Accordion */}
-      <section className="bg-ivory pb-20 sm:pb-28">
+      <section className="bg-ivory pb-20 pt-16 sm:pb-28 sm:pt-20">
         <div className="mx-auto max-w-3xl px-6">
           <FadeIn delay={0.15}>
             <Accordion items={FAQ_ITEMS} />

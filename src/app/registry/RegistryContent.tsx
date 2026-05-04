@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Gift, Heart, ExternalLink, Palmtree } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
+import FluffHero from "@/components/layout/FluffHero";
 
 // TODO: Replace # with real registry URLs
 const REGISTRIES = [
@@ -40,32 +41,14 @@ const iconColorMap = {
 export default function RegistryContent() {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-ivory pb-8 pt-32 sm:pt-40">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <FadeIn>
-            <p className="font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
-              Gifts &amp; registry
-            </p>
-            <h1 className="mt-3 font-serif text-4xl text-charcoal sm:text-5xl">
-              Your Presence Is Our Greatest Gift
-            </h1>
-            <div className="divider-gold" />
-          </FadeIn>
-
-          <FadeIn delay={0.2}>
-            <p className="mt-6 font-serif text-lg leading-relaxed text-charcoal-light">
-              Celebrating with you is truly all we need. However, if you&apos;d
-              like to honor us with a gift, we&apos;ve registered at a few
-              places below. We&apos;re grateful for your generosity and
-              thoughtfulness.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+      <FluffHero
+        eyebrow="Gifts & registry"
+        title="Your Presence Is Our Greatest Gift"
+        subtitle="Celebrating with you is truly all we need. If you'd like to honor us with a gift, we've registered at a few places below."
+      />
 
       {/* Registry Cards */}
-      <section className="bg-ivory pb-20 pt-8 sm:pb-28">
+      <section className="bg-ivory pb-20 pt-16 sm:pb-28 sm:pt-20">
         <div className="mx-auto max-w-4xl px-6">
           <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
             {REGISTRIES.map((registry, i) => {

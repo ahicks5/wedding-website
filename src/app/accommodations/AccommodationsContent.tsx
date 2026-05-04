@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import AustinInteractiveMap from "@/components/accommodations/AustinInteractiveMap";
+import FluffHero from "@/components/layout/FluffHero";
 
 const HOTELS = [
   {
@@ -68,27 +69,14 @@ const HOTELS = [
 export default function AccommodationsContent() {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-ivory pb-4 pt-32 sm:pt-40">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <FadeIn>
-            <p className="font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
-              Your travel guide
-            </p>
-            <h1 className="mt-3 font-serif text-4xl text-charcoal sm:text-5xl">
-              Getting There &amp; Staying
-            </h1>
-            <div className="divider-gold" />
-            <p className="mt-4 font-serif text-lg italic text-charcoal-light">
-              Everything you need to plan your trip to Austin — flights, hotels,
-              and getting around.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+      <FluffHero
+        eyebrow="Your travel guide"
+        title="Getting There & Staying"
+        subtitle="Everything you need to plan your trip to Austin — flights, hotels, and getting around."
+      />
 
       {/* Section 1: Flights */}
-      <section className="bg-ivory pb-8 pt-8 sm:pb-12">
+      <section className="bg-ivory pb-8 pt-16 sm:pb-12 sm:pt-20">
         <div className="mx-auto max-w-5xl px-6">
           <FadeIn>
             <div className="rounded-lg border border-linen bg-white p-8 shadow-soft sm:p-10">

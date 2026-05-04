@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import FadeIn from "@/components/animations/FadeIn";
+import FluffHero from "@/components/layout/FluffHero";
 
 type Place = { name: string; query: string };
 type Section = {
@@ -98,26 +99,14 @@ function mapHref(query: string) {
 export default function ThingsToDoContent() {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-ivory pb-4 pt-32 sm:pt-40">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <FadeIn>
-            <p className="font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
-              Our local tips
-            </p>
-            <h1 className="mt-3 font-serif text-4xl text-charcoal sm:text-5xl">
-              Things to Do in Austin
-            </h1>
-            <div className="divider-gold" />
-            <p className="mt-4 font-serif text-lg italic text-charcoal-light">
-              A handful of our favorite spots if you have time to wander.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+      <FluffHero
+        eyebrow="Our local tips"
+        title="Things to Do in Austin"
+        subtitle="A handful of our favorite spots if you have time to wander."
+      />
 
       {/* Sections */}
-      <section className="bg-ivory pb-24 pt-8">
+      <section className="bg-ivory pb-24 pt-16 sm:pt-20">
         <div className="mx-auto max-w-5xl space-y-12 px-6 sm:space-y-16">
           {SECTIONS.map((section, sIdx) => {
             const Icon = section.icon;

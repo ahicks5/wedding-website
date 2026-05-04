@@ -10,13 +10,14 @@ import { cn } from "@/lib/utils";
 
 // Pages whose top section has a dark/photo hero — nav text must go white
 // here when at the top of the page; everywhere else stays charcoal.
-const DARK_HERO_ROUTES = ["/", "/our-story"];
+// /admin is the lone exception: it's a bare login page with no hero.
+const LIGHT_HERO_ROUTES = new Set(["/admin"]);
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const onDarkHero = DARK_HERO_ROUTES.includes(pathname) && !scrolled;
+  const onDarkHero = !LIGHT_HERO_ROUTES.has(pathname) && !scrolled;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);

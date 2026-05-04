@@ -51,15 +51,7 @@ export const SCHEDULE = [
       { time: "2:00 PM", title: "Ceremony", location: "St. John Neumann Catholic Church" },
       { time: "5:00 PM", title: "Cocktail Hour", location: "Hotel Ella" },
       { time: "6:00 PM", title: "Reception & Dinner", location: "Hotel Ella" },
-      { time: "9:00 PM", title: "Dancing & Celebration", location: "Hotel Ella" },
-    ],
-  },
-  {
-    day: "Sunday",
-    date: "August 16",
-    events: [
-      // TODO: Confirm brunch details
-      { time: "10:00 AM", title: "Farewell Brunch", location: "TBD" },
+      { time: "10:00 PM", title: "Send-off", location: "Hotel Ella" },
     ],
   },
 ] as const;

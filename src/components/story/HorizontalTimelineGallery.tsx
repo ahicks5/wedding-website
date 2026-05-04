@@ -10,11 +10,14 @@ const MILESTONES = TIMELINE.filter(
   (item): item is MilestoneItem => item.type === "milestone"
 );
 
+const MILESTONES_BY_ID = new Map(MILESTONES.map((m) => [m.id, m]));
+
 type GalleryEntry = {
   src: string;
   alt: string;
   date: string;
   source: string;
+  milestoneId: string | null;
   width: number;
   height: number;
 };
@@ -84,45 +87,58 @@ const MONTH_TICKS: number[] = (() => {
 })();
 
 const NAV_HEIGHT = 64;
-// Used only for playhead progress math (so the playhead is at 0% when
-// the section's top hits the nav and at 100% when its bottom reaches
-// the nav). Doesn't drive layout.
-const BAR_HEIGHT_FOR_MATH = 120;
 const PLAYHEAD_COLOR = "#A3BDD1";
 
+// Per-photo timestamp parsed once.
+const PHOTO_TS = PHOTOS.map((p) => new Date(p.date).getTime());
+
 export default function HorizontalTimelineGallery() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
+  const photoRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [playheadPct, setPlayheadPct] = useState(0);
 
   useEffect(() => {
-    const milestonePcts = MILESTONE_TICKS.map((m) => pct(m.ts));
-
     const handleScroll = () => {
-      const node = sectionRef.current;
-      if (!node) return;
-      const rect = node.getBoundingClientRect();
-
-      const scrolledPast = NAV_HEIGHT - rect.top;
-      const scrollableHeight = rect.height - BAR_HEIGHT_FOR_MATH;
-      const progress =
-        scrollableHeight > 0
-          ? Math.max(0, Math.min(1, scrolledPast / scrollableHeight))
-          : 0;
-
-      const newPct = progress * 100;
-      setPlayheadPct(newPct);
-
-      let best = 0;
-      let bestDist = Math.abs(milestonePcts[0] - newPct);
-      for (let i = 1; i < milestonePcts.length; i++) {
-        const d = Math.abs(milestonePcts[i] - newPct);
+      // Pivot is just below the sticky bar — the photo whose center is
+      // closest to this line is the one the user is "looking at."
+      const pivot = NAV_HEIGHT + 140;
+      let bestIdx = 0;
+      let bestDist = Infinity;
+      photoRefs.current.forEach((node, i) => {
+        if (!node) return;
+        const rect = node.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const d = Math.abs(center - pivot);
         if (d < bestDist) {
           bestDist = d;
-          best = i;
+          bestIdx = i;
         }
+      });
+      setActivePhotoIdx(bestIdx);
+
+      // Playhead: smoothly interpolate between this photo's timestamp
+      // and the next one based on how far we've scrolled past this
+      // photo's center. Gives a continuous slide instead of stepping
+      // from photo to photo.
+      const node = photoRefs.current[bestIdx];
+      if (node && PHOTO_TS.length > 1) {
+        const rect = node.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const offsetFromPivot = pivot - center;
+        const halfHeight = rect.height / 2;
+        const lead = Math.max(-1, Math.min(1, offsetFromPivot / halfHeight));
+
+        const curTs = PHOTO_TS[bestIdx];
+        const neighborIdx =
+          lead >= 0
+            ? Math.min(bestIdx + 1, PHOTO_TS.length - 1)
+            : Math.max(bestIdx - 1, 0);
+        const neighborTs = PHOTO_TS[neighborIdx];
+        const ts = curTs + (neighborTs - curTs) * Math.abs(lead) * 0.5;
+        setPlayheadPct(Math.max(0, Math.min(100, pct(ts))));
+      } else {
+        setPlayheadPct(pct(PHOTO_TS[bestIdx] ?? MIN_TS));
       }
-      setActiveIdx(best);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -130,57 +146,64 @@ export default function HorizontalTimelineGallery() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const active = MILESTONES[activeIdx];
+  const activePhoto = PHOTOS[activePhotoIdx];
+  const activeMilestone = activePhoto?.milestoneId
+    ? MILESTONES_BY_ID.get(activePhoto.milestoneId) ?? null
+    : null;
+  const activeMilestoneIdx = activeMilestone
+    ? MILESTONES.findIndex((m) => m.id === activeMilestone.id)
+    : -1;
 
   return (
-    <section ref={sectionRef} className="relative bg-cream">
-      {/* Single sticky bar — the browser handles the pin transition,
-          so no jump when the bar reaches the top of the viewport. */}
+    <section className="relative bg-cream">
+      {/* Single sticky bar — the browser handles the pin transition. */}
       <div className="sticky top-16 z-30 border-b border-linen bg-cream/95 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 pb-4 pt-6 sm:px-6 sm:pb-5 sm:pt-7">
-          {/* Crossfade label container */}
+          {/* Crossfade label container — empty between milestones. */}
           <div className="relative min-h-[44px] sm:min-h-[48px]">
             <AnimatePresence initial={false}>
-              <motion.div
-                key={active.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.28, ease: "easeOut" }}
-                className="absolute inset-0 flex items-center gap-3"
-              >
-                {/* Left — stacked Mon / 'YY */}
-                <div className="flex w-14 shrink-0 flex-col items-start font-serif leading-none">
-                  <span
-                    className="text-lg sm:text-xl"
-                    style={{ color: "#2C2C2C", fontWeight: 500 }}
-                  >
-                    {abbrevMonth(active.date)}
-                  </span>
-                  <span
-                    className="mt-0.5 font-serif text-base italic text-warm-gray sm:text-lg"
-                    style={{ fontWeight: 500 }}
-                  >
-                    {shortYear(active.date)}
-                  </span>
-                </div>
+              {activeMilestone && (
+                <motion.div
+                  key={activeMilestone.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.32, ease: "easeOut" }}
+                  className="absolute inset-0 flex items-center gap-3"
+                >
+                  {/* Left — stacked Mon / 'YY */}
+                  <div className="flex w-14 shrink-0 flex-col items-start font-serif leading-none">
+                    <span
+                      className="text-lg sm:text-xl"
+                      style={{ color: "#2C2C2C", fontWeight: 500 }}
+                    >
+                      {abbrevMonth(activeMilestone.date)}
+                    </span>
+                    <span
+                      className="mt-0.5 font-serif text-base italic text-warm-gray sm:text-lg"
+                      style={{ fontWeight: 500 }}
+                    >
+                      {shortYear(activeMilestone.date)}
+                    </span>
+                  </div>
 
-                {/* Center — title + blurb */}
-                <div className="min-w-0 flex-1 text-center">
-                  <h3
-                    className="font-serif text-sm leading-tight sm:text-base"
-                    style={{ color: "#2C2C2C", fontWeight: 600 }}
-                  >
-                    {active.title}
-                  </h3>
-                  <p className="mt-0.5 font-serif text-[11px] italic leading-tight text-warm-gray sm:text-xs">
-                    {active.description}
-                  </p>
-                </div>
+                  {/* Center — title + blurb */}
+                  <div className="min-w-0 flex-1 text-center">
+                    <h3
+                      className="font-serif text-sm leading-tight sm:text-base"
+                      style={{ color: "#2C2C2C", fontWeight: 600 }}
+                    >
+                      {activeMilestone.title}
+                    </h3>
+                    <p className="mt-0.5 font-serif text-[11px] italic leading-tight text-warm-gray sm:text-xs">
+                      {activeMilestone.description}
+                    </p>
+                  </div>
 
-                {/* Right spacer for true center */}
-                <div className="w-14 shrink-0" />
-              </motion.div>
+                  {/* Right spacer for true center */}
+                  <div className="w-14 shrink-0" />
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
 
@@ -201,7 +224,9 @@ export default function HorizontalTimelineGallery() {
             ))}
 
             {MILESTONE_TICKS.map((m, i) => {
-              const isPast = i <= activeIdx;
+              const isPast =
+                activeMilestoneIdx >= 0 && i <= activeMilestoneIdx;
+              const isActive = i === activeMilestoneIdx;
               return (
                 <div
                   key={m.id}
@@ -210,8 +235,8 @@ export default function HorizontalTimelineGallery() {
                   className="absolute bottom-0 -translate-x-1/2 transition-opacity duration-300 ease-out"
                   style={{
                     left: `${pct(m.ts)}%`,
-                    width: 2,
-                    height: 14,
+                    width: isActive ? 3 : 2,
+                    height: isActive ? 18 : 14,
                     background: "#D4B85C",
                     opacity: isPast ? 1 : 0.4,
                     borderRadius: 1,
@@ -222,7 +247,7 @@ export default function HorizontalTimelineGallery() {
 
             <div
               aria-hidden
-              className="absolute bottom-0 -translate-x-1/2"
+              className="absolute bottom-0 -translate-x-1/2 transition-[left] duration-300 ease-out"
               style={{
                 left: `${playheadPct}%`,
                 width: 3,
@@ -242,6 +267,9 @@ export default function HorizontalTimelineGallery() {
           {PHOTOS.map((photo, i) => (
             <div
               key={photo.src}
+              ref={(el) => {
+                photoRefs.current[i] = el;
+              }}
               className="overflow-hidden rounded-md bg-ivory shadow-medium"
             >
               <Image

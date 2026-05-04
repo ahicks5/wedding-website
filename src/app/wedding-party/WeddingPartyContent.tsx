@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import FadeIn from "@/components/animations/FadeIn";
+import FluffHero from "@/components/layout/FluffHero";
 
 interface Person {
   name: string;
@@ -101,24 +102,11 @@ function PersonCard({
 export default function WeddingPartyContent() {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-ivory pb-4 pt-32 sm:pt-40">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <FadeIn>
-            <p className="font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
-              The people by our side
-            </p>
-            <h1 className="mt-3 font-serif text-4xl text-charcoal sm:text-5xl">
-              Meet the Wedding Party
-            </h1>
-            <div className="divider-gold" />
-            <p className="mt-4 font-serif text-lg italic text-charcoal-light">
-              The incredible friends and family who will be standing with us on
-              our big day.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+      <FluffHero
+        eyebrow="The people by our side"
+        title="Meet the Wedding Party"
+        subtitle="The incredible friends and family who will be standing with us on our big day."
+      />
 
       {/* Bridesmaids */}
       <section className="section-padding bg-cream">
