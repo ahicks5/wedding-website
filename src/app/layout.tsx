@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Nav from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
 import SkipToContent from "@/components/layout/SkipToContent";
@@ -57,6 +59,8 @@ export default function RootLayout({
           <PageTransitionProvider>{children}</PageTransitionProvider>
         </main>
         <Footer />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
