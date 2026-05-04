@@ -51,15 +51,17 @@ function parseMilestoneDate(d: string): Date {
   return new Date(year, monthIdx === -1 ? 0 : monthIdx, isNaN(day) ? 15 : day);
 }
 
-function abbrevMonth(d: string): string {
-  const t = d.replace(/,/g, "").split(/\s+/)[0] || "";
-  return t.slice(0, 3);
+const SHORT_MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+function abbrevMonthFromTs(ts: number): string {
+  return SHORT_MONTHS[new Date(ts).getMonth()];
 }
 
-function shortYear(d: string): string {
-  const tokens = d.replace(/,/g, "").split(/\s+/);
-  const y = tokens[tokens.length - 1] || "";
-  return `'${y.slice(-2)}`;
+function shortYearFromTs(ts: number): string {
+  return `'${String(new Date(ts).getFullYear()).slice(-2)}`;
 }
 
 const MILESTONE_TICKS = MILESTONES.map((m) => ({
@@ -154,41 +156,66 @@ export default function HorizontalTimelineGallery() {
     ? MILESTONES.findIndex((m) => m.id === activeMilestone.id)
     : -1;
 
+  // The date column always tracks where we are in time — derive it from
+  // the active photo so it keeps moving smoothly even between milestones.
+  const activeTs = activePhoto
+    ? new Date(activePhoto.date).getTime()
+    : MIN_TS;
+  const activeMon = abbrevMonthFromTs(activeTs);
+  const activeYr = shortYearFromTs(activeTs);
+  const dateKey = `${activeMon}-${activeYr}`;
+
   return (
     <section className="relative bg-cream">
       {/* Single sticky bar — the browser handles the pin transition. */}
       <div className="sticky top-16 z-30 border-b border-linen bg-cream/95 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 pb-4 pt-6 sm:px-6 sm:pb-5 sm:pt-7">
-          {/* Crossfade label container — empty between milestones. */}
-          <div className="relative min-h-[44px] sm:min-h-[48px]">
-            <AnimatePresence initial={false}>
-              {activeMilestone && (
-                <motion.div
-                  key={activeMilestone.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.32, ease: "easeOut" }}
-                  className="absolute inset-0 flex items-center gap-3"
+          {/* Header row — date column always visible, title fades only on
+              milestone photos. */}
+          <div className="relative flex min-h-[44px] items-center gap-3 sm:min-h-[48px]">
+            {/* Left — stacked Mon / 'YY, derived from the active photo's
+                date so it slides through time even between milestones. */}
+            <div className="flex w-14 shrink-0 flex-col items-start font-serif leading-none">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={dateKey}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  className="text-lg sm:text-xl"
+                  style={{ color: "#2C2C2C", fontWeight: 500 }}
                 >
-                  {/* Left — stacked Mon / 'YY */}
-                  <div className="flex w-14 shrink-0 flex-col items-start font-serif leading-none">
-                    <span
-                      className="text-lg sm:text-xl"
-                      style={{ color: "#2C2C2C", fontWeight: 500 }}
-                    >
-                      {abbrevMonth(activeMilestone.date)}
-                    </span>
-                    <span
-                      className="mt-0.5 font-serif text-base italic text-warm-gray sm:text-lg"
-                      style={{ fontWeight: 500 }}
-                    >
-                      {shortYear(activeMilestone.date)}
-                    </span>
-                  </div>
+                  {activeMon}
+                </motion.span>
+              </AnimatePresence>
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={activeYr}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  className="mt-0.5 font-serif text-base italic text-warm-gray sm:text-lg"
+                  style={{ fontWeight: 500 }}
+                >
+                  {activeYr}
+                </motion.span>
+              </AnimatePresence>
+            </div>
 
-                  {/* Center — title + blurb */}
-                  <div className="min-w-0 flex-1 text-center">
+            {/* Center — title + blurb crossfade only when on a milestone. */}
+            <div className="relative min-w-0 flex-1 text-center">
+              <AnimatePresence initial={false}>
+                {activeMilestone && (
+                  <motion.div
+                    key={activeMilestone.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.32, ease: "easeOut" }}
+                    className="absolute inset-0 flex flex-col items-center justify-center"
+                  >
                     <h3
                       className="font-serif text-sm leading-tight sm:text-base"
                       style={{ color: "#2C2C2C", fontWeight: 600 }}
@@ -198,13 +225,13 @@ export default function HorizontalTimelineGallery() {
                     <p className="mt-0.5 font-serif text-[11px] italic leading-tight text-warm-gray sm:text-xs">
                       {activeMilestone.description}
                     </p>
-                  </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-                  {/* Right spacer for true center */}
-                  <div className="w-14 shrink-0" />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Right spacer for true center */}
+            <div className="w-14 shrink-0" />
           </div>
 
           {/* Ruler */}

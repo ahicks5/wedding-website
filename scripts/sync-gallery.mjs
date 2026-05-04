@@ -27,7 +27,9 @@ import { join, extname } from "node:path";
 
 const GALLERY_DIR = "public/images/photos/gallery";
 const OUTPUT_FILE = "src/lib/gallery.generated.json";
-const VALID_EXT = new Set([".jpg", ".jpeg", ".png", ".heic", ".webp"]);
+// HEIC excluded — most browsers can't render it, so any .HEIC in the
+// gallery would show as a broken image in the timeline.
+const VALID_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 
 // Map a renamed filename to a milestone id from src/components/story/milestones.ts.
 // Anything not in this map shows in the timeline as a between-milestone "fluff"

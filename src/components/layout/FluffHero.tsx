@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import FadeIn from "@/components/animations/FadeIn";
 import FLUFF from "@/lib/fluff.generated.json";
 
@@ -25,21 +25,34 @@ interface FluffHeroProps {
  * random image from public/images/photos/fluff/ on every page load so
  * the same page shows different artwork on each refresh.
  *
- * Forces white text via inline styles + heavy text-shadow so the
- * text reads cleanly on any photo behind it.
+ * The section ships with a charcoal background so the hero looks
+ * "complete" on first paint — the random image then fades in once it
+ * loads, instead of users seeing a blank gap then a sudden pop.
+ *
+ * Forces white text via inline styles + heavy text-shadow so it reads
+ * cleanly on any photo behind it.
  */
 export default function FluffHero({ eyebrow, title, subtitle }: FluffHeroProps) {
-  // Random per-mount: re-rolls on each navigation/refresh.
-  const file = useMemo(() => {
-    if (FLUFF_FILES.length === 0) return null;
-    return FLUFF_FILES[Math.floor(Math.random() * FLUFF_FILES.length)];
+  const [file, setFile] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // Pick after mount so the SSR HTML is identical for every visitor
+  // (avoids a hydration mismatch from differing Math.random() values).
+  useEffect(() => {
+    if (FLUFF_FILES.length === 0) return;
+    setFile(FLUFF_FILES[Math.floor(Math.random() * FLUFF_FILES.length)]);
   }, []);
 
   return (
-    <section className="relative flex min-h-[55vh] items-center justify-center overflow-hidden pt-24 sm:min-h-[60vh] sm:pt-28">
-      {/* Background image */}
+    <section className="relative flex min-h-[55vh] items-center justify-center overflow-hidden bg-charcoal pt-24 sm:min-h-[60vh] sm:pt-28">
+      {/* Background image — fades in once it's actually decoded so the
+          dark section is fully styled from the very first paint. */}
       {file && (
-        <div className="absolute inset-0">
+        <div
+          className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+        >
           <Image
             src={`/images/photos/fluff/${file}`}
             alt=""
@@ -47,17 +60,16 @@ export default function FluffHero({ eyebrow, title, subtitle }: FluffHeroProps) 
             priority
             className="object-cover"
             sizes="100vw"
+            onLoad={() => setLoaded(true)}
           />
         </div>
       )}
 
-      {/* Charcoal scrim */}
-      <div aria-hidden className="absolute inset-0 bg-charcoal/70" />
-
-      {/* Vertical gradient — extra darkness behind the text band */}
+      {/* Lighter scrim — keeps text readable without dimming photos too much. */}
+      <div aria-hidden className="absolute inset-0 bg-charcoal/40" />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-black/55 to-black/40"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/15 via-black/30 to-black/25"
       />
 
       <div className="relative z-10 px-6 py-10 text-center sm:py-14">

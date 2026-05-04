@@ -78,7 +78,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "andrew-graduation",
     date: "May 2022",
     title: "Andrew's graduation",
-    description: "Notre Dame, class of 2022.",
+    description: "Notre Dame, class of 2020.",
     side: "right",
   },
   {
