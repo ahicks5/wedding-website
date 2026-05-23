@@ -45,7 +45,12 @@ export default function Nav() {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          scrolled
+          // When the mobile menu is open the cream overlay fills the page,
+          // so the header needs a matching cream background — otherwise
+          // there's a brief window where the dark logo sits on the still-
+          // visible dark hero photo and "flashes" before the overlay
+          // catches up.
+          scrolled || mobileOpen
             ? "bg-cream/95 backdrop-blur-md shadow-soft"
             : "bg-transparent"
         )}
