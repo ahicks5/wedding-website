@@ -99,10 +99,15 @@ function PersonCard({
   );
 }
 
-export default function WeddingPartyContent() {
+export default function WeddingPartyContent({
+  fluffFile,
+}: {
+  fluffFile: string | null;
+}) {
   return (
     <>
       <FluffHero
+        file={fluffFile}
         eyebrow="The people by our side"
         title="Meet the Wedding Party"
         subtitle="The incredible friends and family who will be standing with us on our big day."

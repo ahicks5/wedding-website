@@ -17,7 +17,11 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const onDarkHero = !LIGHT_HERO_ROUTES.has(pathname) && !scrolled;
+  // When the mobile menu is open, the cream overlay covers the hero — so
+  // the logo and toggle need dark text even on pages that would otherwise
+  // be on a dark hero.
+  const onDarkHero =
+    !LIGHT_HERO_ROUTES.has(pathname) && !scrolled && !mobileOpen;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -60,8 +64,9 @@ export default function Nav() {
             {WEDDING.groomFirstName}
           </Link>
 
-          {/* Desktop Nav */}
-          <ul className="hidden items-center gap-8 lg:flex">
+          {/* Desktop Nav — gated to xl so iPads (which fall under lg) get
+              the mobile menu instead of trying to fit 8 links in one row. */}
+          <ul className="hidden items-center gap-8 xl:flex">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
@@ -91,7 +96,7 @@ export default function Nav() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="relative z-50 lg:hidden"
+            className="relative z-50 xl:hidden"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             {mobileOpen ? (

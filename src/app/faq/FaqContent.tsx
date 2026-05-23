@@ -52,10 +52,15 @@ const FAQ_ITEMS = [
   },
 ];
 
-export default function FaqContent() {
+export default function FaqContent({
+  fluffFile,
+}: {
+  fluffFile: string | null;
+}) {
   return (
     <>
       <FluffHero
+        file={fluffFile}
         eyebrow="Got questions?"
         title="Frequently Asked Questions"
         subtitle="Everything you need to know about our big day."

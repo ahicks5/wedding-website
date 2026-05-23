@@ -51,7 +51,7 @@ export default function Hero() {
           className="font-sans text-[11px] font-semibold uppercase tracking-[0.3em] sm:text-sm sm:tracking-[0.35em]"
           style={{ color: "#FFFFFF", textShadow: "0 1px 10px rgba(0,0,0,0.9)" }}
         >
-          Together with their families
+          The wedding of
         </motion.p>
 
         <motion.h1

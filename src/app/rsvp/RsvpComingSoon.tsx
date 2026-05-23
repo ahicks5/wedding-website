@@ -5,10 +5,18 @@ import FadeIn from "@/components/animations/FadeIn";
 import { WEDDING } from "@/lib/constants";
 import FluffHero from "@/components/layout/FluffHero";
 
-export default function RsvpComingSoon() {
+export default function RsvpComingSoon({
+  fluffFile,
+}: {
+  fluffFile: string | null;
+}) {
   return (
     <>
-      <FluffHero eyebrow="Save the date" title="RSVP Coming Soon" />
+      <FluffHero
+        file={fluffFile}
+        eyebrow="Save the date"
+        title="RSVP Coming Soon"
+      />
 
       <section className="bg-ivory px-6 pb-24 pt-16 sm:pt-20">
         <div className="mx-auto max-w-2xl">

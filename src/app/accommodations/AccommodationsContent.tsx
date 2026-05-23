@@ -8,6 +8,8 @@ import {
   Car,
   ExternalLink,
   Clock,
+  BedDouble,
+  ChevronDown,
 } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import AustinInteractiveMap from "@/components/accommodations/AustinInteractiveMap";
@@ -66,17 +68,157 @@ const HOTELS = [
   },
 ];
 
-export default function AccommodationsContent() {
+// Offsets in-page anchor jumps so the fixed nav doesn't cover the heading.
+const SCROLL_MT = "scroll-mt-24 sm:scroll-mt-28";
+
+export default function AccommodationsContent({
+  fluffFile,
+}: {
+  fluffFile: string | null;
+}) {
   return (
     <>
       <FluffHero
+        file={fluffFile}
         eyebrow="Your travel guide"
         title="Getting There & Staying"
         subtitle="Everything you need to plan your trip to Austin — flights, hotels, and getting around."
       />
 
-      {/* Section 1: Flights */}
-      <section className="bg-ivory pb-8 pt-16 sm:pb-12 sm:pt-20">
+      {/* Section 1: Key Locations — moved to top because "where is everything"
+          is the most-asked question. Includes jump chips to the rest of the
+          page so guests know there's more below. */}
+      <section className="bg-ivory pb-12 pt-12 sm:pt-16">
+        <div className="mx-auto max-w-5xl px-6">
+          <FadeIn>
+            <div className="text-center">
+              <h2 className="font-serif text-3xl text-charcoal sm:text-4xl">
+                Key Locations
+              </h2>
+              <div className="divider-gold" />
+            </div>
+          </FadeIn>
+
+          {/* Map Legend */}
+          <FadeIn delay={0.1}>
+            <div className="mt-6 flex flex-col items-center gap-3 text-center sm:mt-8 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sage text-xs font-bold text-white">1</span>
+                <span className="font-sans text-xs text-charcoal sm:text-sm">Austin-Bergstrom Airport (AUS)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">2</span>
+                <span className="font-sans text-xs text-charcoal sm:text-sm">St. John Neumann Catholic Church</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-charcoal text-xs font-bold text-white">3</span>
+                <span className="font-sans text-xs text-charcoal sm:text-sm">Hotel Ella</span>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* Interactive Austin map */}
+          <FadeIn delay={0.2}>
+            <div className="mt-6">
+              <AustinInteractiveMap />
+            </div>
+            <p className="mt-3 text-center font-sans text-xs text-warm-gray">
+              Tap a pin for directions. All three locations are within 25 minutes of each other.
+            </p>
+          </FadeIn>
+
+          {/* Quick direction cards */}
+          <FadeIn delay={0.3}>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <a
+                href="https://maps.google.com/?q=Austin-Bergstrom+International+Airport"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 rounded-lg border border-linen bg-white p-4 shadow-soft transition-all hover:shadow-medium hover:-translate-y-1"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sage text-xs font-bold text-white">1</span>
+                <div>
+                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-sage transition-colors">Austin Airport (AUS)</p>
+                  <p className="font-sans text-xs text-warm-gray">Get Directions</p>
+                </div>
+                <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-sage transition-colors" />
+              </a>
+
+              <a
+                href="https://maps.google.com/?q=St+John+Neumann+Catholic+Church+Austin+TX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 rounded-lg border border-linen bg-white p-4 shadow-soft transition-all hover:shadow-medium hover:-translate-y-1"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">2</span>
+                <div>
+                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-gold transition-colors">Ceremony</p>
+                  <p className="font-sans text-xs text-warm-gray">Get Directions</p>
+                </div>
+                <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-gold transition-colors" />
+              </a>
+
+              <a
+                href="https://maps.google.com/?q=Hotel+Ella+Austin+TX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 rounded-lg border border-linen bg-white p-4 shadow-soft transition-all hover:shadow-medium hover:-translate-y-1"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-charcoal text-xs font-bold text-white">3</span>
+                <div>
+                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-sage transition-colors">Hotel Ella</p>
+                  <p className="font-sans text-xs text-warm-gray">Get Directions</p>
+                </div>
+                <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-sage transition-colors" />
+              </a>
+            </div>
+          </FadeIn>
+
+          {/* In-page jump chips — let guests know there's more below, and
+              click straight to it instead of hunting. */}
+          <FadeIn delay={0.4}>
+            <div className="mt-12 border-t border-linen pt-10">
+              <p className="text-center font-sans text-xs font-medium uppercase tracking-[0.3em] text-warm-gray">
+                More on this page
+              </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                <a
+                  href="#flights"
+                  className="group inline-flex items-center gap-2 rounded-full border border-linen bg-white px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-[0.15em] text-charcoal shadow-soft transition-all hover:-translate-y-0.5 hover:border-sage hover:text-sage hover:shadow-medium"
+                >
+                  <Plane className="h-3.5 w-3.5 text-sage" />
+                  Flights
+                </a>
+                <a
+                  href="#airport"
+                  className="group inline-flex items-center gap-2 rounded-full border border-linen bg-white px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-[0.15em] text-charcoal shadow-soft transition-all hover:-translate-y-0.5 hover:border-gold hover:text-gold hover:shadow-medium"
+                >
+                  <Car className="h-3.5 w-3.5 text-gold" />
+                  Getting Around
+                </a>
+                <a
+                  href="#hotels"
+                  className="group inline-flex items-center gap-2 rounded-full border border-linen bg-white px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-[0.15em] text-charcoal shadow-soft transition-all hover:-translate-y-0.5 hover:border-sage hover:text-sage hover:shadow-medium"
+                >
+                  <BedDouble className="h-3.5 w-3.5 text-sage" />
+                  Where to Stay
+                </a>
+              </div>
+              <motion.p
+                animate={{ y: [0, 4, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="mt-5 flex items-center justify-center gap-1.5 font-sans text-[11px] uppercase tracking-[0.2em] text-warm-gray"
+              >
+                <ChevronDown className="h-3 w-3" />
+                Scroll for details
+              </motion.p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* Section 2: Flights */}
+      <section id="flights" className={`bg-ivory pb-8 pt-8 sm:pb-12 sm:pt-12 ${SCROLL_MT}`}>
         <div className="mx-auto max-w-5xl px-6">
           <FadeIn>
             <div className="rounded-lg border border-linen bg-white p-8 shadow-soft sm:p-10">
@@ -109,8 +251,8 @@ export default function AccommodationsContent() {
         </div>
       </section>
 
-      {/* Section 2: Getting from the Airport */}
-      <section className="bg-ivory pb-12 pt-4 sm:pb-16">
+      {/* Section 3: Getting from the Airport */}
+      <section id="airport" className={`bg-ivory pb-12 pt-4 sm:pb-16 ${SCROLL_MT}`}>
         <div className="mx-auto max-w-5xl px-6">
           <FadeIn>
             <div className="rounded-lg border border-linen bg-white p-8 shadow-soft sm:p-10">
@@ -169,8 +311,8 @@ export default function AccommodationsContent() {
         </div>
       </section>
 
-      {/* Section 3: Where to Stay */}
-      <section className="section-padding bg-cream">
+      {/* Section 4: Where to Stay */}
+      <section id="hotels" className={`section-padding bg-cream ${SCROLL_MT}`}>
         <div className="mx-auto max-w-6xl px-6">
           <FadeIn>
             <div className="text-center">
@@ -258,95 +400,6 @@ export default function AccommodationsContent() {
               >
                 Explore More Hotels
                 <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Interactive Map */}
-      <section className="bg-ivory py-10 sm:py-16">
-        <div className="mx-auto max-w-5xl px-6">
-          <FadeIn>
-            <div className="text-center">
-              <h2 className="font-serif text-3xl text-charcoal sm:text-4xl">
-                Key Locations
-              </h2>
-              <div className="divider-gold" />
-            </div>
-          </FadeIn>
-
-          {/* Map Legend */}
-          <FadeIn delay={0.1}>
-            <div className="mt-6 flex flex-col items-center gap-3 text-center sm:mt-8 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6">
-              <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sage text-xs font-bold text-white">1</span>
-                <span className="font-sans text-xs text-charcoal sm:text-sm">Austin-Bergstrom Airport (AUS)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">2</span>
-                <span className="font-sans text-xs text-charcoal sm:text-sm">St. John Neumann Catholic Church</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-charcoal text-xs font-bold text-white">3</span>
-                <span className="font-sans text-xs text-charcoal sm:text-sm">Hotel Ella</span>
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* Interactive Austin map */}
-          <FadeIn delay={0.2}>
-            <div className="mt-6">
-              <AustinInteractiveMap />
-            </div>
-            <p className="mt-3 text-center font-sans text-xs text-warm-gray">
-              Tap a pin for directions. All three locations are within 25 minutes of each other.
-            </p>
-          </FadeIn>
-
-          {/* Quick direction cards */}
-          <FadeIn delay={0.3}>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <a
-                href="https://maps.google.com/?q=Austin-Bergstrom+International+Airport"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 rounded-lg border border-linen bg-white p-4 shadow-soft transition-all hover:shadow-medium hover:-translate-y-1"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sage text-xs font-bold text-white">1</span>
-                <div>
-                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-sage transition-colors">Austin Airport (AUS)</p>
-                  <p className="font-sans text-xs text-warm-gray">Get Directions</p>
-                </div>
-                <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-sage transition-colors" />
-              </a>
-
-              <a
-                href="https://maps.google.com/?q=St+John+Neumann+Catholic+Church+Austin+TX"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 rounded-lg border border-linen bg-white p-4 shadow-soft transition-all hover:shadow-medium hover:-translate-y-1"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">2</span>
-                <div>
-                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-gold transition-colors">Ceremony</p>
-                  <p className="font-sans text-xs text-warm-gray">Get Directions</p>
-                </div>
-                <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-gold transition-colors" />
-              </a>
-
-              <a
-                href="https://maps.google.com/?q=Hotel+Ella+Austin+TX"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 rounded-lg border border-linen bg-white p-4 shadow-soft transition-all hover:shadow-medium hover:-translate-y-1"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-charcoal text-xs font-bold text-white">3</span>
-                <div>
-                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-sage transition-colors">Hotel Ella</p>
-                  <p className="font-sans text-xs text-warm-gray">Get Directions</p>
-                </div>
-                <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-sage transition-colors" />
               </a>
             </div>
           </FadeIn>

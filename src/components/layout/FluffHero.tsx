@@ -17,36 +17,55 @@ interface FluffHeroProps {
   title: string;
   /** Optional italic subtitle below the divider. */
   subtitle?: ReactNode;
+  /**
+   * Server-picked fluff filename. When provided (which is the normal
+   * path — see `pickRandomFluff()` in `lib/fluff.ts`), the image src
+   * lands in the SSR HTML so the browser starts the request during
+   * initial parse instead of waiting for hydration. Left optional so
+   * legacy callsites and tests still work without it.
+   */
+  file?: string | null;
 }
 
 /**
  * Reusable hero used by every page that doesn't have its own bespoke
- * hero (i.e. everything except the home page and Our Story). Picks a
- * random image from public/images/photos/fluff/ on every page load so
- * the same page shows different artwork on each refresh.
+ * hero (i.e. everything except the home page and Our Story). Shows a
+ * random image from public/images/photos/fluff/ — picked on the
+ * server so each visit gets fresh artwork without the hydration hitch.
  *
  * The section ships with a charcoal background so the hero looks
- * "complete" on first paint — the random image then fades in once it
- * loads, instead of users seeing a blank gap then a sudden pop.
+ * "complete" on first paint — the image then fades in once it decodes,
+ * instead of users seeing a blank gap then a sudden pop.
  *
  * Forces white text via inline styles + heavy text-shadow so it reads
  * cleanly on any photo behind it.
  */
-export default function FluffHero({ eyebrow, title, subtitle }: FluffHeroProps) {
-  const [file, setFile] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  // Pick after mount so the SSR HTML is identical for every visitor
-  // (avoids a hydration mismatch from differing Math.random() values).
+export default function FluffHero({
+  eyebrow,
+  title,
+  subtitle,
+  file: fileProp,
+}: FluffHeroProps) {
+  // Fallback for callsites that haven't been migrated to pass `file`:
+  // pick on the client after mount (the old behavior, with its tell-tale
+  // hitch). When `fileProp` is provided we skip this entirely.
+  const [clientFile, setClientFile] = useState<string | null>(null);
   useEffect(() => {
+    if (fileProp !== undefined) return;
     if (FLUFF_FILES.length === 0) return;
-    setFile(FLUFF_FILES[Math.floor(Math.random() * FLUFF_FILES.length)]);
-  }, []);
+    setClientFile(FLUFF_FILES[Math.floor(Math.random() * FLUFF_FILES.length)]);
+  }, [fileProp]);
+
+  const file = fileProp !== undefined ? fileProp : clientFile;
+
+  const [loaded, setLoaded] = useState(false);
 
   return (
     <section className="relative flex min-h-[55vh] items-center justify-center overflow-hidden bg-charcoal pt-24 sm:min-h-[60vh] sm:pt-28">
       {/* Background image — fades in once it's actually decoded so the
-          dark section is fully styled from the very first paint. */}
+          dark section is fully styled from the very first paint. When
+          `file` comes from the server, the <img> renders in the SSR
+          HTML and the browser kicks off the request immediately. */}
       {file && (
         <div
           className={`absolute inset-0 transition-opacity duration-700 ease-out ${
@@ -58,6 +77,7 @@ export default function FluffHero({ eyebrow, title, subtitle }: FluffHeroProps) 
             alt=""
             fill
             priority
+            fetchPriority="high"
             className="object-cover"
             sizes="100vw"
             onLoad={() => setLoaded(true)}
