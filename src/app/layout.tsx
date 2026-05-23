@@ -5,7 +5,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Nav from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
 import SkipToContent from "@/components/layout/SkipToContent";
-import CustomCursor from "@/components/layout/CustomCursor";
 import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
 import "@/styles/globals.css";
 
@@ -53,7 +52,6 @@ export default function RootLayout({
     <html lang="en" className={`${cormorant.variable} ${montserrat.variable}`}>
       <body className="antialiased">
         <SkipToContent />
-        <CustomCursor />
         <Nav />
         <main id="main-content" className="min-h-screen">
           <PageTransitionProvider>{children}</PageTransitionProvider>

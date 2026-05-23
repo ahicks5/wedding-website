@@ -58,29 +58,29 @@ export default function FluffHero({
 
   const file = fileProp !== undefined ? fileProp : clientFile;
 
-  const [loaded, setLoaded] = useState(false);
-
   return (
     <section className="relative flex min-h-[55vh] items-center justify-center overflow-hidden bg-charcoal pt-24 sm:min-h-[60vh] sm:pt-28">
-      {/* Background image — fades in once it's actually decoded so the
-          dark section is fully styled from the very first paint. When
-          `file` comes from the server, the <img> renders in the SSR
-          HTML and the browser kicks off the request immediately. */}
+      {/* Background image. Renders directly with no opacity dance — the
+          image is server-picked and preloaded via Next's priority hint,
+          so it's almost always decoded by hydration time. The earlier
+          fade-in was causing a double-flash on iPad Safari (the class-
+          based opacity-0 + onLoad fade could race with hydration). The
+          dark `bg-charcoal` underneath still covers any sliver of empty
+          time before the image paints. */}
       {file && (
-        <div
-          className={`absolute inset-0 transition-opacity duration-700 ease-out ${
-            loaded ? "opacity-100" : "opacity-0"
-          }`}
-        >
+        <div className="absolute inset-0">
           <Image
             src={`/images/photos/fluff/${file}`}
             alt=""
             fill
             priority
             fetchPriority="high"
-            className="object-cover"
+            // `object-top` anchors the image to the top of the section so
+            // the tops of photos (faces, headers) stay visible — default
+            // `object-center` was cropping both ends evenly and lopping
+            // off the top on wide PC viewports.
+            className="object-cover object-top"
             sizes="100vw"
-            onLoad={() => setLoaded(true)}
           />
         </div>
       )}
