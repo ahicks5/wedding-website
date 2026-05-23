@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import RsvpContent from "./RsvpContent";
 import RsvpComingSoon from "./RsvpComingSoon";
-import { pickRandomFluff } from "@/lib/fluff";
 
 export const metadata: Metadata = {
   title: "RSVP",
@@ -11,8 +10,6 @@ export const metadata: Metadata = {
 // Server component — reads ?preview=<password> on the server so the admin
 // password is never sent to the client. Anyone with the password can hit
 // /rsvp?preview=<password> to test the real form before invites go out.
-// `searchParams` already forces dynamic rendering, so the fluff hero
-// re-rolls per request automatically.
 export default function RsvpPage({
   searchParams,
 }: {
@@ -21,11 +18,6 @@ export default function RsvpPage({
   const adminPassword = process.env.ADMIN_PASSWORD ?? "wedding2026";
   const isPreview =
     !!searchParams.preview && searchParams.preview === adminPassword;
-  const fluffFile = pickRandomFluff();
 
-  return isPreview ? (
-    <RsvpContent fluffFile={fluffFile} />
-  ) : (
-    <RsvpComingSoon fluffFile={fluffFile} />
-  );
+  return isPreview ? <RsvpContent /> : <RsvpComingSoon />;
 }

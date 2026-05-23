@@ -4,18 +4,10 @@ import { Gift } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import FluffHero from "@/components/layout/FluffHero";
 
-export default function RegistryComingSoon({
-  fluffFile,
-}: {
-  fluffFile: string | null;
-}) {
+export default function RegistryComingSoon() {
   return (
     <>
-      <FluffHero
-        file={fluffFile}
-        eyebrow="Gifts & registry"
-        title="Registry Coming Soon"
-      />
+      <FluffHero eyebrow="Gifts & registry" title="Registry Coming Soon" />
 
       <section className="bg-ivory px-6 pb-24 pt-16 sm:pt-20">
         <div className="mx-auto max-w-2xl">

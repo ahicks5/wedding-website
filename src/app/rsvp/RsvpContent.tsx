@@ -4,15 +4,10 @@ import FadeIn from "@/components/animations/FadeIn";
 import RsvpForm from "@/components/rsvp/RsvpForm";
 import FluffHero from "@/components/layout/FluffHero";
 
-export default function RsvpContent({
-  fluffFile,
-}: {
-  fluffFile: string | null;
-}) {
+export default function RsvpContent() {
   return (
     <>
       <FluffHero
-        file={fluffFile}
         eyebrow="We'd love to celebrate with you"
         title="RSVP"
       />

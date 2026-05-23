@@ -71,15 +71,10 @@ const HOTELS = [
 // Offsets in-page anchor jumps so the fixed nav doesn't cover the heading.
 const SCROLL_MT = "scroll-mt-24 sm:scroll-mt-28";
 
-export default function AccommodationsContent({
-  fluffFile,
-}: {
-  fluffFile: string | null;
-}) {
+export default function AccommodationsContent() {
   return (
     <>
       <FluffHero
-        file={fluffFile}
         eyebrow="Your travel guide"
         title="Getting There & Staying"
         subtitle="Everything you need to plan your trip to Austin — flights, hotels, and getting around."

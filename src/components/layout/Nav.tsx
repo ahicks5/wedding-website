@@ -45,12 +45,7 @@ export default function Nav() {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          // When the mobile menu is open the cream overlay fills the page,
-          // so the header needs a matching cream background — otherwise
-          // there's a brief window where the dark logo sits on the still-
-          // visible dark hero photo and "flashes" before the overlay
-          // catches up.
-          scrolled || mobileOpen
+          scrolled
             ? "bg-cream/95 backdrop-blur-md shadow-soft"
             : "bg-transparent"
         )}
@@ -60,7 +55,11 @@ export default function Nav() {
           <Link
             href="/"
             className={cn(
-              "font-serif text-xl tracking-wide transition-colors hover:text-gold",
+              // 300ms color transition keeps the logo synced with the
+              // mobile menu overlay's fade-in/out — otherwise it snaps
+              // between white and charcoal while the overlay is still
+              // mid-animation, which reads as a "flash".
+              "font-serif text-xl tracking-wide transition-colors duration-300 hover:text-gold",
               onDarkHero ? "text-white" : "text-charcoal"
             )}
           >

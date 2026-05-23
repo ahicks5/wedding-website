@@ -38,15 +38,10 @@ const iconColorMap = {
   gold: "bg-gold/10 text-gold",
 };
 
-export default function RegistryContent({
-  fluffFile,
-}: {
-  fluffFile: string | null;
-}) {
+export default function RegistryContent() {
   return (
     <>
       <FluffHero
-        file={fluffFile}
         eyebrow="Gifts & registry"
         title="Your Presence Is Our Greatest Gift"
         subtitle="Celebrating with you is truly all we need. If you'd like to honor us with a gift, we've registered at a few places below."

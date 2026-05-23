@@ -96,15 +96,10 @@ function mapHref(query: string) {
   return `https://maps.google.com/?q=${encodeURIComponent(query)}`;
 }
 
-export default function ThingsToDoContent({
-  fluffFile,
-}: {
-  fluffFile: string | null;
-}) {
+export default function ThingsToDoContent() {
   return (
     <>
       <FluffHero
-        file={fluffFile}
         eyebrow="Our local tips"
         title="Things to Do in Austin"
         subtitle="A handful of our favorite spots if you have time to wander."

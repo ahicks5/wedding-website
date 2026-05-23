@@ -17,70 +17,50 @@ interface FluffHeroProps {
   title: string;
   /** Optional italic subtitle below the divider. */
   subtitle?: ReactNode;
-  /**
-   * Server-picked fluff filename. When provided (which is the normal
-   * path — see `pickRandomFluff()` in `lib/fluff.ts`), the image src
-   * lands in the SSR HTML so the browser starts the request during
-   * initial parse instead of waiting for hydration. Left optional so
-   * legacy callsites and tests still work without it.
-   */
-  file?: string | null;
 }
 
 /**
  * Reusable hero used by every page that doesn't have its own bespoke
- * hero (i.e. everything except the home page and Our Story). Shows a
- * random image from public/images/photos/fluff/ — picked on the
- * server so each visit gets fresh artwork without the hydration hitch.
+ * hero (i.e. everything except the home page and Our Story). Picks a
+ * random image from public/images/photos/fluff/ on every page load so
+ * the same page shows different artwork on each refresh.
  *
  * The section ships with a charcoal background so the hero looks
- * "complete" on first paint — the image then fades in once it decodes,
- * instead of users seeing a blank gap then a sudden pop.
+ * "complete" on first paint — the random image then fades in once it
+ * loads, instead of users seeing a blank gap then a sudden pop.
  *
  * Forces white text via inline styles + heavy text-shadow so it reads
  * cleanly on any photo behind it.
  */
-export default function FluffHero({
-  eyebrow,
-  title,
-  subtitle,
-  file: fileProp,
-}: FluffHeroProps) {
-  // Fallback for callsites that haven't been migrated to pass `file`:
-  // pick on the client after mount (the old behavior, with its tell-tale
-  // hitch). When `fileProp` is provided we skip this entirely.
-  const [clientFile, setClientFile] = useState<string | null>(null);
-  useEffect(() => {
-    if (fileProp !== undefined) return;
-    if (FLUFF_FILES.length === 0) return;
-    setClientFile(FLUFF_FILES[Math.floor(Math.random() * FLUFF_FILES.length)]);
-  }, [fileProp]);
+export default function FluffHero({ eyebrow, title, subtitle }: FluffHeroProps) {
+  const [file, setFile] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
-  const file = fileProp !== undefined ? fileProp : clientFile;
+  // Pick after mount so the SSR HTML is identical for every visitor
+  // (avoids a hydration mismatch from differing Math.random() values).
+  useEffect(() => {
+    if (FLUFF_FILES.length === 0) return;
+    setFile(FLUFF_FILES[Math.floor(Math.random() * FLUFF_FILES.length)]);
+  }, []);
 
   return (
     <section className="relative flex min-h-[55vh] items-center justify-center overflow-hidden bg-charcoal pt-24 sm:min-h-[60vh] sm:pt-28">
-      {/* Background image. Renders directly with no opacity dance — the
-          image is server-picked and preloaded via Next's priority hint,
-          so it's almost always decoded by hydration time. The earlier
-          fade-in was causing a double-flash on iPad Safari (the class-
-          based opacity-0 + onLoad fade could race with hydration). The
-          dark `bg-charcoal` underneath still covers any sliver of empty
-          time before the image paints. */}
+      {/* Background image — fades in once it's actually decoded so the
+          dark section is fully styled from the very first paint. */}
       {file && (
-        <div className="absolute inset-0">
+        <div
+          className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+        >
           <Image
             src={`/images/photos/fluff/${file}`}
             alt=""
             fill
             priority
-            fetchPriority="high"
-            // `object-top` anchors the image to the top of the section so
-            // the tops of photos (faces, headers) stay visible — default
-            // `object-center` was cropping both ends evenly and lopping
-            // off the top on wide PC viewports.
-            className="object-cover object-top"
+            className="object-cover"
             sizes="100vw"
+            onLoad={() => setLoaded(true)}
           />
         </div>
       )}

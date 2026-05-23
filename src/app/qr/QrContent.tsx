@@ -7,11 +7,7 @@ import FadeIn from "@/components/animations/FadeIn";
 import { WEDDING } from "@/lib/constants";
 import FluffHero from "@/components/layout/FluffHero";
 
-export default function QrContent({
-  fluffFile,
-}: {
-  fluffFile: string | null;
-}) {
+export default function QrContent() {
   const svgContainerRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = () => {
@@ -45,7 +41,6 @@ export default function QrContent({
   return (
     <>
       <FluffHero
-        file={fluffFile}
         eyebrow="For your invitations"
         title="QR Code"
         subtitle="Scan to visit our wedding website"
