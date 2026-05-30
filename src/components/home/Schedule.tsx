@@ -15,7 +15,7 @@ export default function Schedule() {
               The itinerary
             </p>
             <h2 className="mt-3 font-serif text-3xl text-charcoal sm:text-4xl">
-              The Weekend at a Glance
+              Wedding Day at a Glance
             </h2>
             <div className="divider-gold" />
           </div>

@@ -13,7 +13,7 @@ import FluffHero from "@/components/layout/FluffHero";
 
 type Registry = {
   name: string;
-  description: string;
+  description?: string;
   icon: LucideIcon;
   url: string | null;
   color: "sage" | "gold";
@@ -23,24 +23,20 @@ type Registry = {
 const REGISTRIES: Registry[] = [
   {
     name: "Crate & Barrel",
-    description:
-      "Home essentials, kitchen pieces, and the things we'll use every day in our first place together.",
+    description: "Home and kitchen.",
     icon: Sofa,
     url: "https://www.crateandbarrel.com/gift-registry/lyndsey-sager-and-andrew-hicks/r7546104",
     color: "gold",
   },
   {
     name: "Amazon",
-    description:
-      "A curated mix of practical favorites — small upgrades, everyday must-haves, and a few fun finds.",
+    description: "Everyday essentials.",
     icon: Gift,
     url: "https://www.amazon.com/wedding/guest-view/3EIOIRQPQLMQI",
     color: "sage",
   },
   {
     name: "Honeymoon Fund",
-    description:
-      "We're putting together a way for friends to help us celebrate on our honeymoon — details to follow.",
     icon: Palmtree,
     url: null,
     color: "sage",
@@ -56,11 +52,7 @@ const iconColorMap = {
 export default function RegistryContent() {
   return (
     <>
-      <FluffHero
-        eyebrow="Gifts & registry"
-        title="Your Presence Is Our Greatest Gift"
-        subtitle="Celebrating with you is truly all we need. If you'd like to honor us with a gift, we've registered at a few places below."
-      />
+      <FluffHero eyebrow="Gifts & registry" title="Registry" />
 
       {/* Registry Cards */}
       <section className="bg-ivory pb-20 pt-16 sm:pb-28 sm:pt-20">
@@ -86,9 +78,11 @@ export default function RegistryContent() {
                     {registry.name}
                   </h3>
 
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-charcoal-light">
-                    {registry.description}
-                  </p>
+                  {registry.description && (
+                    <p className="mt-3 font-sans text-sm leading-relaxed text-charcoal-light">
+                      {registry.description}
+                    </p>
+                  )}
 
                   {isComingSoon ? (
                     <span className="mt-auto pt-6 inline-flex items-center gap-1.5 font-sans text-xs font-medium uppercase tracking-[0.2em] text-warm-gray">

@@ -6,7 +6,7 @@ export const WEDDING = {
   groomFirstName: "Andrew",
   brideFirstName: "Lyndsey",
   coupleName: "Lyndsey & Andrew",
-  hashtag: "#LyndseyAndAndrew", // TODO: Finalize hashtag
+  hashtag: "#LyndseyAndAndrew",
 
   // TODO: Confirm exact date and times
   date: new Date("2026-08-15T14:00:00-05:00"), // August 15, 2026, 2:00 PM CDT
