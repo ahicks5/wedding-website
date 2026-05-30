@@ -291,16 +291,6 @@ p {
 }
 
 /* ============================================
-   CUSTOM CURSOR — hide native on desktop
-   ============================================ */
-
-@media (hover: hover) and (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
-}
-
-/* ============================================
    FOCUS STYLES — Accessibility
    ============================================ */
 
