@@ -1,35 +1,50 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Gift, Heart, ExternalLink, Palmtree } from "lucide-react";
+import {
+  Gift,
+  Sofa,
+  Palmtree,
+  ExternalLink,
+  type LucideIcon,
+} from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
 import FluffHero from "@/components/layout/FluffHero";
 
-// TODO: Replace # with real registry URLs
-const REGISTRIES = [
+type Registry = {
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  url: string | null;
+  color: "sage" | "gold";
+  comingSoon?: boolean;
+};
+
+const REGISTRIES: Registry[] = [
   {
-    name: "Amazon Wedding Registry",
+    name: "Crate & Barrel",
     description:
-      "Browse our curated list of home essentials, kitchen upgrades, and things to help us build our life together.",
-    icon: Gift,
-    url: "#",
-    color: "sage" as const,
+      "Home essentials, kitchen pieces, and the things we'll use every day in our first place together.",
+    icon: Sofa,
+    url: "https://www.crateandbarrel.com/gift-registry/lyndsey-sager-and-andrew-hicks/r7546104",
+    color: "gold",
   },
   {
-    name: "Zola Registry",
+    name: "Amazon",
     description:
-      "Our main registry with a mix of experiences, household items, and group gifts to contribute toward.",
-    icon: Heart,
-    url: "#",
-    color: "gold" as const,
+      "A curated mix of practical favorites — small upgrades, everyday must-haves, and a few fun finds.",
+    icon: Gift,
+    url: "https://www.amazon.com/wedding/guest-view/3EIOIRQPQLMQI",
+    color: "sage",
   },
   {
     name: "Honeymoon Fund",
     description:
-      "Help us create unforgettable memories on our honeymoon! Any contribution toward our trip means the world to us.",
+      "We're putting together a way for friends to help us celebrate on our honeymoon — details to follow.",
     icon: Palmtree,
-    url: "#",
-    color: "sage" as const,
+    url: null,
+    color: "sage",
+    comingSoon: true,
   },
 ];
 
@@ -53,43 +68,63 @@ export default function RegistryContent() {
           <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
             {REGISTRIES.map((registry, i) => {
               const Icon = registry.icon;
-              return (
-                <FadeIn key={registry.name} delay={i * 0.12}>
-                  <motion.a
-                    href={registry.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ y: -6 }}
-                    transition={{ duration: 0.3 }}
-                    className="group flex flex-col items-center rounded-lg border border-linen bg-white p-6 text-center shadow-soft transition-shadow hover:shadow-medium sm:p-8"
+              const isComingSoon = registry.comingSoon;
+
+              const cardClasses = `flex h-full flex-col items-center rounded-lg border border-linen bg-white p-6 text-center shadow-soft sm:p-8 ${
+                isComingSoon ? "opacity-80" : "group transition-shadow hover:shadow-medium"
+              }`;
+
+              const body = (
+                <>
+                  <div
+                    className={`flex h-14 w-14 items-center justify-center rounded-full ${iconColorMap[registry.color]}`}
                   >
-                    {/* Icon */}
-                    <div
-                      className={`flex h-14 w-14 items-center justify-center rounded-full ${iconColorMap[registry.color]}`}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
+                    <Icon className="h-6 w-6" />
+                  </div>
 
-                    <h3 className="mt-5 font-serif text-xl text-charcoal">
-                      {registry.name}
-                    </h3>
+                  <h3 className="mt-5 font-serif text-xl text-charcoal">
+                    {registry.name}
+                  </h3>
 
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-charcoal-light">
-                      {registry.description}
-                    </p>
+                  <p className="mt-3 font-sans text-sm leading-relaxed text-charcoal-light">
+                    {registry.description}
+                  </p>
 
-                    <span className="mt-6 inline-flex items-center gap-1.5 font-sans text-xs font-medium uppercase tracking-[0.15em] text-sage transition-colors group-hover:text-gold">
+                  {isComingSoon ? (
+                    <span className="mt-auto pt-6 inline-flex items-center gap-1.5 font-sans text-xs font-medium uppercase tracking-[0.2em] text-warm-gray">
+                      Coming Soon
+                    </span>
+                  ) : (
+                    <span className="mt-auto pt-6 inline-flex items-center gap-1.5 font-sans text-xs font-medium uppercase tracking-[0.15em] text-sage transition-colors group-hover:text-gold">
                       View Registry
                       <ExternalLink className="h-3 w-3" />
                     </span>
-                  </motion.a>
+                  )}
+                </>
+              );
+
+              return (
+                <FadeIn key={registry.name} delay={i * 0.12}>
+                  {isComingSoon || !registry.url ? (
+                    <div className={cardClasses}>{body}</div>
+                  ) : (
+                    <motion.a
+                      href={registry.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ y: -6 }}
+                      transition={{ duration: 0.3 }}
+                      className={cardClasses}
+                    >
+                      {body}
+                    </motion.a>
+                  )}
                 </FadeIn>
               );
             })}
           </div>
         </div>
       </section>
-
     </>
   );
 }

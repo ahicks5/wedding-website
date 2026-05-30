@@ -7,6 +7,7 @@ import {
   Wine,
   Moon,
   Compass,
+  IceCream,
   ArrowUpRight,
   type LucideIcon,
 } from "lucide-react";
@@ -53,6 +54,14 @@ const SECTIONS: Section[] = [
       { name: "One Taco", query: "One Taco Austin TX" },
       { name: "Terry Black's BBQ", query: "Terry Black's Barbecue Austin TX" },
       { name: "Banger's", query: "Banger's Sausage House Austin TX" },
+    ],
+  },
+  {
+    title: "Sweets",
+    icon: IceCream,
+    iconColor: "gold",
+    places: [
+      { name: "Jeni's Splendid Ice Creams", query: "Jeni's Splendid Ice Creams Austin TX" },
     ],
   },
   {
