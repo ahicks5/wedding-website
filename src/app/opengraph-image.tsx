@@ -6,6 +6,12 @@ import { WEDDING } from "@/lib/constants";
 // editorial card matching the site's aesthetic (no photo, so we don't
 // have to fetch one inside the edge runtime).
 
+// Must run on the Edge runtime — `ImageResponse` from next/og uses
+// WASM internals that crash with "Invalid URL" under the default Node
+// runtime during static prerender. This is what broke the last few
+// Vercel builds.
+export const runtime = "edge";
+
 export const alt = `${WEDDING.coupleName} · ${WEDDING.dateDisplay}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
