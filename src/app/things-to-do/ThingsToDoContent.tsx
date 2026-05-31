@@ -62,6 +62,7 @@ const SECTIONS: Section[] = [
     iconColor: "gold",
     places: [
       { name: "Jeni's Splendid Ice Creams", query: "Jeni's Splendid Ice Creams Austin TX" },
+      { name: "Amy's Ice Creams", query: "Amy's Ice Creams Austin TX" },
     ],
   },
   {

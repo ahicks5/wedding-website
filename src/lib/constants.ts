@@ -23,7 +23,7 @@ export const WEDDING = {
 
   reception: {
     name: "Hotel Ella",
-    address: "1900 University Ave, Austin, TX 78705",
+    address: "1900 Rio Grande Street, Austin, TX 78705",
     time: "5:00 PM",
     mapUrl: "https://maps.google.com/?q=Hotel+Ella+Austin+TX",
   },
