@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Lock,
   Loader2,
@@ -53,6 +53,14 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  // Admin auth is temporarily disabled — load the dashboard automatically so
+  // /admin opens without a password. Restore the login gate by re-enabling
+  // ADMIN_AUTH_DISABLED in the admin API routes and removing this effect.
+  useEffect(() => {
+    login();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const exportCsv = () => {
     if (!data) return;

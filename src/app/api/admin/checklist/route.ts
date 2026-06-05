@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-// Same simple password gate the other admin routes use. Trim to tolerate a
-// stray space/newline in the env var or submitted value.
+// TEMPORARY: admin password gate disabled at the owner's request. To restore
+// protection, set ADMIN_AUTH_DISABLED = false (matches src/app/api/admin/rsvps).
+const ADMIN_AUTH_DISABLED = true;
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD ?? "wedding2026").trim();
 
 type ItemState = { checked: boolean; notes: string };
 type StateMap = Record<string, ItemState>;
 
 function authorized(request: NextRequest): boolean {
+  if (ADMIN_AUTH_DISABLED) return true;
   return request.headers.get("x-admin-password")?.trim() === ADMIN_PASSWORD;
 }
 

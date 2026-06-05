@@ -2,15 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { DEMO_GUESTS, DEMO_PARTIES } from "@/lib/demo-data";
 
-// Simple password check via header. Trim to tolerate a stray space/newline
-// accidentally included in the ADMIN_PASSWORD env var (a common Vercel paste
-// mistake) or in the submitted value.
+// TEMPORARY: admin password gate disabled at the owner's request — anyone who
+// reaches this route gets the data. To restore protection, set
+// ADMIN_AUTH_DISABLED = false and set a known-good ADMIN_PASSWORD env var.
+const ADMIN_AUTH_DISABLED = true;
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD ?? "wedding2026").trim();
 
 export async function GET(request: NextRequest) {
   const password = request.headers.get("x-admin-password")?.trim();
 
-  if (password !== ADMIN_PASSWORD) {
+  if (!ADMIN_AUTH_DISABLED && password !== ADMIN_PASSWORD) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
