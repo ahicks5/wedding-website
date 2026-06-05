@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Lock,
   Loader2,
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
     setError("");
     try {
       const res = await fetch("/api/admin/rsvps", {
-        headers: { "x-admin-password": password },
+        headers: { "x-admin-password": password.trim() },
       });
 
       if (!res.ok) {
@@ -53,14 +53,6 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
-
-  // Admin auth is temporarily disabled — load the dashboard automatically so
-  // /admin opens without a password. Restore the login gate by re-enabling
-  // ADMIN_AUTH_DISABLED in the admin API routes and removing this effect.
-  useEffect(() => {
-    login();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const exportCsv = () => {
     if (!data) return;

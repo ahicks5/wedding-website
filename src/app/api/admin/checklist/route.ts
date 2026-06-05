@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-// TEMPORARY: admin password gate disabled at the owner's request. To restore
-// protection, set ADMIN_AUTH_DISABLED = false (matches src/app/api/admin/rsvps).
-const ADMIN_AUTH_DISABLED = true;
-const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD ?? "wedding2026").trim();
+// Admin password HARDCODED to match src/app/api/admin/rsvps (env var ignored).
+const ADMIN_PASSWORD = "dumptruck";
 
 type ItemState = { checked: boolean; notes: string };
 type StateMap = Record<string, ItemState>;
 
 function authorized(request: NextRequest): boolean {
-  if (ADMIN_AUTH_DISABLED) return true;
   return request.headers.get("x-admin-password")?.trim() === ADMIN_PASSWORD;
 }
 

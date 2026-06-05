@@ -2,16 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { DEMO_GUESTS, DEMO_PARTIES } from "@/lib/demo-data";
 
-// TEMPORARY: admin password gate disabled at the owner's request — anyone who
-// reaches this route gets the data. To restore protection, set
-// ADMIN_AUTH_DISABLED = false and set a known-good ADMIN_PASSWORD env var.
-const ADMIN_AUTH_DISABLED = true;
-const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD ?? "wedding2026").trim();
+// Admin password is HARDCODED here on purpose. The ADMIN_PASSWORD env var is
+// intentionally ignored so a mistyped / stray-whitespace Vercel value can no
+// longer break login. (Note: this value is visible in the source code.)
+const ADMIN_PASSWORD = "dumptruck";
 
 export async function GET(request: NextRequest) {
   const password = request.headers.get("x-admin-password")?.trim();
 
-  if (!ADMIN_AUTH_DISABLED && password !== ADMIN_PASSWORD) {
+  if (password !== ADMIN_PASSWORD) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
