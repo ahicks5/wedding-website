@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-// Same simple password gate the other admin routes use.
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "wedding2026";
+// Same simple password gate the other admin routes use. Trim to tolerate a
+// stray space/newline in the env var or submitted value.
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD ?? "wedding2026").trim();
 
 type ItemState = { checked: boolean; notes: string };
 type StateMap = Record<string, ItemState>;
 
 function authorized(request: NextRequest): boolean {
-  return request.headers.get("x-admin-password") === ADMIN_PASSWORD;
+  return request.headers.get("x-admin-password")?.trim() === ADMIN_PASSWORD;
 }
 
 // GET — return the saved state for every touched checklist item.
