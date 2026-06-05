@@ -15,22 +15,37 @@ export async function GET(request: NextRequest) {
   }
 
   if (supabase) {
-    const [guestsRes, partiesRes] = await Promise.all([
-      supabase.from("guests").select("*").order("last_name"),
-      supabase.from("parties").select("*").order("party_name"),
-    ]);
+    try {
+      const [guestsRes, partiesRes] = await Promise.all([
+        supabase.from("guests").select("*").order("last_name"),
+        supabase.from("parties").select("*").order("party_name"),
+      ]);
 
-    if (guestsRes.error || partiesRes.error) {
+      if (guestsRes.error || partiesRes.error) {
+        // TEMP: surface the real Supabase error so we can diagnose the 500.
+        return NextResponse.json(
+          {
+            error: "Failed to fetch data",
+            detail:
+              guestsRes.error?.message ??
+              partiesRes.error?.message ??
+              "unknown",
+          },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        guests: guestsRes.data,
+        parties: partiesRes.data,
+      });
+    } catch (e) {
+      // TEMP: surface unexpected exceptions too.
       return NextResponse.json(
-        { error: "Failed to fetch data" },
+        { error: "Exception", detail: e instanceof Error ? e.message : String(e) },
         { status: 500 }
       );
     }
-
-    return NextResponse.json({
-      guests: guestsRes.data,
-      parties: partiesRes.data,
-    });
   }
 
   // Demo mode

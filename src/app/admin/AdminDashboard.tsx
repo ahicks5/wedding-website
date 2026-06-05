@@ -40,7 +40,14 @@ export default function AdminDashboard() {
       });
 
       if (!res.ok) {
-        setError("Incorrect password.");
+        if (res.status === 401) {
+          setError("Incorrect password.");
+        } else {
+          const body = await res.json().catch(() => ({}));
+          setError(
+            `Server error (${res.status}): ${body.detail ?? body.error ?? "unknown"}`
+          );
+        }
         return;
       }
 
