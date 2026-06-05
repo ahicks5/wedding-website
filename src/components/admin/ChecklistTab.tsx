@@ -9,6 +9,7 @@ import {
   StickyNote,
   CalendarCheck,
   Search,
+  SlidersHorizontal,
   X,
 } from "lucide-react";
 import {
@@ -52,6 +53,7 @@ export default function ChecklistTab({ password }: { password: string }) {
   // Filtering
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState("");
+  const [showTags, setShowTags] = useState(false);
 
   // Load saved state once on mount.
   useEffect(() => {
@@ -201,31 +203,26 @@ export default function ChecklistTab({ password }: { password: string }) {
   return (
     <div>
       {/* Overall progress */}
-      <div className="rounded-2xl border border-linen bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <CalendarCheck className="h-5 w-5 shrink-0 text-sage" />
-              <h2 className="font-serif text-xl text-charcoal sm:text-2xl">
-                Wedding To-Do List
-              </h2>
-            </div>
-            <p className="mt-1 font-sans text-xs text-warm-gray sm:text-sm">
-              From your Mockingbird Lane planning checklist.
-              {demo && " Saved on this device until the database is connected."}
-            </p>
+      <div className="rounded-2xl border border-linen bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <CalendarCheck className="h-5 w-5 shrink-0 text-sage" />
+            <h2 className="truncate font-serif text-xl text-charcoal sm:text-2xl">
+              Wedding To-Do List
+            </h2>
           </div>
-          <div className="shrink-0 text-right">
-            <p className="font-serif text-2xl text-charcoal sm:text-3xl">
-              {completedCount}
-              <span className="text-warm-gray">/{CHECKLIST_TOTAL}</span>
-            </p>
-            <p className="font-sans text-[10px] uppercase tracking-wider text-warm-gray sm:text-xs">
-              {pct}% complete
-            </p>
-          </div>
+          <p className="shrink-0 font-serif text-xl text-charcoal sm:text-2xl">
+            {completedCount}
+            <span className="text-warm-gray">/{CHECKLIST_TOTAL}</span>
+          </p>
         </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-linen">
+
+        <p className="mt-1 font-sans text-xs text-warm-gray sm:text-sm">
+          From your Mockingbird Lane planning checklist.
+          {demo && " Saved on this device until the database is connected."}
+        </p>
+
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-linen">
           <motion.div
             className="h-full rounded-full bg-sage"
             initial={{ width: 0 }}
@@ -233,60 +230,94 @@ export default function ChecklistTab({ password }: { password: string }) {
             transition={{ duration: 0.6, ease: "easeOut" }}
           />
         </div>
+        <p className="mt-1.5 font-sans text-[11px] font-medium text-warm-gray">
+          {pct}% complete
+        </p>
       </div>
 
       {/* Filter bar */}
-      <div className="mt-4 rounded-2xl border border-linen bg-white p-4 shadow-sm sm:mt-6">
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-warm-gray" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tasks or tags…"
-            className="w-full rounded-lg border border-linen bg-ivory/50 py-2.5 pl-10 pr-9 font-sans text-sm text-charcoal outline-none focus:border-sage focus:ring-2 focus:ring-sage/20"
-          />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              aria-label="Clear search"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-warm-gray hover:text-charcoal"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
+      <div className="mt-4 rounded-2xl border border-linen bg-white p-3 shadow-sm sm:mt-6 sm:p-4">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-warm-gray" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search tasks…"
+              className="w-full rounded-lg border border-linen bg-ivory/50 py-2.5 pl-9 pr-9 font-sans text-sm text-charcoal outline-none focus:border-sage focus:ring-2 focus:ring-sage/20"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-warm-gray hover:text-charcoal"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setShowTags((s) => !s)}
+            aria-expanded={showTags}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2.5 font-sans text-sm font-medium transition-colors ${
+              activeTags.size > 0
+                ? "border-sage bg-sage text-white"
+                : "border-linen bg-white text-charcoal-light hover:border-sage hover:text-sage"
+            }`}
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            <span>Tags</span>
+            {activeTags.size > 0 && (
+              <span className="rounded-full bg-white/25 px-1.5 text-xs font-semibold">
+                {activeTags.size}
+              </span>
+            )}
+          </button>
         </div>
 
-        <div className="no-scrollbar -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
-          {ALL_TAGS.map((tag) => {
-            const on = activeTags.has(tag);
-            return (
-              <button
-                key={tag}
-                onClick={() => toggleTag(tag)}
-                className={`shrink-0 rounded-full px-3 py-1.5 font-sans text-xs font-medium transition-colors sm:py-1 ${
-                  on
-                    ? "bg-sage text-white"
-                    : "border border-linen bg-white text-charcoal-light hover:border-sage hover:text-sage"
-                }`}
-              >
-                {tag}
-              </button>
-            );
-          })}
-        </div>
+        <AnimatePresence initial={false}>
+          {showTags && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="flex flex-wrap gap-1.5 pt-3">
+                {ALL_TAGS.map((tag) => {
+                  const on = activeTags.has(tag);
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => toggleTag(tag)}
+                      className={`rounded-full px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
+                        on
+                          ? "bg-sage text-white"
+                          : "border border-linen bg-white text-charcoal-light hover:border-sage hover:text-sage"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {filtering && (
           <div className="mt-3 flex items-center justify-between border-t border-linen pt-3">
             <span className="font-sans text-xs text-warm-gray">
-              Showing {matchCount} of {CHECKLIST_TOTAL} tasks
+              Showing {matchCount} of {CHECKLIST_TOTAL}
             </span>
             <button
               onClick={clearFilters}
               className="flex items-center gap-1 font-sans text-xs font-medium text-sage hover:text-sage-dark"
             >
               <X className="h-3.5 w-3.5" />
-              Clear filters
+              Clear
             </button>
           </div>
         )}
@@ -452,58 +483,50 @@ function ChecklistRow({
   const hasNote = state.notes.trim().length > 0;
 
   return (
-    <li className="px-4 py-3 transition-colors hover:bg-ivory/40 sm:px-5">
-      <div className="flex items-start gap-3">
+    <li className="px-4 py-2.5 transition-colors hover:bg-ivory/40 sm:px-5">
+      <div className="flex items-start gap-2.5">
         <button
           onClick={onToggle}
           role="checkbox"
           aria-checked={state.checked}
           aria-label={state.checked ? "Mark as not done" : "Mark as done"}
-          className={`mt-px flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-all sm:mt-0.5 sm:h-5 sm:w-5 ${
+          className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[5px] border transition-colors ${
             state.checked
               ? "border-sage bg-sage text-white"
-              : "border-warm-gray/40 bg-white hover:border-sage"
+              : "border-warm-gray/40 bg-white"
           }`}
         >
-          {state.checked && (
-            <Check className="h-4 w-4 sm:h-3.5 sm:w-3.5" strokeWidth={3} />
-          )}
+          {state.checked && <Check className="h-3 w-3" strokeWidth={3.5} />}
         </button>
 
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <p
+            className={`font-sans text-[13px] leading-snug transition-colors sm:text-sm ${
+              state.checked ? "text-warm-gray line-through" : "text-charcoal"
+            }`}
+          >
             {tag && (
               <span
-                className={`rounded-full px-2 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wide ${
-                  tag === "Bride"
-                    ? "bg-blush/50 text-sage-dark"
-                    : "bg-sage/15 text-sage-dark"
+                className={`mr-1.5 align-[1px] text-[10px] font-bold uppercase tracking-wide ${
+                  tag === "Bride" ? "text-sage" : "text-gold-dark"
                 }`}
               >
                 {tag}
               </span>
             )}
-            <span
-              className={`font-sans text-sm leading-snug transition-colors ${
-                state.checked
-                  ? "text-warm-gray line-through"
-                  : "text-charcoal"
-              }`}
-            >
-              {label}
-            </span>
-          </div>
+            {label}
+          </p>
 
           {/* Category tags — click to filter */}
           {tags.length > 0 && (
-            <div className="mt-1.5 flex flex-wrap gap-1">
+            <div className="mt-1 flex flex-wrap gap-1">
               {tags.map((t) => {
                 const on = activeTags.has(t);
                 return (
                   <button
                     key={t}
                     onClick={() => onTagClick(t)}
-                    className={`rounded px-2 py-1 font-sans text-[10px] font-medium transition-colors sm:px-1.5 sm:py-0.5 ${
+                    className={`rounded px-1.5 py-0.5 font-sans text-[10px] font-medium leading-none transition-colors ${
                       on
                         ? "bg-sage text-white"
                         : "bg-ivory text-warm-gray hover:bg-sage/10 hover:text-sage"
@@ -518,7 +541,7 @@ function ChecklistRow({
 
           {/* Existing note preview (when collapsed) */}
           {hasNote && !noteOpen && (
-            <p className="mt-1 whitespace-pre-wrap rounded-md bg-ivory px-2.5 py-1.5 font-sans text-xs italic text-charcoal-light">
+            <p className="mt-1.5 whitespace-pre-wrap rounded-md bg-ivory px-2.5 py-1.5 font-sans text-xs italic text-charcoal-light">
               {state.notes}
             </p>
           )}
@@ -544,10 +567,10 @@ function ChecklistRow({
           onClick={() => setNoteOpen((o) => !o)}
           aria-label={hasNote ? "Edit note" : "Add note"}
           title={hasNote ? "Edit note" : "Add note"}
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors sm:mt-0.5 sm:h-7 sm:w-7 ${
+          className={`-mr-1 grid h-7 w-7 shrink-0 place-items-center rounded-md transition-colors ${
             hasNote || noteOpen
               ? "bg-gold/15 text-gold-dark"
-              : "text-warm-gray/60 hover:bg-ivory hover:text-sage"
+              : "text-warm-gray/50 hover:bg-ivory hover:text-sage"
           }`}
         >
           <StickyNote className="h-4 w-4" />

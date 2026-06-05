@@ -154,15 +154,6 @@ p {
   }
 }
 
-/* ---- Hide scrollbar (e.g. horizontally scrollable filter rows on mobile) ---- */
-@utility no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 /* ---- Gold Accent Divider ---- */
 @utility divider-gold {
   width: 60px;
