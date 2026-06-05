@@ -9,8 +9,13 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  ClipboardList,
+  ListChecks,
 } from "lucide-react";
 import type { Guest, Party } from "@/lib/database.types";
+import ChecklistTab from "@/components/admin/ChecklistTab";
+
+type Tab = "rsvps" | "checklist";
 
 type AdminData = {
   guests: Guest[];
@@ -24,6 +29,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState<AdminData | null>(null);
+  const [tab, setTab] = useState<Tab>("rsvps");
 
   const login = async () => {
     setLoading(true);
@@ -135,6 +141,61 @@ export default function AdminDashboard() {
     );
   }
 
+  return (
+    <div className="min-h-screen bg-ivory pb-20 pt-28">
+      <div className="mx-auto max-w-6xl px-6">
+        {/* Header */}
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <h1 className="font-serif text-3xl text-charcoal">
+              Wedding Admin
+            </h1>
+            {data?.demo && (
+              <span className="mt-1 inline-block rounded-full bg-gold/10 px-3 py-1 font-sans text-xs font-medium text-gold">
+                Demo Mode
+              </span>
+            )}
+          </div>
+          {tab === "rsvps" && (
+            <button
+              onClick={exportCsv}
+              className="btn-outline flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </button>
+          )}
+        </div>
+
+        {/* Tabs */}
+        <div className="mt-6 flex gap-1 border-b border-linen">
+          <TabButton
+            active={tab === "rsvps"}
+            onClick={() => setTab("rsvps")}
+            icon={<ClipboardList className="h-4 w-4" />}
+            label="RSVPs"
+          />
+          <TabButton
+            active={tab === "checklist"}
+            onClick={() => setTab("checklist")}
+            icon={<ListChecks className="h-4 w-4" />}
+            label="Checklist"
+          />
+        </div>
+
+        {tab === "checklist" ? (
+          <div className="mt-8">
+            <ChecklistTab password={password} />
+          </div>
+        ) : (
+          <RsvpPanel data={data} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RsvpPanel({ data }: { data: AdminData | null }) {
   const guests = data?.guests ?? [];
   const parties = data?.parties ?? [];
 
@@ -144,30 +205,8 @@ export default function AdminDashboard() {
   const responded = guests.filter((g) => g.responded_at);
 
   return (
-    <div className="min-h-screen bg-ivory pb-20 pt-28">
-      <div className="mx-auto max-w-6xl px-6">
-        {/* Header */}
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h1 className="font-serif text-3xl text-charcoal">
-              RSVP Dashboard
-            </h1>
-            {data?.demo && (
-              <span className="mt-1 inline-block rounded-full bg-gold/10 px-3 py-1 font-sans text-xs font-medium text-gold">
-                Demo Mode
-              </span>
-            )}
-          </div>
-          <button
-            onClick={exportCsv}
-            className="btn-outline flex items-center gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Export CSV
-          </button>
-        </div>
-
-        {/* Stats */}
+    <>
+      {/* Stats */}
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatCard
             icon={<Users className="h-5 w-5 text-sage" />}
@@ -271,8 +310,33 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
+    </>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-3 font-sans text-sm font-medium transition-colors ${
+        active
+          ? "border-sage text-sage"
+          : "border-transparent text-warm-gray hover:text-charcoal"
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }
 

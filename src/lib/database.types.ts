@@ -36,6 +36,13 @@ export interface ContactMessage {
   created_at: string;
 }
 
+export interface ChecklistItemState {
+  item_id: string;
+  checked: boolean;
+  notes: string | null;
+  updated_at: string;
+}
+
 // Supabase Database type for createClient generic
 export interface Database {
   public: {
@@ -54,6 +61,13 @@ export interface Database {
         Row: ContactMessage;
         Insert: Omit<ContactMessage, "id" | "created_at">;
         Update: Partial<Omit<ContactMessage, "id" | "created_at">>;
+      };
+      checklist_items: {
+        Row: ChecklistItemState;
+        Insert: Omit<ChecklistItemState, "updated_at"> & {
+          updated_at?: string;
+        };
+        Update: Partial<Omit<ChecklistItemState, "item_id">>;
       };
     };
     Views: Record<string, never>;
