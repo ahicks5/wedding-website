@@ -8,11 +8,15 @@ import {
   Loader2,
   StickyNote,
   CalendarCheck,
+  Search,
+  X,
 } from "lucide-react";
 import {
   CHECKLIST,
   CHECKLIST_TOTAL,
+  ALL_TAGS,
   parseTag,
+  type ChecklistItem,
   type ChecklistSection,
 } from "@/lib/checklist-data";
 
@@ -44,6 +48,10 @@ export default function ChecklistTab({ password }: { password: string }) {
   const [loading, setLoading] = useState(true);
   const [demo, setDemo] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
+  // Filtering
+  const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
+  const [query, setQuery] = useState("");
 
   // Load saved state once on mount.
   useEffect(() => {
@@ -127,6 +135,20 @@ export default function ChecklistTab({ password }: { password: string }) {
     [itemState, persist]
   );
 
+  const toggleTag = useCallback((tag: string) => {
+    setActiveTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(tag)) next.delete(tag);
+      else next.add(tag);
+      return next;
+    });
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setActiveTags(new Set());
+    setQuery("");
+  }, []);
+
   const completedCount = useMemo(
     () => Object.values(state).filter((s) => s.checked).length,
     [state]
@@ -135,6 +157,38 @@ export default function ChecklistTab({ password }: { password: string }) {
     CHECKLIST_TOTAL > 0
       ? Math.round((completedCount / CHECKLIST_TOTAL) * 100)
       : 0;
+
+  // Apply tag + text filters. An item matches if it has at least one active
+  // tag (or no tags are active) AND its text/tags contain the search query.
+  const filtering = activeTags.size > 0 || query.trim().length > 0;
+  const q = query.trim().toLowerCase();
+
+  const matches = useCallback(
+    (item: ChecklistItem) => {
+      const tagOk =
+        activeTags.size === 0 || item.tags.some((t) => activeTags.has(t));
+      const textOk =
+        !q ||
+        item.text.toLowerCase().includes(q) ||
+        item.tags.some((t) => t.toLowerCase().includes(q));
+      return tagOk && textOk;
+    },
+    [activeTags, q]
+  );
+
+  const filteredSections = useMemo(
+    () =>
+      CHECKLIST.map((section) => ({
+        section,
+        items: filtering ? section.items.filter(matches) : section.items,
+      })).filter((s) => s.items.length > 0),
+    [filtering, matches]
+  );
+
+  const matchCount = useMemo(
+    () => filteredSections.reduce((n, s) => n + s.items.length, 0),
+    [filteredSections]
+  );
 
   if (loading) {
     return (
@@ -181,21 +235,89 @@ export default function ChecklistTab({ password }: { password: string }) {
         </div>
       </div>
 
+      {/* Filter bar */}
+      <div className="mt-6 rounded-2xl border border-linen bg-white p-4 shadow-sm">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-warm-gray" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search tasks or tags…"
+            className="w-full rounded-lg border border-linen bg-ivory/50 py-2.5 pl-10 pr-9 font-sans text-sm text-charcoal outline-none focus:border-sage focus:ring-2 focus:ring-sage/20"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-warm-gray hover:text-charcoal"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {ALL_TAGS.map((tag) => {
+            const on = activeTags.has(tag);
+            return (
+              <button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                className={`rounded-full px-3 py-1 font-sans text-xs font-medium transition-colors ${
+                  on
+                    ? "bg-sage text-white"
+                    : "border border-linen bg-white text-charcoal-light hover:border-sage hover:text-sage"
+                }`}
+              >
+                {tag}
+              </button>
+            );
+          })}
+        </div>
+
+        {filtering && (
+          <div className="mt-3 flex items-center justify-between border-t border-linen pt-3">
+            <span className="font-sans text-xs text-warm-gray">
+              Showing {matchCount} of {CHECKLIST_TOTAL} tasks
+            </span>
+            <button
+              onClick={clearFilters}
+              className="flex items-center gap-1 font-sans text-xs font-medium text-sage hover:text-sage-dark"
+            >
+              <X className="h-3.5 w-3.5" />
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Sections */}
       <div className="mt-6 space-y-4">
-        {CHECKLIST.map((section) => (
-          <SectionCard
-            key={section.id}
-            section={section}
-            itemState={itemState}
-            onToggle={toggle}
-            onNote={setNote}
-            collapsed={!!collapsed[section.id]}
-            onToggleCollapse={() =>
-              setCollapsed((c) => ({ ...c, [section.id]: !c[section.id] }))
-            }
-          />
-        ))}
+        {filteredSections.length === 0 ? (
+          <div className="rounded-2xl border border-linen bg-white p-10 text-center font-sans text-sm text-warm-gray shadow-sm">
+            No tasks match your filters.
+          </div>
+        ) : (
+          filteredSections.map(({ section, items }) => (
+            <SectionCard
+              key={section.id}
+              section={section}
+              items={items}
+              itemState={itemState}
+              onToggle={toggle}
+              onNote={setNote}
+              activeTags={activeTags}
+              onTagClick={toggleTag}
+              // While filtering, always expand so matches are visible.
+              collapsed={filtering ? false : !!collapsed[section.id]}
+              onToggleCollapse={() =>
+                setCollapsed((c) => ({ ...c, [section.id]: !c[section.id] }))
+              }
+              lockOpen={filtering}
+            />
+          ))
+        )}
       </div>
     </div>
   );
@@ -203,28 +325,37 @@ export default function ChecklistTab({ password }: { password: string }) {
 
 function SectionCard({
   section,
+  items,
   itemState,
   onToggle,
   onNote,
+  activeTags,
+  onTagClick,
   collapsed,
   onToggleCollapse,
+  lockOpen,
 }: {
   section: ChecklistSection;
+  items: ChecklistItem[];
   itemState: (id: string) => ItemState;
   onToggle: (id: string) => void;
   onNote: (id: string, notes: string) => void;
+  activeTags: Set<string>;
+  onTagClick: (tag: string) => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
+  lockOpen: boolean;
 }) {
-  const done = section.items.filter((i) => itemState(i.id).checked).length;
-  const total = section.items.length;
+  const done = items.filter((i) => itemState(i.id).checked).length;
+  const total = items.length;
   const complete = done === total;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-linen bg-white shadow-sm">
       <button
         onClick={onToggleCollapse}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-ivory/60"
+        disabled={lockOpen}
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-ivory/60 disabled:cursor-default disabled:hover:bg-transparent"
       >
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -252,11 +383,13 @@ function SectionCard({
               style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
             />
           </div>
-          <ChevronDown
-            className={`h-5 w-5 text-warm-gray transition-transform duration-300 ${
-              collapsed ? "" : "rotate-180"
-            }`}
-          />
+          {!lockOpen && (
+            <ChevronDown
+              className={`h-5 w-5 text-warm-gray transition-transform duration-300 ${
+                collapsed ? "" : "rotate-180"
+              }`}
+            />
+          )}
         </div>
       </button>
 
@@ -270,13 +403,16 @@ function SectionCard({
             className="overflow-hidden"
           >
             <ul className="divide-y divide-linen border-t border-linen">
-              {section.items.map((item) => (
+              {items.map((item) => (
                 <ChecklistRow
                   key={item.id}
                   text={item.text}
+                  tags={item.tags}
                   state={itemState(item.id)}
                   onToggle={() => onToggle(item.id)}
                   onNote={(notes) => onNote(item.id, notes)}
+                  activeTags={activeTags}
+                  onTagClick={onTagClick}
                 />
               ))}
             </ul>
@@ -289,14 +425,20 @@ function SectionCard({
 
 function ChecklistRow({
   text,
+  tags,
   state,
   onToggle,
   onNote,
+  activeTags,
+  onTagClick,
 }: {
   text: string;
+  tags: string[];
   state: ItemState;
   onToggle: () => void;
   onNote: (notes: string) => void;
+  activeTags: Set<string>;
+  onTagClick: (tag: string) => void;
 }) {
   const { tag, text: label } = parseTag(text);
   const [noteOpen, setNoteOpen] = useState(false);
@@ -349,6 +491,28 @@ function ChecklistRow({
               {label}
             </span>
           </div>
+
+          {/* Category tags — click to filter */}
+          {tags.length > 0 && (
+            <div className="mt-1.5 flex flex-wrap gap-1">
+              {tags.map((t) => {
+                const on = activeTags.has(t);
+                return (
+                  <button
+                    key={t}
+                    onClick={() => onTagClick(t)}
+                    className={`rounded px-1.5 py-0.5 font-sans text-[10px] font-medium transition-colors ${
+                      on
+                        ? "bg-sage text-white"
+                        : "bg-ivory text-warm-gray hover:bg-sage/10 hover:text-sage"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Existing note preview (when collapsed) */}
           {hasNote && !noteOpen && (
