@@ -201,26 +201,26 @@ export default function ChecklistTab({ password }: { password: string }) {
   return (
     <div>
       {/* Overall progress */}
-      <div className="rounded-2xl border border-linen bg-white p-6 shadow-sm">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+      <div className="rounded-2xl border border-linen bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <CalendarCheck className="h-5 w-5 text-sage" />
-              <h2 className="font-serif text-2xl text-charcoal">
+              <CalendarCheck className="h-5 w-5 shrink-0 text-sage" />
+              <h2 className="font-serif text-xl text-charcoal sm:text-2xl">
                 Wedding To-Do List
               </h2>
             </div>
-            <p className="mt-1 font-sans text-sm text-warm-gray">
+            <p className="mt-1 font-sans text-xs text-warm-gray sm:text-sm">
               From your Mockingbird Lane planning checklist.
               {demo && " Saved on this device until the database is connected."}
             </p>
           </div>
-          <div className="text-right">
-            <p className="font-serif text-3xl text-charcoal">
+          <div className="shrink-0 text-right">
+            <p className="font-serif text-2xl text-charcoal sm:text-3xl">
               {completedCount}
               <span className="text-warm-gray">/{CHECKLIST_TOTAL}</span>
             </p>
-            <p className="font-sans text-xs uppercase tracking-wider text-warm-gray">
+            <p className="font-sans text-[10px] uppercase tracking-wider text-warm-gray sm:text-xs">
               {pct}% complete
             </p>
           </div>
@@ -236,7 +236,7 @@ export default function ChecklistTab({ password }: { password: string }) {
       </div>
 
       {/* Filter bar */}
-      <div className="mt-6 rounded-2xl border border-linen bg-white p-4 shadow-sm">
+      <div className="mt-4 rounded-2xl border border-linen bg-white p-4 shadow-sm sm:mt-6">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-warm-gray" />
           <input
@@ -257,14 +257,14 @@ export default function ChecklistTab({ password }: { password: string }) {
           )}
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <div className="no-scrollbar -mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
           {ALL_TAGS.map((tag) => {
             const on = activeTags.has(tag);
             return (
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`rounded-full px-3 py-1 font-sans text-xs font-medium transition-colors ${
+                className={`shrink-0 rounded-full px-3 py-1.5 font-sans text-xs font-medium transition-colors sm:py-1 ${
                   on
                     ? "bg-sage text-white"
                     : "border border-linen bg-white text-charcoal-light hover:border-sage hover:text-sage"
@@ -355,21 +355,21 @@ function SectionCard({
       <button
         onClick={onToggleCollapse}
         disabled={lockOpen}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-ivory/60 disabled:cursor-default disabled:hover:bg-transparent"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-ivory/60 disabled:cursor-default disabled:hover:bg-transparent sm:gap-4 sm:px-5 sm:py-4"
       >
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-serif text-lg text-charcoal">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <h3 className="font-serif text-base text-charcoal sm:text-lg">
               {section.timing}
             </h3>
             {section.note && (
-              <span className="rounded-full bg-gold/10 px-2.5 py-0.5 font-sans text-xs font-medium text-gold-dark">
+              <span className="rounded-full bg-gold/10 px-2.5 py-0.5 font-sans text-[10px] font-medium text-gold-dark sm:text-xs">
                 {section.note}
               </span>
             )}
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <span
             className={`font-sans text-sm font-semibold ${
               complete ? "text-sage" : "text-warm-gray"
@@ -377,7 +377,7 @@ function SectionCard({
           >
             {done}/{total}
           </span>
-          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-linen sm:w-24">
+          <div className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-linen sm:block sm:w-24">
             <div
               className="h-full rounded-full bg-sage transition-all duration-500"
               style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
@@ -452,20 +452,22 @@ function ChecklistRow({
   const hasNote = state.notes.trim().length > 0;
 
   return (
-    <li className="px-5 py-3 transition-colors hover:bg-ivory/40">
+    <li className="px-4 py-3 transition-colors hover:bg-ivory/40 sm:px-5">
       <div className="flex items-start gap-3">
         <button
           onClick={onToggle}
           role="checkbox"
           aria-checked={state.checked}
           aria-label={state.checked ? "Mark as not done" : "Mark as done"}
-          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${
+          className={`mt-px flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-all sm:mt-0.5 sm:h-5 sm:w-5 ${
             state.checked
               ? "border-sage bg-sage text-white"
               : "border-warm-gray/40 bg-white hover:border-sage"
           }`}
         >
-          {state.checked && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
+          {state.checked && (
+            <Check className="h-4 w-4 sm:h-3.5 sm:w-3.5" strokeWidth={3} />
+          )}
         </button>
 
         <div className="min-w-0 flex-1">
@@ -501,7 +503,7 @@ function ChecklistRow({
                   <button
                     key={t}
                     onClick={() => onTagClick(t)}
-                    className={`rounded px-1.5 py-0.5 font-sans text-[10px] font-medium transition-colors ${
+                    className={`rounded px-2 py-1 font-sans text-[10px] font-medium transition-colors sm:px-1.5 sm:py-0.5 ${
                       on
                         ? "bg-sage text-white"
                         : "bg-ivory text-warm-gray hover:bg-sage/10 hover:text-sage"
@@ -542,7 +544,7 @@ function ChecklistRow({
           onClick={() => setNoteOpen((o) => !o)}
           aria-label={hasNote ? "Edit note" : "Add note"}
           title={hasNote ? "Edit note" : "Add note"}
-          className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors sm:mt-0.5 sm:h-7 sm:w-7 ${
             hasNote || noteOpen
               ? "bg-gold/15 text-gold-dark"
               : "text-warm-gray/60 hover:bg-ivory hover:text-sage"
