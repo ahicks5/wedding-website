@@ -21,6 +21,8 @@ type AdminData = {
   guests: Guest[];
   parties: Party[];
   demo?: boolean;
+  dbError?: boolean;
+  detail?: string;
 };
 
 export default function AdminDashboard() {
@@ -173,6 +175,14 @@ export default function AdminDashboard() {
             </button>
           )}
         </div>
+
+        {data?.dbError && (
+          <div className="mt-4 rounded-lg border border-gold/30 bg-gold/5 px-4 py-3 font-sans text-sm text-charcoal-light">
+            Couldn&apos;t reach the database, so the RSVP list is empty and the
+            checklist is saving to this device only. Everything else works — once
+            Supabase is connected it&apos;ll sync automatically.
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="mt-6 flex gap-1 border-b border-linen">

@@ -22,17 +22,17 @@ export async function GET(request: NextRequest) {
       ]);
 
       if (guestsRes.error || partiesRes.error) {
-        // TEMP: surface the real Supabase error so we can diagnose the 500.
-        return NextResponse.json(
-          {
-            error: "Failed to fetch data",
-            detail:
-              guestsRes.error?.message ??
-              partiesRes.error?.message ??
-              "unknown",
-          },
-          { status: 500 }
-        );
+        // DB reachable but the query failed (e.g. tables not created yet).
+        // Don't block login — return empty data plus a flag the UI can show.
+        return NextResponse.json({
+          guests: [],
+          parties: [],
+          dbError: true,
+          detail:
+            guestsRes.error?.message ??
+            partiesRes.error?.message ??
+            "unknown",
+        });
       }
 
       return NextResponse.json({
@@ -40,11 +40,15 @@ export async function GET(request: NextRequest) {
         parties: partiesRes.data,
       });
     } catch (e) {
-      // TEMP: surface unexpected exceptions too.
-      return NextResponse.json(
-        { error: "Exception", detail: e instanceof Error ? e.message : String(e) },
-        { status: 500 }
-      );
+      // Couldn't reach Supabase at all (bad URL/key, project paused, etc.).
+      // Still let the admin in so the checklist and the rest of the dashboard
+      // work — the RSVP list will just be empty until the DB is connected.
+      return NextResponse.json({
+        guests: [],
+        parties: [],
+        dbError: true,
+        detail: e instanceof Error ? e.message : String(e),
+      });
     }
   }
 

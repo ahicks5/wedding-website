@@ -19,25 +19,28 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // No DB, query error, or unreachable Supabase all fall back to demo mode so
+  // the client persists checklist state in localStorage instead of crashing.
   if (!supabase) {
     return NextResponse.json({ items: {}, demo: true });
   }
 
-  const { data, error } = await supabase.from("checklist_items").select("*");
+  try {
+    const { data, error } = await supabase.from("checklist_items").select("*");
 
-  if (error) {
-    return NextResponse.json(
-      { error: "Failed to load checklist" },
-      { status: 500 }
-    );
+    if (error) {
+      return NextResponse.json({ items: {}, demo: true });
+    }
+
+    const items: StateMap = {};
+    for (const row of data) {
+      items[row.item_id] = { checked: row.checked, notes: row.notes ?? "" };
+    }
+
+    return NextResponse.json({ items });
+  } catch {
+    return NextResponse.json({ items: {}, demo: true });
   }
-
-  const items: StateMap = {};
-  for (const row of data) {
-    items[row.item_id] = { checked: row.checked, notes: row.notes ?? "" };
-  }
-
-  return NextResponse.json({ items });
 }
 
 // POST — upsert the state for a single item.
@@ -65,22 +68,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, demo: true });
   }
 
-  const { error } = await supabase.from("checklist_items").upsert(
-    {
-      item_id,
-      checked,
-      notes: notes ?? null,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "item_id" }
-  );
-
-  if (error) {
-    return NextResponse.json(
-      { error: "Failed to save checklist item" },
-      { status: 500 }
+  try {
+    const { error } = await supabase.from("checklist_items").upsert(
+      {
+        item_id,
+        checked,
+        notes: notes ?? null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "item_id" }
     );
-  }
 
-  return NextResponse.json({ ok: true });
+    if (error) {
+      return NextResponse.json({ ok: true, demo: true });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch {
+    // Supabase unreachable — report success; the client keeps localStorage.
+    return NextResponse.json({ ok: true, demo: true });
+  }
 }
