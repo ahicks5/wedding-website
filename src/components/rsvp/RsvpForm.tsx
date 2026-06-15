@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Guest, Household, Rsvp, NameStatus, GuestType } from "@/lib/database.types";
 import StepSearch from "./StepSearch";
@@ -68,6 +68,15 @@ export default function RsvpForm() {
     s.push(NOTES, CONFIRM);
     return s;
   }, [anyRehearsalInvited, anyNeedsMeal]);
+
+  // Safety net: if a step stops applying while the user is on it (e.g. they go
+  // back and change answers so the meal/rehearsal step disappears), snap to the
+  // RSVP step so Back/Continue can never become a dead-end.
+  useEffect(() => {
+    if (step !== CONFIRM && !sequence.includes(step)) {
+      setStep(RSVP);
+    }
+  }, [sequence, step]);
 
   const goTo = (target: number, dir: number) => {
     setDirection(dir);
@@ -137,6 +146,21 @@ export default function RsvpForm() {
   };
 
   const handleSubmit = async () => {
+    // Final guard: every attending, non-infant guest must have a meal. This
+    // closes the edge where someone changes a meal/toggle then navigates Back
+    // (skipping the meal step's own check) before submitting.
+    const missingMeal = guestData.some(
+      (g) =>
+        g.attending_wedding === true &&
+        g.guest_type !== "infant" &&
+        !g.meal_preference
+    );
+    if (missingMeal) {
+      setDirection(-1);
+      setStep(MEALS);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await fetch("/api/rsvp", {

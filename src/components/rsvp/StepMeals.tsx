@@ -75,7 +75,9 @@ export default function StepMeals({
           return (
             <div key={guest.guest_id}>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-serif text-lg text-charcoal">{nameFor(guest)}</p>
+                <p className="min-w-0 break-words font-serif text-lg text-charcoal">
+                  {nameFor(guest)}
+                </p>
 
                 {/* Plus-one seats: let the guest say whether this is an adult or a child. */}
                 {isPlaceholder(guest) && (

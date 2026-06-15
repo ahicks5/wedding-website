@@ -30,6 +30,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No guest data provided" }, { status: 400 });
   }
 
+  // Reject incomplete submissions (every guest must have a yes/no answer and a
+  // guest_id). Client-side validation is convenience; this is the real gate.
+  const invalid = guests.some(
+    (g) => !g.guest_id || g.attending_wedding === null || g.attending_wedding === undefined
+  );
+  if (invalid) {
+    return NextResponse.json(
+      { error: "Each guest needs a yes/no response." },
+      { status: 400 }
+    );
+  }
+
   const now = new Date().toISOString();
   const rows = guests.map((g) => ({
     guest_id: g.guest_id,

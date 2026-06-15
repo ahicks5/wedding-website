@@ -334,6 +334,20 @@ p {
     min-height: 44px;
   }
 
+  /* Tighter button padding so two-button rows (Back / Continue) don't overflow
+     on narrow phones (~320px). */
+  .btn-primary, .btn-outline, .btn-light {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  /* Prevent iOS Safari from auto-zooming when focusing a form field: any
+     control under 16px triggers the zoom, so floor every field at 16px on
+     mobile. !important to beat Tailwind's text-sm/text-xs utilities. */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
   /* Responsive iframe embeds */
   iframe {
     max-width: 100%;
