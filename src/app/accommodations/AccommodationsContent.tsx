@@ -103,11 +103,11 @@ export default function AccommodationsContent() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">2</span>
-                <span className="font-sans text-xs text-charcoal sm:text-sm">St. John Neumann Catholic Church</span>
+                <span className="font-sans text-xs text-charcoal sm:text-sm">Ceremony · St. John Neumann</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-charcoal text-xs font-bold text-white">3</span>
-                <span className="font-sans text-xs text-charcoal sm:text-sm">Hotel Ella</span>
+                <span className="font-sans text-xs text-charcoal sm:text-sm">Reception · Hotel Ella</span>
               </div>
             </div>
           </FadeIn>
@@ -147,7 +147,7 @@ export default function AccommodationsContent() {
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">2</span>
                 <div>
-                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-gold transition-colors">Ceremony</p>
+                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-gold transition-colors">Ceremony · St. John Neumann</p>
                   <p className="font-sans text-xs text-warm-gray">Get Directions</p>
                 </div>
                 <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-gold transition-colors" />
@@ -161,7 +161,7 @@ export default function AccommodationsContent() {
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-charcoal text-xs font-bold text-white">3</span>
                 <div>
-                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-sage transition-colors">Hotel Ella</p>
+                  <p className="font-sans text-sm font-medium text-charcoal group-hover:text-sage transition-colors">Reception · Hotel Ella</p>
                   <p className="font-sans text-xs text-warm-gray">Get Directions</p>
                 </div>
                 <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-warm-gray group-hover:text-sage transition-colors" />

@@ -168,7 +168,7 @@ export default function HorizontalTimelineGallery() {
   return (
     <section className="relative bg-cream">
       {/* Single sticky bar — the browser handles the pin transition. */}
-      <div className="sticky top-16 z-30 border-b border-linen bg-cream/95 backdrop-blur-md">
+      <div className="sticky top-16 z-30 border-b border-linen bg-cream">
         <div className="mx-auto max-w-6xl px-4 pb-4 pt-6 sm:px-6 sm:pb-5 sm:pt-7">
           {/* Header row — date column always visible, title fades only on
               milestone photos. */}

@@ -11,11 +11,13 @@ interface FadeInProps {
   duration?: number;
 }
 
+// Gentle travel — small offsets read as a soft settle rather than a visible
+// slide, which keeps scroll reveals calm on mobile.
 const directionOffset = {
-  up: { y: 30 },
-  down: { y: -30 },
-  left: { x: 30 },
-  right: { x: -30 },
+  up: { y: 16 },
+  down: { y: -16 },
+  left: { x: 16 },
+  right: { x: -16 },
   none: {},
 };
 

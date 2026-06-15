@@ -68,6 +68,10 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Contain any transient horizontal overflow from entrance animations so the
+     page never jiggles sideways on mobile (the scroll container is often
+     <html> on phones, so body's clip alone isn't enough). */
+  overflow-x: clip;
 }
 
 body {
