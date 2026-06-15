@@ -81,6 +81,7 @@ create table rsvps (
   rsvp_phone text,
   notes text,                          -- free-text note for the couple (primary contact)
   plus_one_name text,                  -- name a guest fills in for a placeholder seat
+  plus_one_type text,                  -- adult | child, chosen for a placeholder seat at RSVP time
   submitted_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

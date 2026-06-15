@@ -103,10 +103,17 @@ function sheetPathByName(files) {
   const wb = files["xl/workbook.xml"].toString("utf8");
   const rels = files["xl/_rels/workbook.xml.rels"].toString("utf8");
 
+  // Parse each <Relationship> independently of attribute order (writers differ:
+  // openpyxl emits Target before Id, Excel emits Id first).
   const relMap = {};
   let m;
-  const relRe = /<Relationship[^>]*Id="([^"]+)"[^>]*Target="([^"]+)"[^>]*\/?>/g;
-  while ((m = relRe.exec(rels))) relMap[m[1]] = m[2];
+  const relRe = /<Relationship\b[^>]*\/?>/g;
+  while ((m = relRe.exec(rels))) {
+    const tag = m[0];
+    const id = /Id="([^"]+)"/.exec(tag)?.[1];
+    const target = /Target="([^"]+)"/.exec(tag)?.[1];
+    if (id && target) relMap[id] = target;
+  }
 
   const byName = {};
   const sheetRe = /<sheet[^>]*\/?>/g;

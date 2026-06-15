@@ -5,7 +5,6 @@ import type { GuestRsvpData } from "./RsvpForm";
 
 interface StepNotesProps {
   guests: GuestRsvpData[];
-  updateGuest: (id: string, updates: Partial<GuestRsvpData>) => void;
   email: string;
   phone: string;
   note: string;
@@ -22,7 +21,6 @@ const inputClass =
 
 export default function StepNotes({
   guests,
-  updateGuest,
   email,
   phone,
   note,
@@ -33,51 +31,29 @@ export default function StepNotes({
   onBack,
   submitting,
 }: StepNotesProps) {
-  const attendingGuests = guests.filter((g) => g.attending_wedding === true);
-  const allDeclining = attendingGuests.length === 0;
-
-  const nameFor = (g: GuestRsvpData) =>
-    g.name_status === "PLACEHOLDER_UNKNOWN"
-      ? g.plus_one_name.trim() || "Your guest"
-      : g.display_name;
+  const anyAttending = guests.some((g) => g.attending_wedding === true);
 
   return (
     <div>
       <div className="text-center">
         <h2 className="font-serif text-3xl text-charcoal sm:text-4xl">
-          {allDeclining ? "A Few Last Things" : "Dietary Needs & Notes"}
+          A Few Last Things
         </h2>
         <p className="mt-2 font-sans text-sm text-charcoal-light">
-          {allDeclining
-            ? "Anything you'd like us to know?"
-            : "Let us know about any allergies or restrictions."}
+          {anyAttending
+            ? "Anything else you'd like us to know?"
+            : "We're sorry you can't make it — anything you'd like to share?"}
         </p>
       </div>
 
       <div className="mt-8 space-y-6">
-        {!allDeclining &&
-          attendingGuests.map((guest) => (
-            <div key={guest.guest_id}>
-              <p className="font-serif text-lg text-charcoal">{nameFor(guest)}</p>
-              <input
-                type="text"
-                placeholder="Dietary restrictions (e.g., nut allergy, vegan)..."
-                value={guest.dietary_notes}
-                onChange={(e) =>
-                  updateGuest(guest.guest_id, { dietary_notes: e.target.value })
-                }
-                className={inputClass}
-              />
-            </div>
-          ))}
-
         {/* Shared note to the couple. */}
         <div>
           <label className="block font-sans text-sm font-medium text-charcoal">
-            Anything else you&apos;d like to share?
+            Note to the couple
           </label>
           <textarea
-            placeholder="Song requests, well wishes, special needs..."
+            placeholder="Song requests, well wishes, anything else..."
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}

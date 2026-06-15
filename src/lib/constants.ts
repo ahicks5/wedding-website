@@ -68,7 +68,18 @@ export const KIDS_MEALS = [
   { value: "Tenders", label: "Chicken Tenders & Fries", description: "" },
 ] as const;
 
-// Served to all guests — shown on the site, not selectable.
+// A third choice offered alongside the entrées for anyone whose needs aren't met
+// by the menu — they explain in the dietary field on the same step.
+export const ALTERNATIVE_MEAL = {
+  value: "Alternative",
+  label: "Alternative meal preferred",
+  description: "We'll note it in dietary restrictions below",
+} as const;
+
+// Starter, served to all guests — shown on the site, not selectable.
+export const STARTER = "Caesar salad";
+
+// Sides served alongside every entrée — shown on the site, not selectable.
 export const SHARED_SIDES = [
   "House mac & cheese",
   "Crispy brussels sprouts (balsamic reduction & parmesan)",

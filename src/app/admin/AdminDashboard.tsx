@@ -14,7 +14,7 @@ import {
   ListChecks,
 } from "lucide-react";
 import type { Guest, Household, Rsvp } from "@/lib/database.types";
-import { ADULT_ENTREES, KIDS_MEALS } from "@/lib/constants";
+import { ADULT_ENTREES, KIDS_MEALS, ALTERNATIVE_MEAL } from "@/lib/constants";
 import ChecklistTab from "@/components/admin/ChecklistTab";
 
 type Tab = "rsvps" | "checklist";
@@ -29,7 +29,7 @@ type AdminData = {
 };
 
 const MEAL_LABELS: Record<string, string> = Object.fromEntries(
-  [...ADULT_ENTREES, ...KIDS_MEALS].map((m) => [m.value, m.label])
+  [...ADULT_ENTREES, ...KIDS_MEALS, ALTERNATIVE_MEAL].map((m) => [m.value, m.label])
 );
 
 export default function AdminDashboard() {
@@ -70,63 +70,77 @@ export default function AdminDashboard() {
     }
   };
 
+  // CSV columns mirror the database (guests + rsvps) so the export is easy to
+  // read against the schema and edit. Imported guest fields first, then the
+  // response fields. Booleans render as Y/yes to match the spreadsheet style.
   const exportCsv = () => {
     if (!data) return;
     const rsvpById = new Map(data.rsvps.map((r) => [r.guest_id, r]));
     const householdById = new Map(data.households.map((h) => [h.household_id, h]));
 
-    const headers = [
-      "Guest",
-      "Household",
-      "Side",
-      "Type",
-      "Wedding",
-      "Meal",
-      "Rehearsal Invited",
-      "Rehearsal",
-      "Dietary",
-      "Plus-One Name",
-      "Email",
-      "Phone",
-      "Notes",
-      "Responded At",
+    const cols = [
+      "guest_id",
+      "household_id",
+      "household_search_name",
+      "display_name",
+      "first_name",
+      "last_name",
+      "name_status",
+      "guest_type",
+      "side",
+      "invite_group",
+      "tier",
+      "is_primary_contact",
+      "invited_rehearsal_dinner",
+      "plus_one_allowed",
+      "attending_wedding",
+      "attending_rehearsal",
+      "meal_preference",
+      "plus_one_name",
+      "plus_one_type",
+      "dietary_notes",
+      "rsvp_email",
+      "rsvp_phone",
+      "notes",
+      "responded_at",
     ];
+
+    const bool = (v: boolean | null | undefined) =>
+      v == null ? "" : v ? "yes" : "no";
 
     const rows = data.guests.map((g) => {
       const r = rsvpById.get(g.guest_id);
-      const household = householdById.get(g.household_id);
-      const weddingStatus =
-        r?.attending_wedding == null
-          ? "pending"
-          : r.attending_wedding
-            ? "accepted"
-            : "declined";
-      const rehearsalStatus = !g.invited_rehearsal_dinner
-        ? ""
-        : r?.attending_rehearsal == null
-          ? "pending"
-          : r.attending_rehearsal
-            ? "accepted"
-            : "declined";
-      return [
-        g.display_name,
-        household?.search_name ?? "",
-        g.side ?? "",
-        g.guest_type,
-        weddingStatus,
-        r?.meal_preference ? MEAL_LABELS[r.meal_preference] ?? r.meal_preference : "",
-        g.invited_rehearsal_dinner ? "yes" : "no",
-        rehearsalStatus,
-        r?.dietary_notes ?? "",
-        r?.plus_one_name ?? "",
-        r?.rsvp_email ?? "",
-        r?.rsvp_phone ?? "",
-        r?.notes ?? "",
-        r?.updated_at ?? "",
-      ].map((v) => `"${String(v).replace(/"/g, '""')}"`);
+      const h = householdById.get(g.household_id);
+      const val: Record<string, string | number> = {
+        guest_id: g.guest_id,
+        household_id: g.household_id,
+        household_search_name: h?.search_name ?? "",
+        display_name: g.display_name,
+        first_name: g.first_name ?? "",
+        last_name: g.last_name ?? "",
+        name_status: g.name_status,
+        guest_type: g.guest_type,
+        side: g.side ?? "",
+        invite_group: g.invite_group ?? "",
+        tier: g.tier ?? "",
+        is_primary_contact: g.is_primary_contact ? "Y" : "",
+        invited_rehearsal_dinner: g.invited_rehearsal_dinner ? "Y" : "",
+        plus_one_allowed: g.plus_one_allowed ?? "",
+        attending_wedding: bool(r?.attending_wedding),
+        attending_rehearsal: g.invited_rehearsal_dinner ? bool(r?.attending_rehearsal) : "",
+        meal_preference: r?.meal_preference ?? "",
+        plus_one_name: r?.plus_one_name ?? "",
+        plus_one_type: r?.plus_one_type ?? "",
+        dietary_notes: r?.dietary_notes ?? "",
+        rsvp_email: r?.rsvp_email ?? "",
+        rsvp_phone: r?.rsvp_phone ?? "",
+        notes: r?.notes ?? "",
+        responded_at: r?.updated_at ?? "",
+      };
+      return cols.map((c) => `"${String(val[c]).replace(/"/g, '""')}"`);
     });
 
-    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const csv = [cols.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -348,15 +362,19 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
       </div>
 
       {/* Table */}
-      <div className="mt-8 overflow-x-auto rounded-lg border border-linen bg-white">
-        <table className="w-full min-w-[820px]">
-          <thead>
-            <tr className="border-b border-linen bg-ivory">
-              {["Guest", "Household", "Wedding", "Meal", "Rehearsal", "Dietary", "Contact"].map(
+      <p className="mt-8 font-sans text-xs text-warm-gray">
+        “Reception” is the wedding-day RSVP and meal. “Rehearsal” is a separate
+        yes/no — the rehearsal dinner has no meal selection.
+      </p>
+      <div className="mt-2 max-h-[70vh] overflow-auto rounded-lg border border-linen bg-white">
+        <table className="w-full min-w-[860px]">
+          <thead className="sticky top-0 z-10">
+            <tr className="bg-ivory">
+              {["Guest", "Household", "Reception", "Reception Meal", "Rehearsal", "Dietary", "Contact"].map(
                 (h) => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wider text-warm-gray"
+                    className="border-b border-linen bg-ivory px-4 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wider text-warm-gray"
                   >
                     {h}
                   </th>
@@ -368,21 +386,24 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
             {guests.map((guest) => {
               const r = rsvpById.get(guest.guest_id);
               const household = householdById.get(guest.household_id);
-              const name =
-                guest.name_status === "PLACEHOLDER_UNKNOWN" && r?.plus_one_name
-                  ? `${r.plus_one_name} (plus-one)`
-                  : guest.display_name;
-              const contact = [r?.rsvp_email, r?.rsvp_phone]
-                .filter(Boolean)
-                .join(" · ");
+              const isPlaceholder = guest.name_status === "PLACEHOLDER_UNKNOWN";
+              // For a plus-one seat, show the name they entered (or a placeholder)
+              // and the adult/child choice; otherwise the imported guest_type.
+              const name = isPlaceholder
+                ? r?.plus_one_name || "Unnamed plus-one"
+                : guest.display_name;
+              const typeTag = isPlaceholder
+                ? `plus-one${r?.plus_one_type ? `, ${r.plus_one_type}` : ""}`
+                : guest.guest_type !== "adult"
+                  ? guest.guest_type
+                  : "";
+              const contact = [r?.rsvp_email, r?.rsvp_phone].filter(Boolean).join(" · ");
               return (
                 <tr key={guest.guest_id} className="hover:bg-ivory/50">
                   <td className="px-4 py-3 font-sans text-sm text-charcoal">
                     {name}
-                    {guest.guest_type !== "adult" && (
-                      <span className="ml-1.5 text-xs text-warm-gray">
-                        ({guest.guest_type})
-                      </span>
+                    {typeTag && (
+                      <span className="ml-1.5 text-xs text-warm-gray">({typeTag})</span>
                     )}
                   </td>
                   <td className="px-4 py-3 font-sans text-sm text-charcoal-light">
@@ -405,7 +426,7 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
                           ? "Yes"
                           : "No"}
                   </td>
-                  <td className="px-4 py-3 font-sans text-sm text-charcoal-light">
+                  <td className="max-w-[220px] truncate px-4 py-3 font-sans text-sm text-charcoal-light">
                     {r?.dietary_notes ?? "—"}
                   </td>
                   <td className="max-w-[200px] truncate px-4 py-3 font-sans text-sm text-charcoal-light">

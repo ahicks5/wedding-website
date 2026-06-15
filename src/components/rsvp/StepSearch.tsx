@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { Search, Loader2 } from "lucide-react";
 import type { Guest, Household, Rsvp } from "@/lib/database.types";
 
-interface HouseholdResult {
+interface GuestResult {
+  guest_id: string;
+  display_name: string;
   household_id: number;
-  search_name: string;
 }
 
 interface StepSearchProps {
@@ -15,7 +16,7 @@ interface StepSearchProps {
 
 export default function StepSearch({ onHouseholdFound }: StepSearchProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<HouseholdResult[]>([]);
+  const [results, setResults] = useState<GuestResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,11 +47,11 @@ export default function StepSearch({ onHouseholdFound }: StepSearchProps) {
     return () => clearTimeout(debounceRef.current);
   }, [query]);
 
-  const selectHousehold = async (household: HouseholdResult) => {
+  const selectGuest = async (guest: GuestResult) => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/households/${household.household_id}`);
+      const res = await fetch(`/api/households/${guest.household_id}`);
       if (!res.ok) throw new Error("Household not found");
       const data = await res.json();
       onHouseholdFound(data.household, data.guests, data.rsvps ?? []);
@@ -87,14 +88,14 @@ export default function StepSearch({ onHouseholdFound }: StepSearchProps) {
 
       {results.length > 0 && (
         <div className="mt-4 overflow-hidden rounded-lg border border-linen bg-white text-left shadow-soft">
-          {results.map((h) => (
+          {results.map((g) => (
             <button
-              key={h.household_id}
-              onClick={() => selectHousehold(h)}
+              key={g.guest_id}
+              onClick={() => selectGuest(g)}
               disabled={loading}
               className="flex w-full items-center justify-between px-5 py-4 font-sans text-sm text-charcoal transition-colors hover:bg-ivory disabled:opacity-50"
             >
-              <span>{h.search_name}</span>
+              <span>{g.display_name}</span>
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-sage" />
               ) : (

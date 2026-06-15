@@ -52,6 +52,7 @@ export interface Rsvp {
   rsvp_phone: string | null;
   notes: string | null;
   plus_one_name: string | null;
+  plus_one_type: string | null;
   submitted_at: string;
   updated_at: string;
 }

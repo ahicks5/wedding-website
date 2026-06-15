@@ -8,6 +8,7 @@ interface GuestRsvpInput {
   meal_preference: string | null;
   dietary_notes: string | null;
   plus_one_name: string | null;
+  plus_one_type: string | null;
 }
 
 interface RsvpBody {
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
     meal_preference: g.meal_preference || null,
     dietary_notes: g.dietary_notes || null,
     plus_one_name: g.plus_one_name || null,
+    plus_one_type: g.plus_one_type || null,
     // Contact info and the free-text note live on the primary contact's row.
     rsvp_email: g.guest_id === primary_guest_id ? email || null : null,
     rsvp_phone: g.guest_id === primary_guest_id ? phone || null : null,

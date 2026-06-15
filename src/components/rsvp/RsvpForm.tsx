@@ -23,6 +23,8 @@ export interface GuestRsvpData {
   meal_preference: string;
   dietary_notes: string;
   plus_one_name: string;
+  // For PLACEHOLDER_UNKNOWN seats only: "adult" | "child", chosen at RSVP time.
+  plus_one_type: string;
 }
 
 // Logical steps. Rehearsal and meals are conditionally skipped, but we keep
@@ -109,6 +111,13 @@ export default function RsvpForm() {
           plus_one_name:
             existing?.plus_one_name ??
             (g.name_status === "PLACEHOLDER_UNKNOWN" ? "" : g.display_name),
+          plus_one_type:
+            g.name_status === "PLACEHOLDER_UNKNOWN"
+              ? existing?.plus_one_type ??
+                (g.guest_type === "child" || g.guest_type === "toddler"
+                  ? "child"
+                  : "adult")
+              : "",
         };
       })
     );
@@ -149,6 +158,8 @@ export default function RsvpForm() {
             dietary_notes: g.dietary_notes || null,
             plus_one_name:
               g.name_status === "PLACEHOLDER_UNKNOWN" ? g.plus_one_name || null : null,
+            plus_one_type:
+              g.name_status === "PLACEHOLDER_UNKNOWN" ? g.plus_one_type || null : null,
           })),
         }),
       });
@@ -241,7 +252,6 @@ export default function RsvpForm() {
           {step === NOTES && (
             <StepNotes
               guests={guestData}
-              updateGuest={updateGuest}
               email={email}
               phone={phone}
               note={note}
