@@ -313,16 +313,12 @@ p {
    REDUCED MOTION — Accessibility
    ============================================ */
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+/* NOTE: A global prefers-reduced-motion override used to live here, forcing all
+   animation/transition durations to ~0. On devices with Reduce Motion enabled
+   it fought Framer Motion's scroll-linked animations and caused flicker, so it
+   was removed — the site now renders identically regardless of the OS setting.
+   If a proper reduced-motion experience is wanted later, build it deliberately
+   and test it on a device that has Reduce Motion on. */
 
 /* ============================================
    RESPONSIVE TYPOGRAPHY
