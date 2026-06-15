@@ -1,18 +1,17 @@
 "use client";
 
 import { Users } from "lucide-react";
-import type { Household } from "@/lib/database.types";
 import type { GuestRsvpData } from "./RsvpForm";
 
 interface StepPartyProps {
-  household: Household;
+  label: string;
   guests: GuestRsvpData[];
   onNext: () => void;
   onBack: () => void;
 }
 
 export default function StepParty({
-  household,
+  label,
   guests,
   onNext,
   onBack,
@@ -24,7 +23,7 @@ export default function StepParty({
       </div>
 
       <h2 className="mt-5 font-serif text-3xl text-charcoal sm:text-4xl">
-        {household.search_name}
+        {label}
       </h2>
       <p className="mt-2 font-sans text-sm text-charcoal-light">
         We found your invitation! Please confirm these are the right guests.

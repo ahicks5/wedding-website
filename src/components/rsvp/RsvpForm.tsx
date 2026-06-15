@@ -48,6 +48,7 @@ export default function RsvpForm() {
   const [step, setStep] = useState(SEARCH);
   const [direction, setDirection] = useState(1);
   const [household, setHousehold] = useState<Household | null>(null);
+  const [householdLabel, setHouseholdLabel] = useState("");
   const [guestData, setGuestData] = useState<GuestRsvpData[]>([]);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -103,6 +104,11 @@ export default function RsvpForm() {
   ) => {
     const byId = new Map(rsvps.map((r) => [r.guest_id, r]));
     setHousehold(foundHousehold);
+    // Display label: primary contact's last name + " Party" (e.g. "Milligan
+    // Party"), falling back to the stored search name.
+    const primaryGuest = guests.find((g) => g.is_primary_contact) ?? guests[0];
+    const lastName = primaryGuest?.last_name?.trim();
+    setHouseholdLabel(lastName ? `${lastName} Party` : foundHousehold.search_name);
     setGuestData(
       guests.map((g) => {
         const existing = byId.get(g.guest_id);
@@ -237,7 +243,7 @@ export default function RsvpForm() {
 
           {step === PARTY && household && (
             <StepParty
-              household={household}
+              label={householdLabel}
               guests={guestData}
               onNext={goNext}
               onBack={goBack}
@@ -289,10 +295,7 @@ export default function RsvpForm() {
           )}
 
           {step === CONFIRM && (
-            <StepConfirmation
-              guests={guestData}
-              searchName={household?.search_name ?? ""}
-            />
+            <StepConfirmation guests={guestData} searchName={householdLabel} />
           )}
         </motion.div>
       </AnimatePresence>

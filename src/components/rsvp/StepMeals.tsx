@@ -69,6 +69,17 @@ export default function StepMeals({
         </p>
       </div>
 
+      {/* Starter + sides — informational, served to everyone. Shown up top so
+          guests see the full plate before choosing an entrée. */}
+      <div className="mt-6 rounded-lg border border-linen bg-ivory/60 p-5 text-center">
+        <p className="font-sans text-xs font-medium uppercase tracking-[0.2em] text-warm-gray">
+          Every dinner includes
+        </p>
+        <p className="mt-2 font-serif text-base text-charcoal-light">
+          {STARTER} · {SHARED_SIDES.join(" · ")}
+        </p>
+      </div>
+
       <div className="mt-8 space-y-8">
         {guests.map((guest) => {
           const options = wantsKidsMenu(guest) ? KIDS_MEALS : ADULT_ENTREES;
@@ -160,16 +171,6 @@ export default function StepMeals({
             </div>
           );
         })}
-      </div>
-
-      {/* Starter + sides — informational, served to everyone. */}
-      <div className="mt-8 rounded-lg border border-linen bg-ivory/60 p-5 text-center">
-        <p className="font-sans text-xs font-medium uppercase tracking-[0.2em] text-warm-gray">
-          Served alongside every entrée
-        </p>
-        <p className="mt-2 font-serif text-base text-charcoal-light">
-          {STARTER} · {SHARED_SIDES.join(" · ")}
-        </p>
       </div>
 
       {error && (

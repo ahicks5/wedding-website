@@ -10,6 +10,7 @@ import {
   XCircle,
   Clock,
   Wine,
+  Utensils,
   ClipboardList,
   ListChecks,
 } from "lucide-react";
@@ -267,6 +268,15 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
     return r.attending_wedding ? "accepted" : "declined";
   };
 
+  // Household display label: the primary contact's last name + " Party"
+  // (e.g. "Milligan Party"), falling back to the stored search name.
+  const householdLabel = (hid: number): string => {
+    const primary = guests.find((g) => g.household_id === hid && g.is_primary_contact);
+    const last = primary?.last_name?.trim();
+    if (last) return `${last} Party`;
+    return householdById.get(hid)?.search_name ?? "—";
+  };
+
   const accepted = guests.filter((g) => statusOf(g) === "accepted");
   const declined = guests.filter((g) => statusOf(g) === "declined");
   const pending = guests.filter((g) => statusOf(g) === "pending");
@@ -310,7 +320,7 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
         />
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* Response Rate */}
         <div className="rounded-lg border border-linen bg-white p-5">
           <div className="flex items-center justify-between">
@@ -337,7 +347,34 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
           </p>
         </div>
 
-        {/* Rehearsal + meals summary */}
+        {/* Reception meal counts (NOT the rehearsal dinner) */}
+        <div className="rounded-lg border border-linen bg-white p-5">
+          <div className="flex items-center gap-2">
+            <Utensils className="h-4 w-4 text-sage" />
+            <span className="font-sans text-sm font-medium text-charcoal">
+              Reception Meals
+            </span>
+          </div>
+          {mealCounts.size > 0 ? (
+            <div className="mt-3 space-y-1">
+              {Array.from(mealCounts.entries()).map(([meal, count]) => (
+                <div
+                  key={meal}
+                  className="flex items-center justify-between font-sans text-xs text-charcoal-light"
+                >
+                  <span>{MEAL_LABELS[meal] ?? meal}</span>
+                  <span className="font-semibold text-charcoal">{count}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-1 font-sans text-xs text-warm-gray">
+              No meal selections yet
+            </p>
+          )}
+        </div>
+
+        {/* Rehearsal dinner — attendance only, no meal */}
         <div className="rounded-lg border border-linen bg-white p-5">
           <div className="flex items-center gap-2">
             <Wine className="h-4 w-4 text-gold" />
@@ -345,19 +382,16 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
               Rehearsal Dinner
             </span>
           </div>
-          <p className="mt-1 font-sans text-xs text-warm-gray">
-            {rehearsalYes.length} attending of {rehearsalInvited.length} invited
+          <p className="mt-1 font-serif text-2xl text-charcoal">
+            {rehearsalYes.length}
+            <span className="font-sans text-sm text-warm-gray">
+              {" "}
+              of {rehearsalInvited.length} invited
+            </span>
           </p>
-          {mealCounts.size > 0 && (
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
-              {Array.from(mealCounts.entries()).map(([meal, count]) => (
-                <span key={meal} className="font-sans text-xs text-charcoal-light">
-                  <span className="font-semibold text-charcoal">{count}</span>{" "}
-                  {MEAL_LABELS[meal] ?? meal}
-                </span>
-              ))}
-            </div>
-          )}
+          <p className="mt-1 font-sans text-xs italic text-warm-gray">
+            Attendance only — no meal selection
+          </p>
         </div>
       </div>
 
@@ -385,7 +419,6 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
           <tbody className="divide-y divide-linen">
             {guests.map((guest) => {
               const r = rsvpById.get(guest.guest_id);
-              const household = householdById.get(guest.household_id);
               const isPlaceholder = guest.name_status === "PLACEHOLDER_UNKNOWN";
               // For a plus-one seat, show the name they entered (or a placeholder)
               // and the adult/child choice; otherwise the imported guest_type.
@@ -407,7 +440,7 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
                     )}
                   </td>
                   <td className="px-4 py-3 font-sans text-sm text-charcoal-light">
-                    {household?.search_name ?? "—"}
+                    {householdLabel(guest.household_id)}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={statusOf(guest)} />
