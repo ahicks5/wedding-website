@@ -38,10 +38,13 @@ const MEALS = 5;
 const NOTES = 6;
 const CONFIRM = 7;
 
-const slideVariants = {
-  enter: (direction: number) => ({ x: direction > 0 ? 80 : -80, opacity: 0 }),
-  center: { x: 0, opacity: 1 },
-  exit: (direction: number) => ({ x: direction > 0 ? -80 : 80, opacity: 0 }),
+// Vertical fade rather than a horizontal slide: a horizontal x-offset makes the
+// entering step start off-screen, which momentarily widens the page on mobile
+// (the flashing/jump). A small y + opacity crossfade stays within the layout.
+const stepVariants = {
+  enter: (direction: number) => ({ opacity: 0, y: direction > 0 ? 10 : -10 }),
+  center: { opacity: 1, y: 0 },
+  exit: (direction: number) => ({ opacity: 0, y: direction > 0 ? -10 : 10 }),
 };
 
 export default function RsvpForm() {
@@ -233,11 +236,11 @@ export default function RsvpForm() {
         <motion.div
           key={step}
           custom={direction}
-          variants={slideVariants}
+          variants={stepVariants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
         >
           {step === SEARCH && <StepSearch onHouseholdFound={handleHouseholdFound} />}
 
