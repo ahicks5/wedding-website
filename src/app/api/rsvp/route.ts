@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+// Never cache submissions.
+export const dynamic = "force-dynamic";
+
 interface GuestRsvpInput {
   guest_id: string;
   attending_wedding: boolean | null;

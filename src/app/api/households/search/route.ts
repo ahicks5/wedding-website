@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { DEMO_GUESTS } from "@/lib/demo-data";
 
+// Always run fresh — never cache search results.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Guests can search by ANY named guest (not just the primary contact). Each
 // match resolves to that person's household, which the next step loads in full.
 export async function GET(request: NextRequest) {

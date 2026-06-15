@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { DEMO_HOUSEHOLDS, DEMO_GUESTS, DEMO_RSVPS } from "@/lib/demo-data";
 
+// Always run fresh — the admin dashboard must reflect live RSVP data.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Admin password is HARDCODED here on purpose. The ADMIN_PASSWORD env var is
 // intentionally ignored so a mistyped / stray-whitespace Vercel value can no
 // longer break login. (Note: this value is visible in the source code.)

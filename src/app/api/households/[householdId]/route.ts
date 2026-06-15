@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { DEMO_HOUSEHOLDS, DEMO_GUESTS, DEMO_RSVPS } from "@/lib/demo-data";
 
+// Always run fresh — never cache. RSVP responses change constantly, and a
+// cached snapshot would replay an old (or test) response for a household.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Returns a household, its non-removed guests, and any existing RSVP responses
 // (so a guest can review/edit a response they already submitted).
 export async function GET(

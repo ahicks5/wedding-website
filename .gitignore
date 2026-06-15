@@ -32,6 +32,9 @@ yarn-error.log*
 *.xlsx
 *.pdf
 
+# local screenshots
+Screenshot*.png
+
 # vercel
 .vercel
 
