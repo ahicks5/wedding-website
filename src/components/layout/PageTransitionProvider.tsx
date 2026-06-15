@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 // Fade the NEW page in only. The previous version used AnimatePresence with
 // mode="wait" + an exit animation, which faded the old page out to a blank
@@ -13,6 +13,10 @@ export default function PageTransitionProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const reduce = useReducedMotion();
+
+  // Reduce Motion on → no page-change fade at all.
+  if (reduce) return <div key={pathname}>{children}</div>;
 
   return (
     <motion.div

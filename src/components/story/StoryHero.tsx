@@ -2,18 +2,20 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 export default function StoryHero() {
   const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [0.65, 0.82]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  // Freeze the parallax translate when Reduce Motion is on (see Hero.tsx).
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "25%"]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [0.65, reduce ? 0.65 : 0.82]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, reduce ? 1 : 0]);
 
   // Heavy drop shadow so the white text stays crisp regardless of how
   // light or dark the photo behind it happens to be.

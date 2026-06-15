@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface FadeInProps {
@@ -28,6 +28,13 @@ export default function FadeIn({
   direction = "up",
   duration = 0.6,
 }: FadeInProps) {
+  const reduce = useReducedMotion();
+
+  // Reduce Motion on → render statically, no entrance animation at all.
+  if (reduce) {
+    return <div className={cn(className)}>{children}</div>;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, ...directionOffset[direction] }}

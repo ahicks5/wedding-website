@@ -2,20 +2,24 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { WEDDING } from "@/lib/constants";
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 0.4], [0, -60]);
+  // Disable the scroll-linked parallax when Reduce Motion is on — continuous
+  // scroll transforms are the main source of compositing flicker on some iOS
+  // versions. With reduce on, the hero is fully static.
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "20%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.4], [1, reduce ? 1 : 0]);
+  const contentY = useTransform(scrollYProgress, [0, 0.4], [0, reduce ? 0 : -60]);
 
   return (
     <section
