@@ -1,18 +1,18 @@
 "use client";
 
 import { Users } from "lucide-react";
-import type { Party } from "@/lib/database.types";
+import type { Household } from "@/lib/database.types";
 import type { GuestRsvpData } from "./RsvpForm";
 
 interface StepPartyProps {
-  party: Party;
+  household: Household;
   guests: GuestRsvpData[];
   onNext: () => void;
   onBack: () => void;
 }
 
 export default function StepParty({
-  party,
+  household,
   guests,
   onNext,
   onBack,
@@ -24,27 +24,32 @@ export default function StepParty({
       </div>
 
       <h2 className="mt-5 font-serif text-3xl text-charcoal sm:text-4xl">
-        {party.party_name}
+        {household.search_name}
       </h2>
       <p className="mt-2 font-sans text-sm text-charcoal-light">
-        We found your party! Please confirm these are the right guests.
+        We found your invitation! Please confirm these are the right guests.
       </p>
 
-      {/* Guest List */}
       <div className="mt-8 space-y-3">
         {guests.map((guest) => (
           <div
-            key={guest.id}
-            className="rounded-lg border border-linen bg-white px-5 py-4 text-left"
+            key={guest.guest_id}
+            className="flex items-center justify-between rounded-lg border border-linen bg-white px-5 py-4 text-left"
           >
             <span className="font-serif text-lg text-charcoal">
-              {guest.first_name} {guest.last_name}
+              {guest.name_status === "PLACEHOLDER_UNKNOWN"
+                ? "Your guest (plus-one)"
+                : guest.display_name}
             </span>
+            {guest.name_status === "PLACEHOLDER_UNKNOWN" && (
+              <span className="font-sans text-xs uppercase tracking-[0.15em] text-warm-gray">
+                Name added next
+              </span>
+            )}
           </div>
         ))}
       </div>
 
-      {/* Actions */}
       <div className="mt-10 flex items-center justify-center gap-4">
         <button onClick={onBack} className="btn-outline">
           Not Me

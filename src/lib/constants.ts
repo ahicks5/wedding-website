@@ -43,6 +43,37 @@ export const NAV_LINKS = [
   { label: "RSVP", href: "/rsvp" },
 ] as const;
 
+// ============================================
+// RECEPTION DINNER MENU
+// ============================================
+// Adults choose one entrée; children choose one kids' meal; infants need no
+// meal (the RSVP form skips them). The shared sides are served to everyone and
+// are informational only — guests do not pick them.
+
+export const ADULT_ENTREES = [
+  {
+    value: "Beef",
+    label: "Peppercorn Crusted Beef Tenderloin",
+    description: "Caramelized shallots, thyme, veal jus",
+  },
+  {
+    value: "Chicken",
+    label: "Herb Roasted Chicken Breast",
+    description: "Charred poblano cream sauce",
+  },
+] as const;
+
+export const KIDS_MEALS = [
+  { value: "Burger", label: "Burger & Fries", description: "" },
+  { value: "Tenders", label: "Chicken Tenders & Fries", description: "" },
+] as const;
+
+// Served to all guests — shown on the site, not selectable.
+export const SHARED_SIDES = [
+  "House mac & cheese",
+  "Crispy brussels sprouts (balsamic reduction & parmesan)",
+] as const;
+
 export const SCHEDULE = [
   {
     day: "Saturday",

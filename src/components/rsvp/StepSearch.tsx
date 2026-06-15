@@ -2,22 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Search, Loader2 } from "lucide-react";
-import type { Guest, Party } from "@/lib/database.types";
+import type { Guest, Household, Rsvp } from "@/lib/database.types";
 
-interface SearchResult {
-  id: string;
-  first_name: string;
-  last_name: string;
-  party_id: string;
+interface HouseholdResult {
+  household_id: number;
+  search_name: string;
 }
 
 interface StepSearchProps {
-  onPartyFound: (party: Party, guests: Guest[]) => void;
+  onHouseholdFound: (household: Household, guests: Guest[], rsvps: Rsvp[]) => void;
 }
 
-export default function StepSearch({ onPartyFound }: StepSearchProps) {
+export default function StepSearch({ onHouseholdFound }: StepSearchProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<HouseholdResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +32,7 @@ export default function StepSearch({ onPartyFound }: StepSearchProps) {
       setSearching(true);
       try {
         const res = await fetch(
-          `/api/guests/search?q=${encodeURIComponent(query)}`
+          `/api/households/search?q=${encodeURIComponent(query)}`
         );
         const data = await res.json();
         setResults(Array.isArray(data) ? data : []);
@@ -48,16 +46,16 @@ export default function StepSearch({ onPartyFound }: StepSearchProps) {
     return () => clearTimeout(debounceRef.current);
   }, [query]);
 
-  const selectGuest = async (guest: SearchResult) => {
+  const selectHousehold = async (household: HouseholdResult) => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/guests/party/${guest.party_id}`);
-      if (!res.ok) throw new Error("Party not found");
+      const res = await fetch(`/api/households/${household.household_id}`);
+      if (!res.ok) throw new Error("Household not found");
       const data = await res.json();
-      onPartyFound(data.party, data.guests);
+      onHouseholdFound(data.household, data.guests, data.rsvps ?? []);
     } catch {
-      setError("Could not find your party. Please try again.");
+      setError("Could not find your invitation. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -69,10 +67,9 @@ export default function StepSearch({ onPartyFound }: StepSearchProps) {
         Find Your Invitation
       </h2>
       <p className="mt-3 font-sans text-sm text-charcoal-light">
-        Search for your name to get started.
+        Search for the name on your invitation to get started.
       </p>
 
-      {/* Search Input */}
       <div className="relative mt-8">
         <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-warm-gray" />
         <input
@@ -88,19 +85,16 @@ export default function StepSearch({ onPartyFound }: StepSearchProps) {
         )}
       </div>
 
-      {/* Results */}
       {results.length > 0 && (
         <div className="mt-4 overflow-hidden rounded-lg border border-linen bg-white text-left shadow-soft">
-          {results.map((guest) => (
+          {results.map((h) => (
             <button
-              key={guest.id}
-              onClick={() => selectGuest(guest)}
+              key={h.household_id}
+              onClick={() => selectHousehold(h)}
               disabled={loading}
               className="flex w-full items-center justify-between px-5 py-4 font-sans text-sm text-charcoal transition-colors hover:bg-ivory disabled:opacity-50"
             >
-              <span>
-                {guest.first_name} {guest.last_name}
-              </span>
+              <span>{h.search_name}</span>
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-sage" />
               ) : (
@@ -111,16 +105,14 @@ export default function StepSearch({ onPartyFound }: StepSearchProps) {
         </div>
       )}
 
-      {/* No results */}
       {query.length >= 2 && !searching && results.length === 0 && (
         <p className="mt-4 font-sans text-sm text-warm-gray">
-          No guests found. Please check the spelling or try a different name.
+          No invitation found under that name. Try the other person&apos;s name on
+          your invitation, or check the spelling.
         </p>
       )}
 
-      {error && (
-        <p className="mt-4 font-sans text-sm text-red-500">{error}</p>
-      )}
+      {error && <p className="mt-4 font-sans text-sm text-red-500">{error}</p>}
     </div>
   );
 }

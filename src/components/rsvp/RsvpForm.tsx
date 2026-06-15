@@ -1,75 +1,129 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { Guest, Party, RsvpStatus } from "@/lib/database.types";
+import type { Guest, Household, Rsvp, NameStatus, GuestType } from "@/lib/database.types";
 import StepSearch from "./StepSearch";
 import StepParty from "./StepParty";
 import StepRsvp from "./StepRsvp";
+import StepRehearsal from "./StepRehearsal";
 import StepMeals from "./StepMeals";
 import StepNotes from "./StepNotes";
 import StepConfirmation from "./StepConfirmation";
 
 export interface GuestRsvpData {
-  id: string;
-  first_name: string;
-  last_name: string;
-  rsvp_status: RsvpStatus;
-  meal_choice: string;
-  dietary_restrictions: string;
-  notes: string;
+  guest_id: string;
+  display_name: string;
+  name_status: NameStatus;
+  guest_type: GuestType;
+  is_primary_contact: boolean;
+  invited_rehearsal_dinner: boolean;
+  attending_wedding: boolean | null;
+  attending_rehearsal: boolean | null;
+  meal_preference: string;
+  dietary_notes: string;
+  plus_one_name: string;
 }
 
-const TOTAL_STEPS = 6;
+// Logical steps. Rehearsal and meals are conditionally skipped, but we keep
+// stable numeric ids and compute the visible sequence so the progress bar and
+// next/back navigation stay correct regardless of which steps apply.
+const SEARCH = 1;
+const PARTY = 2;
+const RSVP = 3;
+const REHEARSAL = 4;
+const MEALS = 5;
+const NOTES = 6;
+const CONFIRM = 7;
 
 const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 80 : -80,
-    opacity: 0,
-  }),
+  enter: (direction: number) => ({ x: direction > 0 ? 80 : -80, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit: (direction: number) => ({
-    x: direction > 0 ? -80 : 80,
-    opacity: 0,
-  }),
+  exit: (direction: number) => ({ x: direction > 0 ? -80 : 80, opacity: 0 }),
 };
 
 export default function RsvpForm() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(SEARCH);
   const [direction, setDirection] = useState(1);
-  const [party, setParty] = useState<Party | null>(null);
+  const [household, setHousehold] = useState<Household | null>(null);
   const [guestData, setGuestData] = useState<GuestRsvpData[]>([]);
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const anyRehearsalInvited = guestData.some((g) => g.invited_rehearsal_dinner);
+  // Infants don't need a meal, so the meal step only applies if a non-infant is attending.
+  const anyNeedsMeal = guestData.some(
+    (g) => g.attending_wedding === true && g.guest_type !== "infant"
+  );
+
+  // The ordered list of steps that actually apply to this party.
+  const sequence = useMemo(() => {
+    const s = [SEARCH, PARTY, RSVP];
+    if (anyRehearsalInvited) s.push(REHEARSAL);
+    if (anyNeedsMeal) s.push(MEALS);
+    s.push(NOTES, CONFIRM);
+    return s;
+  }, [anyRehearsalInvited, anyNeedsMeal]);
+
+  const goTo = (target: number, dir: number) => {
+    setDirection(dir);
+    setStep(target);
+  };
+
   const goNext = () => {
-    setDirection(1);
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
+    const i = sequence.indexOf(step);
+    if (i >= 0 && i < sequence.length - 1) goTo(sequence[i + 1], 1);
   };
 
   const goBack = () => {
-    setDirection(-1);
-    setStep((s) => Math.max(s - 1, 1));
+    const i = sequence.indexOf(step);
+    if (i > 0) goTo(sequence[i - 1], -1);
   };
 
-  const handlePartyFound = (foundParty: Party, guests: Guest[]) => {
-    setParty(foundParty);
+  const primaryGuestId =
+    guestData.find((g) => g.is_primary_contact)?.guest_id ?? guestData[0]?.guest_id;
+
+  const handleHouseholdFound = (
+    foundHousehold: Household,
+    guests: Guest[],
+    rsvps: Rsvp[]
+  ) => {
+    const byId = new Map(rsvps.map((r) => [r.guest_id, r]));
+    setHousehold(foundHousehold);
     setGuestData(
-      guests.map((g) => ({
-        id: g.id,
-        first_name: g.first_name,
-        last_name: g.last_name,
-        rsvp_status: g.rsvp_status === "pending" ? "accepted" : g.rsvp_status,
-        meal_choice: g.meal_choice ?? "",
-        dietary_restrictions: g.dietary_restrictions ?? "",
-        notes: g.notes ?? "",
-      }))
+      guests.map((g) => {
+        const existing = byId.get(g.guest_id);
+        return {
+          guest_id: g.guest_id,
+          display_name: g.display_name,
+          name_status: g.name_status,
+          guest_type: g.guest_type,
+          is_primary_contact: g.is_primary_contact,
+          invited_rehearsal_dinner: g.invited_rehearsal_dinner,
+          attending_wedding: existing?.attending_wedding ?? null,
+          attending_rehearsal: existing?.attending_rehearsal ?? null,
+          meal_preference: existing?.meal_preference ?? "",
+          dietary_notes: existing?.dietary_notes ?? "",
+          plus_one_name:
+            existing?.plus_one_name ??
+            (g.name_status === "PLACEHOLDER_UNKNOWN" ? "" : g.display_name),
+        };
+      })
     );
-    goNext();
+    // Prefill contact/note from the primary's existing response, if any.
+    const primary = guests.find((g) => g.is_primary_contact) ?? guests[0];
+    const primaryRsvp = primary ? byId.get(primary.guest_id) : undefined;
+    setEmail(primaryRsvp?.rsvp_email ?? "");
+    setPhone(primaryRsvp?.rsvp_phone ?? "");
+    setNote(primaryRsvp?.notes ?? "");
+    goTo(PARTY, 1);
   };
 
   const updateGuest = (id: string, updates: Partial<GuestRsvpData>) => {
     setGuestData((prev) =>
-      prev.map((g) => (g.id === id ? { ...g, ...updates } : g))
+      prev.map((g) => (g.guest_id === id ? { ...g, ...updates } : g))
     );
   };
 
@@ -80,18 +134,26 @@ export default function RsvpForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          primary_guest_id: primaryGuestId,
+          email: email.trim() || null,
+          phone: phone.trim() || null,
+          note: note.trim() || null,
           guests: guestData.map((g) => ({
-            id: g.id,
-            rsvp_status: g.rsvp_status,
-            meal_choice: g.meal_choice || null,
-            dietary_restrictions: g.dietary_restrictions || null,
-            notes: g.notes || null,
+            guest_id: g.guest_id,
+            attending_wedding: g.attending_wedding,
+            attending_rehearsal: g.invited_rehearsal_dinner ? g.attending_rehearsal : null,
+            meal_preference:
+              g.attending_wedding && g.guest_type !== "infant"
+                ? g.meal_preference || null
+                : null,
+            dietary_notes: g.dietary_notes || null,
+            plus_one_name:
+              g.name_status === "PLACEHOLDER_UNKNOWN" ? g.plus_one_name || null : null,
           })),
         }),
       });
-
       if (!res.ok) throw new Error("Failed to submit");
-      goNext();
+      goTo(CONFIRM, 1);
     } catch {
       alert("Something went wrong. Please try again.");
     } finally {
@@ -99,34 +161,33 @@ export default function RsvpForm() {
     }
   };
 
-  // Determine if any guest is attending (for meal step)
-  const anyAccepted = guestData.some((g) => g.rsvp_status === "accepted");
+  // Progress: position within the applicable steps, excluding the final confirm.
+  const stepsBeforeConfirm = sequence.length - 1;
+  const currentIndex = sequence.indexOf(step) + 1;
 
   return (
     <div className="mx-auto max-w-2xl">
-      {/* Progress Bar */}
-      {step < TOTAL_STEPS && (
+      {step !== CONFIRM && (
         <div className="mb-10">
           <div className="flex items-center justify-between">
             <span className="font-sans text-xs uppercase tracking-[0.2em] text-warm-gray">
-              Step {step} of {TOTAL_STEPS - 1}
+              Step {currentIndex} of {stepsBeforeConfirm}
             </span>
             <span className="font-sans text-xs text-warm-gray">
-              {Math.round((step / (TOTAL_STEPS - 1)) * 100)}%
+              {Math.round((currentIndex / stepsBeforeConfirm) * 100)}%
             </span>
           </div>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-linen">
             <motion.div
               className="h-full bg-gold"
               initial={{ width: 0 }}
-              animate={{ width: `${(step / (TOTAL_STEPS - 1)) * 100}%` }}
+              animate={{ width: `${(currentIndex / stepsBeforeConfirm) * 100}%` }}
               transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             />
           </div>
         </div>
       )}
 
-      {/* Step Content */}
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={step}
@@ -137,50 +198,67 @@ export default function RsvpForm() {
           exit="exit"
           transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          {step === 1 && <StepSearch onPartyFound={handlePartyFound} />}
-          {step === 2 && party && (
+          {step === SEARCH && <StepSearch onHouseholdFound={handleHouseholdFound} />}
+
+          {step === PARTY && household && (
             <StepParty
-              party={party}
+              household={household}
               guests={guestData}
               onNext={goNext}
               onBack={goBack}
             />
           )}
-          {step === 3 && (
+
+          {step === RSVP && (
             <StepRsvp
               guests={guestData}
               updateGuest={updateGuest}
-              onNext={() => {
-                // Skip meals if nobody is attending
-                if (!guestData.some((g) => g.rsvp_status === "accepted")) {
-                  setDirection(1);
-                  setStep(5); // Jump to notes
-                } else {
-                  goNext();
-                }
-              }}
+              onNext={goNext}
               onBack={goBack}
             />
           )}
-          {step === 4 && anyAccepted && (
-            <StepMeals
-              guests={guestData.filter((g) => g.rsvp_status === "accepted")}
+
+          {step === REHEARSAL && (
+            <StepRehearsal
+              guests={guestData}
               updateGuest={updateGuest}
               onNext={goNext}
               onBack={goBack}
             />
           )}
-          {step === 5 && (
+
+          {step === MEALS && (
+            <StepMeals
+              guests={guestData.filter(
+                (g) => g.attending_wedding === true && g.guest_type !== "infant"
+              )}
+              updateGuest={updateGuest}
+              onNext={goNext}
+              onBack={goBack}
+            />
+          )}
+
+          {step === NOTES && (
             <StepNotes
               guests={guestData}
               updateGuest={updateGuest}
+              email={email}
+              phone={phone}
+              note={note}
+              setEmail={setEmail}
+              setPhone={setPhone}
+              setNote={setNote}
               onSubmit={handleSubmit}
               onBack={goBack}
               submitting={submitting}
             />
           )}
-          {step === 6 && (
-            <StepConfirmation guests={guestData} partyName={party?.party_name ?? ""} />
+
+          {step === CONFIRM && (
+            <StepConfirmation
+              guests={guestData}
+              searchName={household?.search_name ?? ""}
+            />
           )}
         </motion.div>
       </AnimatePresence>

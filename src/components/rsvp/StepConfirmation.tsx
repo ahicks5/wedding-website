@@ -7,27 +7,29 @@ import type { GuestRsvpData } from "./RsvpForm";
 
 interface StepConfirmationProps {
   guests: GuestRsvpData[];
-  partyName: string;
+  searchName: string;
 }
 
 export default function StepConfirmation({
   guests,
-  partyName,
+  searchName,
 }: StepConfirmationProps) {
-  const anyAccepted = guests.some((g) => g.rsvp_status === "accepted");
+  const anyAccepted = guests.some((g) => g.attending_wedding === true);
+  const anyRehearsal = guests.some(
+    (g) => g.invited_rehearsal_dinner && g.attending_rehearsal === true
+  );
+
+  const nameFor = (g: GuestRsvpData) =>
+    g.name_status === "PLACEHOLDER_UNKNOWN"
+      ? g.plus_one_name.trim() || "Your guest"
+      : g.display_name;
 
   return (
     <div className="text-center">
-      {/* Animated Checkmark */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 200,
-          damping: 15,
-          delay: 0.2,
-        }}
+        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
         className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-sage"
       >
         <motion.div
@@ -52,18 +54,17 @@ export default function StepConfirmation({
 
         {anyAccepted ? (
           <p className="mt-4 font-serif text-lg text-charcoal-light">
-            Thank you, {partyName}! Your RSVP has been received. We&apos;re so
+            Thank you, {searchName}! Your RSVP has been received. We&apos;re so
             excited to celebrate with you in August!
           </p>
         ) : (
           <p className="mt-4 font-serif text-lg text-charcoal-light">
-            Thank you for letting us know, {partyName}. We&apos;ll miss you!
+            Thank you for letting us know, {searchName}. We&apos;ll miss you!
             You&apos;ll be in our hearts on our special day.
           </p>
         )}
       </motion.div>
 
-      {/* RSVP Summary */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,26 +78,43 @@ export default function StepConfirmation({
           <div className="mt-4 space-y-2">
             {guests.map((guest) => (
               <div
-                key={guest.id}
+                key={guest.guest_id}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-charcoal">
-                  {guest.first_name} {guest.last_name}
-                </span>
+                <span className="text-charcoal">{nameFor(guest)}</span>
                 <span
                   className={
-                    guest.rsvp_status === "accepted"
+                    guest.attending_wedding === true
                       ? "font-medium text-sage"
                       : "text-warm-gray"
                   }
                 >
-                  {guest.rsvp_status === "accepted"
-                    ? "Attending"
-                    : "Not Attending"}
+                  {guest.attending_wedding === true ? "Attending" : "Not Attending"}
                 </span>
               </div>
             ))}
           </div>
+
+          {anyRehearsal && (
+            <div className="mt-4 border-t border-linen pt-4">
+              <p className="font-sans text-xs font-medium uppercase tracking-[0.2em] text-warm-gray">
+                Rehearsal Dinner
+              </p>
+              <div className="mt-3 space-y-2">
+                {guests
+                  .filter((g) => g.invited_rehearsal_dinner && g.attending_rehearsal === true)
+                  .map((guest) => (
+                    <div
+                      key={guest.guest_id}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span className="text-charcoal">{nameFor(guest)}</span>
+                      <span className="font-medium text-sage">Attending</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </motion.div>
 

@@ -28,6 +28,10 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# guest list & private docs — contain guest PII, keep out of git
+*.xlsx
+*.pdf
+
 # vercel
 .vercel
 

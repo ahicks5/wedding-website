@@ -6,73 +6,119 @@ import type { GuestRsvpData } from "./RsvpForm";
 interface StepNotesProps {
   guests: GuestRsvpData[];
   updateGuest: (id: string, updates: Partial<GuestRsvpData>) => void;
+  email: string;
+  phone: string;
+  note: string;
+  setEmail: (v: string) => void;
+  setPhone: (v: string) => void;
+  setNote: (v: string) => void;
   onSubmit: () => void;
   onBack: () => void;
   submitting: boolean;
 }
 
+const inputClass =
+  "mt-2 w-full rounded-lg border border-linen bg-white px-4 py-3 font-sans text-sm text-charcoal outline-none transition-colors placeholder:text-warm-gray/60 focus:border-sage focus:ring-2 focus:ring-sage/20";
+
 export default function StepNotes({
   guests,
   updateGuest,
+  email,
+  phone,
+  note,
+  setEmail,
+  setPhone,
+  setNote,
   onSubmit,
   onBack,
   submitting,
 }: StepNotesProps) {
-  // Show one combined dietary/notes section per guest
-  const attendingGuests = guests.filter((g) => g.rsvp_status === "accepted");
+  const attendingGuests = guests.filter((g) => g.attending_wedding === true);
   const allDeclining = attendingGuests.length === 0;
+
+  const nameFor = (g: GuestRsvpData) =>
+    g.name_status === "PLACEHOLDER_UNKNOWN"
+      ? g.plus_one_name.trim() || "Your guest"
+      : g.display_name;
 
   return (
     <div>
       <div className="text-center">
         <h2 className="font-serif text-3xl text-charcoal sm:text-4xl">
-          {allDeclining ? "Any Notes?" : "Dietary Needs & Notes"}
+          {allDeclining ? "A Few Last Things" : "Dietary Needs & Notes"}
         </h2>
         <p className="mt-2 font-sans text-sm text-charcoal-light">
           {allDeclining
             ? "Anything you'd like us to know?"
-            : "Let us know about any allergies, restrictions, or anything else."}
+            : "Let us know about any allergies or restrictions."}
         </p>
       </div>
 
       <div className="mt-8 space-y-6">
         {!allDeclining &&
           attendingGuests.map((guest) => (
-            <div key={guest.id}>
-              <p className="font-serif text-lg text-charcoal">
-                {guest.first_name} {guest.last_name}
-              </p>
+            <div key={guest.guest_id}>
+              <p className="font-serif text-lg text-charcoal">{nameFor(guest)}</p>
               <input
                 type="text"
                 placeholder="Dietary restrictions (e.g., nut allergy, vegan)..."
-                value={guest.dietary_restrictions}
+                value={guest.dietary_notes}
                 onChange={(e) =>
-                  updateGuest(guest.id, {
-                    dietary_restrictions: e.target.value,
-                  })
+                  updateGuest(guest.guest_id, { dietary_notes: e.target.value })
                 }
-                className="mt-2 w-full rounded-lg border border-linen bg-white px-4 py-3 font-sans text-sm text-charcoal outline-none transition-colors placeholder:text-warm-gray/60 focus:border-sage focus:ring-2 focus:ring-sage/20"
+                className={inputClass}
               />
             </div>
           ))}
 
-        {/* Shared notes field */}
+        {/* Shared note to the couple. */}
         <div>
           <label className="block font-sans text-sm font-medium text-charcoal">
             Anything else you&apos;d like to share?
           </label>
           <textarea
             placeholder="Song requests, well wishes, special needs..."
-            value={guests[0]?.notes ?? ""}
-            onChange={(e) => {
-              // Apply note to the first guest (party-level note)
-              if (guests[0]) {
-                updateGuest(guests[0].id, { notes: e.target.value });
-              }
-            }}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
             rows={3}
-            className="mt-2 w-full resize-none rounded-lg border border-linen bg-white px-4 py-3 font-sans text-sm text-charcoal outline-none transition-colors placeholder:text-warm-gray/60 focus:border-sage focus:ring-2 focus:ring-sage/20"
+            className={`${inputClass} resize-none`}
           />
+        </div>
+
+        {/* Optional contact info, kept on the primary contact. */}
+        <div className="rounded-lg border border-linen bg-ivory/50 p-5">
+          <p className="font-sans text-xs font-medium uppercase tracking-[0.2em] text-warm-gray">
+            Contact info (optional)
+          </p>
+          <p className="mt-1 font-sans text-xs text-warm-gray">
+            So we can reach you with any updates.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block font-sans text-sm font-medium text-charcoal">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className="block font-sans text-sm font-medium text-charcoal">
+                Phone
+              </label>
+              <input
+                type="tel"
+                placeholder="(555) 555-5555"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className={inputClass}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -80,11 +126,7 @@ export default function StepNotes({
         <button onClick={onBack} className="btn-outline" disabled={submitting}>
           Back
         </button>
-        <button
-          onClick={onSubmit}
-          className="btn-primary"
-          disabled={submitting}
-        >
+        <button onClick={onSubmit} className="btn-primary" disabled={submitting}>
           {submitting ? (
             <span className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />

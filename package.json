@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "node --test",
+    "import-guests": "node --env-file=.env.local scripts/import-guests.mjs",
     "sync-gallery": "node scripts/sync-gallery.mjs",
     "sync-fluff": "node scripts/sync-fluff.mjs"
   },
