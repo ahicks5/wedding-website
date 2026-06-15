@@ -20,11 +20,22 @@ export type HoneymoonExperience = {
   location: string;
   /** One-line pitch in the couple's voice. */
   blurb: string;
-  /** Fundraising target in whole dollars. Bars can exceed this. */
-  goalDollars: number;
+  /**
+   * Fundraising target in whole dollars. Bars can exceed this. Set to `null`
+   * for an open-ended fund — it shows the running total with no goal/bar.
+   */
+  goalDollars: number | null;
 };
 
 export const HONEYMOON_EXPERIENCES: HoneymoonExperience[] = [
+  {
+    id: "general-fund",
+    emoji: "💙",
+    title: "The honeymoon fund",
+    location: "Everywhere",
+    blurb: "Toward anything and everything else — every bit helps us celebrate.",
+    goalDollars: null,
+  },
   {
     id: "mallorca-boat-day",
     emoji: "🏖️",
@@ -56,14 +67,6 @@ export const HONEYMOON_EXPERIENCES: HoneymoonExperience[] = [
     location: "Rome",
     blurb: "The long, candlelit, anniversary-worthy one.",
     goalDollars: 250,
-  },
-  {
-    id: "general-fund",
-    emoji: "💙",
-    title: "The honeymoon fund",
-    location: "Everywhere",
-    blurb: "Toward anything and everything else — every bit helps us celebrate.",
-    goalDollars: 2000,
   },
 ];
 

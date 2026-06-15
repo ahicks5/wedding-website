@@ -62,8 +62,12 @@ function ExperienceCard({
   raisedDollars: number;
   onContribute: () => void;
 }) {
-  const pct = Math.min(100, Math.round((raisedDollars / exp.goalDollars) * 100));
-  const funded = raisedDollars >= exp.goalDollars;
+  // Open-ended fund (no goal): a full decorative bar + running total, no target.
+  const openEnded = exp.goalDollars == null;
+  const pct = openEnded
+    ? 100
+    : Math.min(100, Math.round((raisedDollars / exp.goalDollars!) * 100));
+  const funded = !openEnded && raisedDollars >= exp.goalDollars!;
 
   return (
     <div className="rounded-xl border border-linen bg-white p-6 shadow-soft sm:p-7">
@@ -95,14 +99,19 @@ function ExperienceCard({
         </div>
         <div className="mt-2 flex items-baseline justify-between font-sans text-sm">
           <span className="font-medium text-charcoal">
-            {funded ? (
+            {openEnded ? (
+              <>
+                {formatUSD(raisedDollars)}{" "}
+                <span className="text-warm-gray">contributed so far</span>
+              </>
+            ) : funded ? (
               <span className="inline-flex items-center gap-1.5 text-gold-dark">
                 <Check className="h-4 w-4" /> Fully funded — thank you!
               </span>
             ) : (
               <>
                 {formatUSD(raisedDollars)}{" "}
-                <span className="text-warm-gray">of {formatUSD(exp.goalDollars)}</span>
+                <span className="text-warm-gray">of {formatUSD(exp.goalDollars!)}</span>
               </>
             )}
           </span>
