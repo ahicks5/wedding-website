@@ -6,6 +6,7 @@ import Nav from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
 import SkipToContent from "@/components/layout/SkipToContent";
 import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
+import MotionProvider from "@/components/layout/MotionProvider";
 import "@/styles/globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -51,12 +52,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${montserrat.variable}`}>
       <body className="antialiased">
-        <SkipToContent />
-        <Nav />
-        <main id="main-content" className="min-h-screen">
-          <PageTransitionProvider>{children}</PageTransitionProvider>
-        </main>
-        <Footer />
+        <MotionProvider>
+          <SkipToContent />
+          <Nav />
+          <main id="main-content" className="min-h-screen">
+            <PageTransitionProvider>{children}</PageTransitionProvider>
+          </main>
+          <Footer />
+        </MotionProvider>
         <Analytics />
         <SpeedInsights />
       </body>
