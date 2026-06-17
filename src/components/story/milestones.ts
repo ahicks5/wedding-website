@@ -155,14 +155,6 @@ export const TIMELINE: TimelineItem[] = [
   },
   {
     type: "milestone",
-    id: "ring-shopping",
-    date: "September 2025",
-    title: "Ring shopping",
-    description: "A hint of what was coming.",
-    side: "right",
-  },
-  {
-    type: "milestone",
     id: "nd-am-2025",
     date: "September 13, 2025",
     title: "Texas A&M at Notre Dame",

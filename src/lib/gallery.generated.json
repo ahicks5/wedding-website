@@ -6,7 +6,7 @@
     "source": "milestone-override",
     "milestoneId": "first-date",
     "width": 1170,
-    "height": 2532
+    "height": 1564
   },
   {
     "src": "gallery/shreveport .jpg",
@@ -23,8 +23,8 @@
     "date": "2022-01-07T12:00:00.000Z",
     "source": "milestone-override",
     "milestoneId": "official",
-    "width": 1170,
-    "height": 2532
+    "width": 983,
+    "height": 1387
   },
   {
     "src": "gallery/IMG_1148.jpg",
@@ -32,8 +32,8 @@
     "date": "2022-02-12T20:39:37.000Z",
     "source": "DateTimeOriginal",
     "milestoneId": null,
-    "width": 1170,
-    "height": 2532
+    "width": 1040,
+    "height": 1379
   },
   {
     "src": "gallery/IMG_1897.jpg",
@@ -50,8 +50,8 @@
     "date": "2022-05-21T12:00:00.000Z",
     "source": "milestone-override",
     "milestoneId": "andrew-graduation",
-    "width": 2048,
-    "height": 1536
+    "width": 1524,
+    "height": 1096
   },
   {
     "src": "gallery/IMG_2135.jpg",
@@ -86,8 +86,8 @@
     "date": "2022-12-25T00:26:14.000Z",
     "source": "DateTimeOriginal",
     "milestoneId": null,
-    "width": 1536,
-    "height": 2048
+    "width": 1119,
+    "height": 1495
   },
   {
     "src": "gallery/taylor swift.JPG",
@@ -97,15 +97,6 @@
     "milestoneId": "eras",
     "width": 1440,
     "height": 1800
-  },
-  {
-    "src": "gallery/IMG_4463.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2023-05-29T00:07:26.000Z",
-    "source": "DateTimeOriginal",
-    "milestoneId": null,
-    "width": 1448,
-    "height": 2171
   },
   {
     "src": "gallery/IMG_4469.jpg",
@@ -225,15 +216,6 @@
     "height": 2048
   },
   {
-    "src": "gallery/IMG_8277.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2024-08-31T20:27:05.000Z",
-    "source": "DateTimeOriginal",
-    "milestoneId": null,
-    "width": 1536,
-    "height": 2048
-  },
-  {
     "src": "gallery/nyc.jpg",
     "alt": "Andrew & Lyndsey",
     "date": "2024-11-15T12:00:00.000Z",
@@ -257,8 +239,8 @@
     "date": "2024-12-25T00:25:21.000Z",
     "source": "DateTimeOriginal",
     "milestoneId": null,
-    "width": 1536,
-    "height": 2048
+    "width": 996,
+    "height": 1389
   },
   {
     "src": "gallery/IMG_4481.jpg",
@@ -284,17 +266,8 @@
     "date": "2025-06-15T12:00:00.000Z",
     "source": "manual-override",
     "milestoneId": null,
-    "width": 1179,
-    "height": 2008
-  },
-  {
-    "src": "gallery/ring shopping.jpg",
-    "alt": "Andrew & Lyndsey",
-    "date": "2025-09-05T12:00:00.000Z",
-    "source": "milestone-override",
-    "milestoneId": "ring-shopping",
-    "width": 1067,
-    "height": 1600
+    "width": 840,
+    "height": 1168
   },
   {
     "src": "gallery/notre dame vs tamu2.jpg",
@@ -347,8 +320,8 @@
     "date": "2026-03-08T22:31:56.000Z",
     "source": "DateTimeOriginal",
     "milestoneId": null,
-    "width": 1536,
-    "height": 2048
+    "width": 1115,
+    "height": 1501
   },
   {
     "src": "gallery/IMG_2800.jpg",
