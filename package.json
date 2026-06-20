@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test": "node --test",
     "import-guests": "node --env-file=.env.local scripts/import-guests.mjs",
+    "export-guests": "node --env-file=.env.local scripts/export-guests.mjs",
     "sync-gallery": "node scripts/sync-gallery.mjs",
     "sync-fluff": "node scripts/sync-fluff.mjs"
   },

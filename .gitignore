@@ -31,6 +31,7 @@ yarn-error.log*
 # guest list & private docs — contain guest PII, keep out of git
 *.xlsx
 *.pdf
+guest-list-review.csv
 
 # local screenshots
 Screenshot*.png
