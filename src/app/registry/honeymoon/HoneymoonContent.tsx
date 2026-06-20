@@ -99,12 +99,22 @@ function ExperienceCard({
   raisedDollars: number;
   onContribute: () => void;
 }) {
-  // Open-ended fund (no goal): a full decorative bar + running total, no target.
+  // Open-ended fund (no goal): no bar and no dollar metric — just a button.
   const openEnded = exp.goalDollars == null;
   const pct = openEnded
     ? 100
     : Math.min(100, Math.round((raisedDollars / exp.goalDollars!) * 100));
   const funded = !openEnded && raisedDollars >= exp.goalDollars!;
+
+  const contributeButton = (
+    <button
+      onClick={onContribute}
+      className="inline-flex items-center gap-1.5 rounded-full bg-sage px-4 py-2 font-sans text-xs font-medium uppercase tracking-[0.12em] text-white transition-colors hover:bg-sage-dark"
+    >
+      <Heart className="h-3.5 w-3.5" />
+      Contribute
+    </button>
+  );
 
   return (
     <div className="rounded-xl border border-linen bg-white p-6 shadow-soft sm:p-7">
@@ -123,43 +133,41 @@ function ExperienceCard({
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="mt-5">
-        <div className="h-2.5 w-full overflow-hidden rounded-full bg-linen">
-          <motion.div
-            className={`h-full rounded-full ${funded ? "bg-gold" : "bg-sage"}`}
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
-          />
+      {openEnded ? (
+        // The general fund has no goal and never shows a dollar metric — just
+        // a warm invitation to give whatever feels right.
+        <div className="mt-5 flex justify-end">
+          {contributeButton}
         </div>
-        <div className="mt-2 flex items-baseline justify-between font-sans text-sm">
-          <span className="font-medium text-charcoal">
-            {openEnded ? (
-              <>
-                {formatUSD(raisedDollars)}{" "}
-                <span className="text-warm-gray">contributed so far</span>
-              </>
-            ) : funded ? (
-              <span className="inline-flex items-center gap-1.5 text-gold-dark">
-                <Check className="h-4 w-4" /> Fully funded — thank you!
-              </span>
-            ) : (
-              <>
-                {formatUSD(raisedDollars)}{" "}
-                <span className="text-warm-gray">of {formatUSD(exp.goalDollars!)}</span>
-              </>
-            )}
-          </span>
-          <button
-            onClick={onContribute}
-            className="inline-flex items-center gap-1.5 rounded-full bg-sage px-4 py-2 font-sans text-xs font-medium uppercase tracking-[0.12em] text-white transition-colors hover:bg-sage-dark"
-          >
-            <Heart className="h-3.5 w-3.5" />
-            Contribute
-          </button>
+      ) : (
+        <div className="mt-5">
+          <div className="h-2.5 w-full overflow-hidden rounded-full bg-linen">
+            <motion.div
+              className={`h-full rounded-full ${funded ? "bg-gold" : "bg-sage"}`}
+              initial={{ width: 0 }}
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+            />
+          </div>
+          <div className="mt-2 flex items-baseline justify-between font-sans text-sm">
+            <span className="font-medium text-charcoal">
+              {funded ? (
+                <span className="inline-flex items-center gap-1.5 text-gold-dark">
+                  <Check className="h-4 w-4" /> Fully funded — thank you!
+                </span>
+              ) : (
+                <>
+                  {formatUSD(raisedDollars)}{" "}
+                  <span className="text-warm-gray">
+                    of {formatUSD(exp.goalDollars!)}
+                  </span>
+                </>
+              )}
+            </span>
+            {contributeButton}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

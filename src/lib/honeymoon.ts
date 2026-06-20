@@ -29,44 +29,36 @@ export type HoneymoonExperience = {
 
 export const HONEYMOON_EXPERIENCES: HoneymoonExperience[] = [
   {
+    id: "mallorca-massage",
+    emoji: "💆",
+    title: "A massage in Mallorca",
+    location: "Mallorca",
+    blurb: "Side by side and fully unwound, with the Mediterranean just outside.",
+    goalDollars: 300,
+  },
+  {
+    id: "florence-wine-tasting",
+    emoji: "🍷",
+    title: "Wine tasting in Florence",
+    location: "Florence",
+    blurb: "A slow afternoon among the Tuscan vines, glass in hand.",
+    goalDollars: 200,
+  },
+  {
+    id: "vatican-tour",
+    emoji: "⛪",
+    title: "A Vatican tour",
+    location: "Rome",
+    blurb: "St. Peter's and the Sistine Chapel, with a guide all to ourselves.",
+    goalDollars: 200,
+  },
+  {
     id: "general-fund",
     emoji: "💙",
     title: "The honeymoon fund",
     location: "Everywhere",
     blurb: "Toward anything and everything else — every bit helps us celebrate.",
     goalDollars: null,
-  },
-  {
-    id: "mallorca-boat-day",
-    emoji: "🏖️",
-    title: "A boat day in Mallorca",
-    location: "Mallorca",
-    blurb: "Our own little cove, a chilled bottle of wine, and nowhere to be.",
-    goalDollars: 400,
-  },
-  {
-    id: "tuscany-wine-tasting",
-    emoji: "🍷",
-    title: "Wine tasting in Tuscany",
-    location: "Florence",
-    blurb: "A slow afternoon among the Chianti vines, glass in hand.",
-    goalDollars: 250,
-  },
-  {
-    id: "vatican-private-tour",
-    emoji: "⛪",
-    title: "A private Vatican tour",
-    location: "Rome",
-    blurb: "St. Peter's and the Sistine Chapel, with a guide all to ourselves.",
-    goalDollars: 300,
-  },
-  {
-    id: "rome-special-dinner",
-    emoji: "🍝",
-    title: "A special dinner in Rome",
-    location: "Rome",
-    blurb: "The long, candlelit, anniversary-worthy one.",
-    goalDollars: 250,
   },
 ];
 
@@ -83,11 +75,10 @@ export function getExperience(id: string): HoneymoonExperience | undefined {
 // Supabase + the webhook are live, real contributions replace these entirely.
 // ---------------------------------------------------------------------------
 export const DEMO_RAISED_DOLLARS: Record<string, number> = {
-  "mallorca-boat-day": 260,
-  "tuscany-wine-tasting": 250, // fully funded — shows the celebratory state
-  "vatican-private-tour": 90,
-  "rome-special-dinner": 175,
-  "general-fund": 640,
+  "mallorca-massage": 180,
+  "florence-wine-tasting": 200, // fully funded — shows the celebratory state
+  "vatican-tour": 75,
+  // general-fund intentionally omitted — it never shows a dollar metric.
 };
 
 // Preset "quick amount" chips offered in the contribute dialog (dollars).
