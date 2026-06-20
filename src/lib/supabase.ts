@@ -10,6 +10,14 @@ export const supabase =
   supabaseUrl && supabaseServiceKey
     ? createClient(supabaseUrl, supabaseServiceKey, {
         auth: { persistSession: false, autoRefreshToken: false },
+        // Bypass Next.js's fetch Data Cache so every read reflects the latest
+        // database state. Without this, Next can cache a Supabase GET response
+        // (e.g. honeymoon totals) and keep serving a stale snapshot — which
+        // made new contributions appear to "not show up" on the site.
+        global: {
+          fetch: (input, init) =>
+            fetch(input as RequestInfo, { ...init, cache: "no-store" }),
+        },
       })
     : null;
 
