@@ -38,7 +38,8 @@ export default function ThankYouContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.55, duration: 0.5 }}
         >
-          You just made our honeymoon a little sweeter.
+          We&apos;re endlessly grateful for your kindness, and so deeply
+          thankful to have you in our lives.
         </motion.p>
 
         <motion.p
