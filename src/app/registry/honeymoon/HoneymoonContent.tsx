@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, X, Check, Loader2 } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
@@ -15,6 +15,38 @@ import type { RaisedTotals } from "@/lib/contributions";
 
 export default function HoneymoonContent({ raised }: { raised: RaisedTotals }) {
   const [active, setActive] = useState<HoneymoonExperience | null>(null);
+
+  // Start from the server-rendered totals (instant, no flicker), then keep
+  // them live: re-fetch on mount and whenever the guest returns to the tab, so
+  // a fresh gift shows up without anyone needing to hard-refresh.
+  const [liveRaised, setLiveRaised] = useState<RaisedTotals>(raised);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function refresh() {
+      try {
+        const res = await fetch("/api/honeymoon/totals", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && data?.raised) setLiveRaised(data.raised);
+      } catch {
+        // Network blip — keep showing the last good numbers.
+      }
+    }
+
+    refresh();
+
+    function onVisible() {
+      if (document.visibilityState === "visible") refresh();
+    }
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
 
   return (
     <>
@@ -31,7 +63,7 @@ export default function HoneymoonContent({ raised }: { raised: RaisedTotals }) {
               <FadeIn key={exp.id} delay={i * 0.08}>
                 <ExperienceCard
                   exp={exp}
-                  raisedDollars={raised[exp.id] ?? 0}
+                  raisedDollars={liveRaised[exp.id] ?? 0}
                   onContribute={() => setActive(exp)}
                 />
               </FadeIn>
@@ -92,8 +124,7 @@ function ExperienceCard({
           <motion.div
             className={`h-full rounded-full ${funded ? "bg-gold" : "bg-sage"}`}
             initial={{ width: 0 }}
-            whileInView={{ width: `${pct}%` }}
-            viewport={{ once: true }}
+            animate={{ width: `${pct}%` }}
             transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
           />
         </div>
