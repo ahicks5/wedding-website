@@ -37,6 +37,10 @@ export default function HoneymoonContent({ raised }: { raised: RaisedTotals }) {
 
     refresh();
 
+    // Poll while the page is open so the bars feel live, and refresh the moment
+    // a guest switches back to the tab (e.g. returning from Stripe checkout).
+    const interval = setInterval(refresh, 15000);
+
     function onVisible() {
       if (document.visibilityState === "visible") refresh();
     }
@@ -44,6 +48,7 @@ export default function HoneymoonContent({ raised }: { raised: RaisedTotals }) {
 
     return () => {
       cancelled = true;
+      clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
