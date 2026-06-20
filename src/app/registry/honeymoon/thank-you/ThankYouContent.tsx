@@ -33,12 +33,12 @@ export default function ThankYouContent() {
         </motion.h1>
 
         <motion.p
-          className="mx-auto mt-5 max-w-md font-sans text-sm leading-relaxed text-warm-gray"
+          className="mx-auto mt-5 max-w-md font-sans text-base leading-relaxed text-charcoal-light"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.55, duration: 0.5 }}
         >
-          It may take a little while for your gift to show up on the fund page.
+          You just made our honeymoon a little sweeter.
         </motion.p>
 
         <motion.p
