@@ -29,6 +29,14 @@ export type HoneymoonExperience = {
 
 export const HONEYMOON_EXPERIENCES: HoneymoonExperience[] = [
   {
+    id: "general-fund",
+    emoji: "💙",
+    title: "The honeymoon fund",
+    location: "Everywhere",
+    blurb: "Toward anything and everything else — every bit helps us celebrate.",
+    goalDollars: null,
+  },
+  {
     id: "mallorca-massage",
     emoji: "💆",
     title: "A massage in Mallorca",
@@ -51,14 +59,6 @@ export const HONEYMOON_EXPERIENCES: HoneymoonExperience[] = [
     location: "Rome",
     blurb: "St. Peter's and the Sistine Chapel, with a guide all to ourselves.",
     goalDollars: 200,
-  },
-  {
-    id: "general-fund",
-    emoji: "💙",
-    title: "The honeymoon fund",
-    location: "Everywhere",
-    blurb: "Toward anything and everything else — every bit helps us celebrate.",
-    goalDollars: null,
   },
 ];
 
