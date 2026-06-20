@@ -41,11 +41,13 @@ const REGISTRIES: Registry[] = [
   },
   {
     name: "Honeymoon Fund",
-    description: "Help send us off to Italy.",
+    description: "Opening in just a couple of days — check back soon.",
     icon: Palmtree,
+    // Kept here so it's a one-line change to re-enable: set comingSoon:false
+    // and internal:true once Stripe is live.
     url: "/registry/honeymoon",
     color: "sage",
-    internal: true,
+    comingSoon: true,
   },
 ];
 
@@ -91,7 +93,7 @@ export default function RegistryContent() {
 
                   {isComingSoon ? (
                     <span className="mt-auto pt-6 inline-flex items-center gap-1.5 font-sans text-xs font-medium uppercase tracking-[0.2em] text-warm-gray">
-                      Coming Soon
+                      Opening Soon
                     </span>
                   ) : (
                     <span className="mt-auto pt-6 inline-flex items-center gap-1.5 font-sans text-xs font-medium uppercase tracking-[0.15em] text-sage transition-colors group-hover:text-gold">
