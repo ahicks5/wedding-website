@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Gift,
   Sofa,
   Palmtree,
   ExternalLink,
+  ArrowRight,
   type LucideIcon,
 } from "lucide-react";
 import FadeIn from "@/components/animations/FadeIn";
@@ -18,6 +20,8 @@ type Registry = {
   url: string | null;
   color: "sage" | "gold";
   comingSoon?: boolean;
+  /** Internal link (same site) — uses client-side routing, no new tab. */
+  internal?: boolean;
 };
 
 const REGISTRIES: Registry[] = [
@@ -37,10 +41,11 @@ const REGISTRIES: Registry[] = [
   },
   {
     name: "Honeymoon Fund",
+    description: "Help send us off to Italy.",
     icon: Palmtree,
-    url: null,
+    url: "/registry/honeymoon",
     color: "sage",
-    comingSoon: true,
+    internal: true,
   },
 ];
 
@@ -90,8 +95,12 @@ export default function RegistryContent() {
                     </span>
                   ) : (
                     <span className="mt-auto pt-6 inline-flex items-center gap-1.5 font-sans text-xs font-medium uppercase tracking-[0.15em] text-sage transition-colors group-hover:text-gold">
-                      View Registry
-                      <ExternalLink className="h-3 w-3" />
+                      {registry.internal ? "View the Fund" : "View Registry"}
+                      {registry.internal ? (
+                        <ArrowRight className="h-3 w-3" />
+                      ) : (
+                        <ExternalLink className="h-3 w-3" />
+                      )}
                     </span>
                   )}
                 </>
@@ -101,6 +110,13 @@ export default function RegistryContent() {
                 <FadeIn key={registry.name} delay={i * 0.12}>
                   {isComingSoon || !registry.url ? (
                     <div className={cardClasses}>{body}</div>
+                  ) : registry.internal ? (
+                    <Link
+                      href={registry.url}
+                      className={`${cardClasses} transition-transform hover:-translate-y-1.5`}
+                    >
+                      {body}
+                    </Link>
                   ) : (
                     <motion.a
                       href={registry.url}
