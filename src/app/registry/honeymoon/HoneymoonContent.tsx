@@ -191,6 +191,9 @@ function ContributeDialog({
   const customNum = parseFloat(custom);
   const chosenDollars = custom.trim() && !Number.isNaN(customNum) ? customNum : amount;
   const valid = chosenDollars >= 5;
+  // True only when a custom amount has been typed but is under the $5 minimum,
+  // so we can highlight the hint without nagging before they've entered anything.
+  const belowMin = custom.trim() !== "" && !Number.isNaN(customNum) && customNum < 5;
 
   async function handleSubmit() {
     if (!valid) return;
@@ -315,9 +318,18 @@ function ContributeDialog({
                   placeholder="Other amount"
                   value={custom}
                   onChange={(e) => setCustom(e.target.value)}
-                  className="w-full rounded-lg border border-linen py-2.5 pl-8 pr-4 font-sans text-sm text-charcoal outline-none transition-colors focus:border-sage"
+                  className={`w-full rounded-lg border py-2.5 pl-8 pr-4 font-sans text-sm text-charcoal outline-none transition-colors ${
+                    belowMin ? "border-red-400 focus:border-red-500" : "border-linen focus:border-sage"
+                  }`}
                 />
               </label>
+              <p
+                className={`mt-2 font-sans text-xs ${
+                  belowMin ? "text-red-600" : "text-warm-gray"
+                }`}
+              >
+                There&apos;s a $5 minimum.
+              </p>
             </div>
 
             {status === "error" && (
