@@ -41,7 +41,7 @@ const REGISTRIES: Registry[] = [
   },
   {
     name: "Honeymoon Fund",
-    description: "Help send us off to Italy.",
+    description: "Help send us off on our honeymoon.",
     icon: Palmtree,
     url: "/registry/honeymoon",
     color: "sage",
