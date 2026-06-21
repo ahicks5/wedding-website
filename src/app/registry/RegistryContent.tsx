@@ -41,13 +41,11 @@ const REGISTRIES: Registry[] = [
   },
   {
     name: "Honeymoon Fund",
-    description: "Opening in just a couple of days — check back soon.",
+    description: "Help send us off to Italy.",
     icon: Palmtree,
-    // Kept here so it's a one-line change to re-enable: set comingSoon:false
-    // and internal:true once Stripe is live.
     url: "/registry/honeymoon",
     color: "sage",
-    comingSoon: true,
+    internal: true,
   },
 ];
 
