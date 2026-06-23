@@ -18,7 +18,7 @@ const FAQ_ITEMS = [
   {
     question: "What time should I arrive?",
     answer:
-      "The ceremony begins at 2:00 PM. We kindly ask that guests arrive by 1:30 PM to allow time to be seated. The doors will open at 1:15 PM.",
+      "The ceremony begins at 2:00 PM. The church doors open at 1:30 PM — the earliest guests can be seated — so please plan to arrive between 1:30 and 1:45 PM.",
   },
   {
     question: "Is there parking available?",

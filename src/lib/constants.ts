@@ -90,6 +90,7 @@ export const SCHEDULE = [
     day: "Saturday",
     date: "August 15",
     events: [
+      { time: "1:30 PM", title: "Doors Open", location: "St. John Neumann Catholic Church" },
       { time: "2:00 PM", title: "Ceremony", location: "St. John Neumann Catholic Church" },
       { time: "5:00 PM", title: "Cocktail Hour", location: "Hotel Ella" },
       { time: "6:00 PM", title: "Reception & Dinner", location: "Hotel Ella" },
