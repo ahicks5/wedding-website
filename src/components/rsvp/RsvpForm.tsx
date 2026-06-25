@@ -107,11 +107,20 @@ export default function RsvpForm() {
   ) => {
     const byId = new Map(rsvps.map((r) => [r.guest_id, r]));
     setHousehold(foundHousehold);
-    // Display label: primary contact's last name + " Party" (e.g. "Milligan
-    // Party"), falling back to the stored search name.
+    // Display label: a deliberately-set party name (the stored search_name
+    // already ending in "Party", e.g. "Dickman and Geneslaw Party") wins as an
+    // override; otherwise default to the primary contact's last name + " Party"
+    // (e.g. "Milligan Party"), falling back to the raw stored name.
     const primaryGuest = guests.find((g) => g.is_primary_contact) ?? guests[0];
     const lastName = primaryGuest?.last_name?.trim();
-    setHouseholdLabel(lastName ? `${lastName} Party` : foundHousehold.search_name);
+    const stored = foundHousehold.search_name?.trim();
+    setHouseholdLabel(
+      stored && /party$/i.test(stored)
+        ? stored
+        : lastName
+          ? `${lastName} Party`
+          : stored ?? ""
+    );
     setGuestData(
       guests.map((g) => {
         const existing = byId.get(g.guest_id);

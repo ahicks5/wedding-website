@@ -268,13 +268,17 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
     return r.attending_wedding ? "accepted" : "declined";
   };
 
-  // Household display label: the primary contact's last name + " Party"
-  // (e.g. "Milligan Party"), falling back to the stored search name.
+  // Household display label: a deliberately-set party name (the stored
+  // search_name already ending in "Party", e.g. "Dickman and Geneslaw Party")
+  // wins as an override; otherwise default to the primary contact's last name
+  // + " Party" (e.g. "Milligan Party"), falling back to the raw stored name.
   const householdLabel = (hid: number): string => {
     const primary = guests.find((g) => g.household_id === hid && g.is_primary_contact);
     const last = primary?.last_name?.trim();
+    const stored = householdById.get(hid)?.search_name?.trim();
+    if (stored && /party$/i.test(stored)) return stored;
     if (last) return `${last} Party`;
-    return householdById.get(hid)?.search_name ?? "—";
+    return stored ?? "—";
   };
 
   const accepted = guests.filter((g) => statusOf(g) === "accepted");
