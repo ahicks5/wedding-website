@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   ADULT_ENTREES,
@@ -20,6 +20,9 @@ interface StepMealsProps {
 
 const isPlaceholder = (g: GuestRsvpData) => g.name_status === "PLACEHOLDER_UNKNOWN";
 
+// Kids' meals are locked to a single option for now — no choice, just show it.
+const KIDS_FIXED_MEAL = KIDS_MEALS.find((m) => m.value === "Tenders") ?? KIDS_MEALS[0];
+
 // Whether to show the kids' menu for a guest. Placeholder (plus-one) seats use
 // the adult/child choice made on this step; everyone else uses their guest_type.
 const wantsKidsMenu = (g: GuestRsvpData) =>
@@ -34,6 +37,17 @@ export default function StepMeals({
   onBack,
 }: StepMealsProps) {
   const [error, setError] = useState("");
+
+  // Kids can only have the fixed children's meal — auto-assign it so there's no
+  // choice to make (and the "meal required" check passes). Re-runs if a plus-one
+  // seat is toggled to "child".
+  useEffect(() => {
+    for (const g of guests) {
+      if (wantsKidsMenu(g) && g.meal_preference !== KIDS_FIXED_MEAL.value) {
+        updateGuest(g.guest_id, { meal_preference: KIDS_FIXED_MEAL.value });
+      }
+    }
+  }, [guests, updateGuest]);
 
   const nameFor = (g: GuestRsvpData) =>
     isPlaceholder(g) ? g.plus_one_name.trim() || "Your guest" : g.display_name;
@@ -82,7 +96,7 @@ export default function StepMeals({
 
       <div className="mt-8 space-y-8">
         {guests.map((guest) => {
-          const options = wantsKidsMenu(guest) ? KIDS_MEALS : ADULT_ENTREES;
+          const kids = wantsKidsMenu(guest);
           return (
             <div key={guest.guest_id}>
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -116,47 +130,61 @@ export default function StepMeals({
                 )}
               </div>
 
-              <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
-                {options.map((meal) => (
+              {kids ? (
+                // Kids' meal is fixed for now — show it, no choice to make.
+                <div className="mt-3 rounded-lg border border-gold bg-gold/5 p-4 shadow-gold">
+                  <span className="block font-sans text-sm font-medium text-charcoal">
+                    {KIDS_FIXED_MEAL.label}
+                  </span>
+                  <span className="mt-1 block font-sans text-xs text-warm-gray">
+                    The children&apos;s meal.
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
+                    {ADULT_ENTREES.map((meal) => (
+                      <button
+                        key={meal.value}
+                        onClick={() =>
+                          updateGuest(guest.guest_id, { meal_preference: meal.value })
+                        }
+                        className={cn(
+                          "rounded-lg border p-4 text-left transition-all",
+                          guest.meal_preference === meal.value
+                            ? "border-gold bg-gold/5 shadow-gold"
+                            : "border-linen bg-white hover:border-gold/40"
+                        )}
+                      >
+                        <span className="block font-sans text-sm font-medium text-charcoal">
+                          {meal.label}
+                        </span>
+                        {meal.description && (
+                          <span className="mt-1 block font-sans text-sm text-warm-gray sm:text-xs">
+                            {meal.description}
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Third option: alternative meal (smaller, full width). */}
                   <button
-                    key={meal.value}
                     onClick={() =>
-                      updateGuest(guest.guest_id, { meal_preference: meal.value })
+                      updateGuest(guest.guest_id, { meal_preference: ALTERNATIVE_MEAL.value })
                     }
                     className={cn(
-                      "rounded-lg border p-4 text-left transition-all",
-                      guest.meal_preference === meal.value
-                        ? "border-gold bg-gold/5 shadow-gold"
-                        : "border-linen bg-white hover:border-gold/40"
+                      "mt-2.5 w-full rounded-lg border px-4 py-2.5 text-left font-sans text-xs transition-all",
+                      guest.meal_preference === ALTERNATIVE_MEAL.value
+                        ? "border-gold bg-gold/5 text-charcoal shadow-gold"
+                        : "border-dashed border-linen bg-white text-warm-gray hover:border-gold/40"
                     )}
                   >
-                    <span className="block font-sans text-sm font-medium text-charcoal">
-                      {meal.label}
-                    </span>
-                    {meal.description && (
-                      <span className="mt-1 block font-sans text-sm text-warm-gray sm:text-xs">
-                        {meal.description}
-                      </span>
-                    )}
+                    <span className="font-medium">{ALTERNATIVE_MEAL.label}</span>
+                    <span className="ml-1">— {ALTERNATIVE_MEAL.description}</span>
                   </button>
-                ))}
-              </div>
-
-              {/* Third option: alternative meal (smaller, full width). */}
-              <button
-                onClick={() =>
-                  updateGuest(guest.guest_id, { meal_preference: ALTERNATIVE_MEAL.value })
-                }
-                className={cn(
-                  "mt-2.5 w-full rounded-lg border px-4 py-2.5 text-left font-sans text-xs transition-all",
-                  guest.meal_preference === ALTERNATIVE_MEAL.value
-                    ? "border-gold bg-gold/5 text-charcoal shadow-gold"
-                    : "border-dashed border-linen bg-white text-warm-gray hover:border-gold/40"
-                )}
-              >
-                <span className="font-medium">{ALTERNATIVE_MEAL.label}</span>
-                <span className="ml-1">— {ALTERNATIVE_MEAL.description}</span>
-              </button>
+                </>
+              )}
 
               {/* Dietary restrictions, on the same step so it can explain the choice. */}
               <input
