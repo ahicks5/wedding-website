@@ -323,6 +323,7 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
           ? "Yes"
           : "No";
     const dietary = r?.dietary_notes || "—";
+    const notes = r?.notes || "—";
     const contact =
       [r?.rsvp_email, r?.rsvp_phone].filter(Boolean).join(" · ") || "—";
     return {
@@ -333,6 +334,7 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
       meal,
       rehearsal,
       dietary,
+      notes,
       contact,
     };
   };
@@ -456,10 +458,10 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
       </p>
       {/* Desktop: full table */}
       <div className="mt-2 hidden max-h-[70vh] overflow-auto rounded-lg border border-linen bg-white md:block">
-        <table className="w-full min-w-[860px]">
+        <table className="w-full min-w-[980px]">
           <thead className="sticky top-0 z-10">
             <tr className="bg-ivory">
-              {["Guest", "Household", "Reception", "Reception Meal", "Rehearsal", "Dietary", "Contact"].map(
+              {["Guest", "Household", "Reception", "Reception Meal", "Rehearsal", "Dietary", "Notes", "Contact"].map(
                 (h) => (
                   <th
                     key={h}
@@ -496,6 +498,9 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
                   </td>
                   <td className="max-w-[220px] truncate px-4 py-3 font-sans text-sm text-charcoal-light">
                     {v.dietary}
+                  </td>
+                  <td className="max-w-[240px] truncate px-4 py-3 font-sans text-sm text-charcoal-light">
+                    {v.notes}
                   </td>
                   <td className="max-w-[200px] truncate px-4 py-3 font-sans text-sm text-charcoal-light">
                     {v.contact}
@@ -555,6 +560,14 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
                             <dt className="text-warm-gray">Dietary</dt>
                             <dd className="break-words text-charcoal-light">
                               {v.dietary}
+                            </dd>
+                          </>
+                        )}
+                        {v.notes !== "—" && (
+                          <>
+                            <dt className="text-warm-gray">Notes</dt>
+                            <dd className="break-words text-charcoal-light">
+                              {v.notes}
                             </dd>
                           </>
                         )}
