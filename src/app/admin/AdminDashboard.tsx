@@ -337,6 +337,18 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
     };
   };
 
+  // Group guests by household for the mobile "card per party" view, preserving
+  // the order households first appear in.
+  const partyOrder: number[] = [];
+  const guestsByParty = new Map<number, Guest[]>();
+  for (const g of guests) {
+    if (!guestsByParty.has(g.household_id)) {
+      guestsByParty.set(g.household_id, []);
+      partyOrder.push(g.household_id);
+    }
+    guestsByParty.get(g.household_id)!.push(g);
+  }
+
   return (
     <>
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -495,50 +507,70 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
         </table>
       </div>
 
-      {/* Mobile: one card per guest (no horizontal scrolling) */}
+      {/* Mobile: one card per party, each member's results nested inside */}
       <div className="mt-2 space-y-3 md:hidden">
-        {guests.map((guest) => {
-          const v = rowView(guest);
+        {partyOrder.map((hid) => {
+          const members = guestsByParty.get(hid)!;
+          const respondedCount = members.filter((g) =>
+            rsvpById.has(g.guest_id)
+          ).length;
           return (
             <div
-              key={guest.guest_id}
-              className="rounded-lg border border-linen bg-white p-4"
+              key={hid}
+              className="overflow-hidden rounded-lg border border-linen bg-white"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="break-words font-serif text-base text-charcoal">
-                    {v.name}
-                    {v.typeTag && (
-                      <span className="ml-1.5 font-sans text-xs text-warm-gray">
-                        ({v.typeTag})
-                      </span>
-                    )}
-                  </p>
-                  <p className="mt-0.5 font-sans text-xs text-warm-gray">
-                    {v.household}
-                  </p>
-                </div>
-                <StatusBadge status={v.status} />
+              <div className="flex items-center justify-between gap-3 border-b border-linen bg-ivory px-4 py-2.5">
+                <p className="min-w-0 break-words font-serif text-base text-charcoal">
+                  {householdLabel(hid)}
+                </p>
+                <span className="shrink-0 font-sans text-xs text-warm-gray">
+                  {respondedCount}/{members.length} responded
+                </span>
               </div>
 
-              <dl className="mt-3 grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1.5 font-sans text-sm">
-                <dt className="text-warm-gray">Meal</dt>
-                <dd className="text-charcoal-light">{v.meal}</dd>
-                <dt className="text-warm-gray">Rehearsal</dt>
-                <dd className="text-charcoal-light">{v.rehearsal}</dd>
-                {v.dietary !== "—" && (
-                  <>
-                    <dt className="text-warm-gray">Dietary</dt>
-                    <dd className="break-words text-charcoal-light">{v.dietary}</dd>
-                  </>
-                )}
-                {v.contact !== "—" && (
-                  <>
-                    <dt className="text-warm-gray">Contact</dt>
-                    <dd className="break-words text-charcoal-light">{v.contact}</dd>
-                  </>
-                )}
-              </dl>
+              <div className="divide-y divide-linen">
+                {members.map((guest) => {
+                  const v = rowView(guest);
+                  return (
+                    <div key={guest.guest_id} className="px-4 py-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="min-w-0 break-words font-sans text-sm font-medium text-charcoal">
+                          {v.name}
+                          {v.typeTag && (
+                            <span className="ml-1.5 text-xs font-normal text-warm-gray">
+                              ({v.typeTag})
+                            </span>
+                          )}
+                        </p>
+                        <StatusBadge status={v.status} />
+                      </div>
+
+                      <dl className="mt-2 grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1 font-sans text-xs">
+                        <dt className="text-warm-gray">Meal</dt>
+                        <dd className="text-charcoal-light">{v.meal}</dd>
+                        <dt className="text-warm-gray">Rehearsal</dt>
+                        <dd className="text-charcoal-light">{v.rehearsal}</dd>
+                        {v.dietary !== "—" && (
+                          <>
+                            <dt className="text-warm-gray">Dietary</dt>
+                            <dd className="break-words text-charcoal-light">
+                              {v.dietary}
+                            </dd>
+                          </>
+                        )}
+                        {v.contact !== "—" && (
+                          <>
+                            <dt className="text-warm-gray">Contact</dt>
+                            <dd className="break-words text-charcoal-light">
+                              {v.contact}
+                            </dd>
+                          </>
+                        )}
+                      </dl>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           );
         })}
