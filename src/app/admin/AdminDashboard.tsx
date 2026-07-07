@@ -299,6 +299,44 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
     if (meal) mealCounts.set(meal, (mealCounts.get(meal) ?? 0) + 1);
   }
 
+  // One place to derive a guest's display values, shared by the desktop table
+  // and the mobile card list.
+  const rowView = (guest: Guest) => {
+    const r = rsvpById.get(guest.guest_id);
+    const isPlaceholder = guest.name_status === "PLACEHOLDER_UNKNOWN";
+    const name = isPlaceholder
+      ? r?.plus_one_name || "Unnamed plus-one"
+      : guest.display_name;
+    const typeTag = isPlaceholder
+      ? `plus-one${r?.plus_one_type ? `, ${r.plus_one_type}` : ""}`
+      : guest.guest_type !== "adult"
+        ? guest.guest_type
+        : "";
+    const meal = r?.meal_preference
+      ? MEAL_LABELS[r.meal_preference] ?? r.meal_preference
+      : "—";
+    const rehearsal = !guest.invited_rehearsal_dinner
+      ? "—"
+      : r?.attending_rehearsal == null
+        ? "pending"
+        : r.attending_rehearsal
+          ? "Yes"
+          : "No";
+    const dietary = r?.dietary_notes || "—";
+    const contact =
+      [r?.rsvp_email, r?.rsvp_phone].filter(Boolean).join(" · ") || "—";
+    return {
+      name,
+      typeTag,
+      household: householdLabel(guest.household_id),
+      status: statusOf(guest),
+      meal,
+      rehearsal,
+      dietary,
+      contact,
+    };
+  };
+
   return (
     <>
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -404,7 +442,8 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
         “Reception” is the wedding-day RSVP and meal. “Rehearsal” is a separate
         yes/no — the rehearsal dinner has no meal selection.
       </p>
-      <div className="mt-2 max-h-[70vh] overflow-auto rounded-lg border border-linen bg-white">
+      {/* Desktop: full table */}
+      <div className="mt-2 hidden max-h-[70vh] overflow-auto rounded-lg border border-linen bg-white md:block">
         <table className="w-full min-w-[860px]">
           <thead className="sticky top-0 z-10">
             <tr className="bg-ivory">
@@ -422,58 +461,87 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
           </thead>
           <tbody className="divide-y divide-linen">
             {guests.map((guest) => {
-              const r = rsvpById.get(guest.guest_id);
-              const isPlaceholder = guest.name_status === "PLACEHOLDER_UNKNOWN";
-              // For a plus-one seat, show the name they entered (or a placeholder)
-              // and the adult/child choice; otherwise the imported guest_type.
-              const name = isPlaceholder
-                ? r?.plus_one_name || "Unnamed plus-one"
-                : guest.display_name;
-              const typeTag = isPlaceholder
-                ? `plus-one${r?.plus_one_type ? `, ${r.plus_one_type}` : ""}`
-                : guest.guest_type !== "adult"
-                  ? guest.guest_type
-                  : "";
-              const contact = [r?.rsvp_email, r?.rsvp_phone].filter(Boolean).join(" · ");
+              const v = rowView(guest);
               return (
                 <tr key={guest.guest_id} className="hover:bg-ivory/50">
                   <td className="px-4 py-3 font-sans text-sm text-charcoal">
-                    {name}
-                    {typeTag && (
-                      <span className="ml-1.5 text-xs text-warm-gray">({typeTag})</span>
+                    {v.name}
+                    {v.typeTag && (
+                      <span className="ml-1.5 text-xs text-warm-gray">({v.typeTag})</span>
                     )}
                   </td>
                   <td className="px-4 py-3 font-sans text-sm text-charcoal-light">
-                    {householdLabel(guest.household_id)}
+                    {v.household}
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={statusOf(guest)} />
+                    <StatusBadge status={v.status} />
                   </td>
                   <td className="px-4 py-3 font-sans text-sm text-charcoal-light">
-                    {r?.meal_preference
-                      ? MEAL_LABELS[r.meal_preference] ?? r.meal_preference
-                      : "—"}
+                    {v.meal}
                   </td>
                   <td className="px-4 py-3 font-sans text-sm text-charcoal-light">
-                    {!guest.invited_rehearsal_dinner
-                      ? "—"
-                      : r?.attending_rehearsal == null
-                        ? "pending"
-                        : r.attending_rehearsal
-                          ? "Yes"
-                          : "No"}
+                    {v.rehearsal}
                   </td>
                   <td className="max-w-[220px] truncate px-4 py-3 font-sans text-sm text-charcoal-light">
-                    {r?.dietary_notes ?? "—"}
+                    {v.dietary}
                   </td>
                   <td className="max-w-[200px] truncate px-4 py-3 font-sans text-sm text-charcoal-light">
-                    {contact || "—"}
+                    {v.contact}
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile: one card per guest (no horizontal scrolling) */}
+      <div className="mt-2 space-y-3 md:hidden">
+        {guests.map((guest) => {
+          const v = rowView(guest);
+          return (
+            <div
+              key={guest.guest_id}
+              className="rounded-lg border border-linen bg-white p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="break-words font-serif text-base text-charcoal">
+                    {v.name}
+                    {v.typeTag && (
+                      <span className="ml-1.5 font-sans text-xs text-warm-gray">
+                        ({v.typeTag})
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-0.5 font-sans text-xs text-warm-gray">
+                    {v.household}
+                  </p>
+                </div>
+                <StatusBadge status={v.status} />
+              </div>
+
+              <dl className="mt-3 grid grid-cols-[max-content_1fr] gap-x-3 gap-y-1.5 font-sans text-sm">
+                <dt className="text-warm-gray">Meal</dt>
+                <dd className="text-charcoal-light">{v.meal}</dd>
+                <dt className="text-warm-gray">Rehearsal</dt>
+                <dd className="text-charcoal-light">{v.rehearsal}</dd>
+                {v.dietary !== "—" && (
+                  <>
+                    <dt className="text-warm-gray">Dietary</dt>
+                    <dd className="break-words text-charcoal-light">{v.dietary}</dd>
+                  </>
+                )}
+                {v.contact !== "—" && (
+                  <>
+                    <dt className="text-warm-gray">Contact</dt>
+                    <dd className="break-words text-charcoal-light">{v.contact}</dd>
+                  </>
+                )}
+              </dl>
+            </div>
+          );
+        })}
       </div>
     </>
   );
