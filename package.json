@@ -14,6 +14,7 @@
     "sync-fluff": "node scripts/sync-fluff.mjs"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
     "@supabase/supabase-js": "^2.98.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@vercel/analytics": "^2.0.1",

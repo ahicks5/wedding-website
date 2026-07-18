@@ -13,12 +13,14 @@ import {
   Utensils,
   ClipboardList,
   ListChecks,
+  Armchair,
 } from "lucide-react";
 import type { Guest, Household, Rsvp } from "@/lib/database.types";
 import { ADULT_ENTREES, KIDS_MEALS, ALTERNATIVE_MEAL } from "@/lib/constants";
 import ChecklistTab from "@/components/admin/ChecklistTab";
+import SeatingTab from "@/components/admin/SeatingTab";
 
-type Tab = "rsvps" | "checklist";
+type Tab = "rsvps" | "checklist" | "seating";
 
 type AdminData = {
   households: Household[];
@@ -240,11 +242,26 @@ export default function AdminDashboard() {
             icon={<ListChecks className="h-4 w-4" />}
             label="Checklist"
           />
+          <TabButton
+            active={tab === "seating"}
+            onClick={() => setTab("seating")}
+            icon={<Armchair className="h-4 w-4" />}
+            label="Seating"
+          />
         </div>
 
         {tab === "checklist" ? (
           <div className="mt-8">
             <ChecklistTab password={password} />
+          </div>
+        ) : tab === "seating" ? (
+          <div className="mt-8">
+            <SeatingTab
+              password={password}
+              guests={data?.guests ?? []}
+              households={data?.households ?? []}
+              rsvps={data?.rsvps ?? []}
+            />
           </div>
         ) : (
           <RsvpPanel data={data} />

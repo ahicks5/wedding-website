@@ -85,6 +85,23 @@ export interface ChecklistItemState {
   updated_at: string;
 }
 
+export interface SeatingTable {
+  id: string;
+  name: string;
+  pos_x: number; // 0..1 fraction across the floor plan
+  pos_y: number; // 0..1 fraction down the floor plan
+  capacity: number;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface SeatingAssignment {
+  guest_id: string;
+  table_id: string;
+  seat_index: number | null;
+  updated_at: string;
+}
+
 // Supabase Database type for createClient generic
 export interface Database {
   public: {
@@ -129,6 +146,21 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Omit<ChecklistItemState, "item_id">>;
+      };
+      seating_tables: {
+        Row: SeatingTable;
+        Insert: Omit<SeatingTable, "id" | "created_at"> & {
+          id?: string;
+          created_at?: string;
+        };
+        Update: Partial<Omit<SeatingTable, "id">>;
+      };
+      seating_assignments: {
+        Row: SeatingAssignment;
+        Insert: Omit<SeatingAssignment, "updated_at"> & {
+          updated_at?: string;
+        };
+        Update: Partial<Omit<SeatingAssignment, "guest_id">>;
       };
     };
     Views: Record<string, never>;
