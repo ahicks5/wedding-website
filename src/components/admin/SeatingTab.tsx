@@ -32,6 +32,12 @@ import {
   Search,
   X,
   Pencil,
+  Maximize2,
+  Minimize2,
+  ZoomIn,
+  ZoomOut,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import type { Guest, Household, Rsvp, SeatingTable } from "@/lib/database.types";
 import { ADULT_ENTREES, KIDS_MEALS, ALTERNATIVE_MEAL } from "@/lib/constants";
@@ -115,6 +121,11 @@ export default function SeatingTab({
   const [query, setQuery] = useState("");
   const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  // View controls
+  const [fullscreen, setFullscreen] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [rosterOpen, setRosterOpen] = useState(true);
 
   const canvasRef = useRef<HTMLDivElement>(null);
   // Latest values for use inside pointer-event closures (avoids stale state).
@@ -645,6 +656,21 @@ export default function SeatingTab({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
+  // Full-screen: lock background scroll and allow Escape to exit.
+  useEffect(() => {
+    if (!fullscreen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFullscreen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [fullscreen]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -654,35 +680,208 @@ export default function SeatingTab({
   }
 
   const activeView = activeId ? guestViews.get(activeId) : null;
+  const zoomPct = Math.round(zoom * 100);
+  const setZoomClamped = (z: number) => setZoom(Math.max(0.5, Math.min(2, z)));
 
+  // Canvas sizing: in full screen the plan grows to fill the viewport height;
+  // otherwise it fills the column width. Zoom scales either, with scroll.
+  const canvasStyle: React.CSSProperties = fullscreen
+    ? { height: `${82 * zoom}vh`, aspectRatio: "16 / 11" }
+    : { width: `${100 * zoom}%`, minWidth: 640 * zoom, aspectRatio: "16 / 11" };
+
+  const floorPlan = (
+    <div
+      className={
+        fullscreen
+          ? "min-w-0 flex-1 overflow-auto bg-linen/30 p-3"
+          : "overflow-auto rounded-lg border border-linen bg-white"
+      }
+    >
+      <div
+        ref={canvasRef}
+        className="relative mx-auto rounded-lg bg-white"
+        style={{
+          ...canvasStyle,
+          background:
+            "repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,0,0,0.03) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(0,0,0,0.03) 40px)",
+        }}
+      >
+        {/* Head table — a real, assignable long table pinned north */}
+        {headTable && (
+          <HeadTableNode
+            table={headTable}
+            guests={seatedByTable.get(headTable.id) ?? []}
+            onRename={(name) => renameTable(headTable.id, name)}
+            onTap={() => onTableTap(headTable.id)}
+            onUnassign={unassign}
+            hasSelection={Boolean(selectedGuest)}
+          />
+        )}
+
+        {/* Fixed fixtures */}
+        <Fixture
+          className="left-1/2 bottom-[3%] h-[8%] w-[34%] -translate-x-1/2"
+          label="DJ Booth"
+          tone="charcoal"
+        />
+        <Fixture className="left-[3%] bottom-[4%] h-[13%] w-[15%]" label="Bar" tone="gold" />
+        <Fixture className="right-[3%] top-[16%] h-[13%] w-[15%]" label="Bar" tone="gold" />
+        {/* Dance floor — center, between head table and DJ */}
+        <div className="pointer-events-none absolute left-1/2 top-[36%] h-[26%] w-[30%] -translate-x-1/2 rounded-md border-2 border-dashed border-sage/40 bg-sage/5">
+          <span className="absolute inset-0 flex items-center justify-center font-serif text-sm italic text-sage/60">
+            Dance Floor
+          </span>
+        </div>
+
+        {/* Round guest tables */}
+        {roundTables.map((t) => (
+          <TableNode
+            key={t.id}
+            table={t}
+            guests={seatedByTable.get(t.id) ?? []}
+            onMoveStart={(e) => startMove(e, t.id)}
+            onDelete={() => {
+              if (window.confirm(`Delete "${t.name}"? Its guests go back to the list.`))
+                deleteTable(t.id);
+            }}
+            onRename={(name) => renameTable(t.id, name)}
+            onTap={() => onTableTap(t.id)}
+            onUnassign={unassign}
+            hasSelection={Boolean(selectedGuest)}
+          />
+        ))}
+
+        {roundTables.length === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <button onClick={addTable} className="btn-primary flex items-center gap-2 !text-sm">
+              <Plus className="h-4 w-4" />
+              Add your first table
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const rosterEl = (
+    <RosterRail
+      groups={rosterGroups}
+      filter={filter}
+      setFilter={setFilter}
+      showDeclined={showDeclined}
+      setShowDeclined={setShowDeclined}
+      query={query}
+      setQuery={setQuery}
+      selectedGuest={selectedGuest}
+      setSelectedGuest={setSelectedGuest}
+      heightClass={fullscreen ? "h-full rounded-none border-0 border-r" : "max-h-[74vh]"}
+    />
+  );
+
+  // The view toolbar (zoom / roster / full screen), shared by both layouts.
+  const viewControls = (
+    <div className="flex items-center gap-1">
+      <button
+        onClick={() => setRosterOpen((v) => !v)}
+        className="flex items-center gap-1 rounded-md border border-linen bg-white px-2 py-1.5 font-sans text-xs text-charcoal hover:border-sage"
+        title={rosterOpen ? "Hide guest list" : "Show guest list"}
+      >
+        {rosterOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+        <span className="hidden sm:inline">{rosterOpen ? "Hide list" : "Show list"}</span>
+      </button>
+      <div className="flex items-center rounded-md border border-linen bg-white">
+        <button onClick={() => setZoomClamped(zoom - 0.15)} className="p-1.5 text-charcoal hover:text-sage" title="Zoom out">
+          <ZoomOut className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => setZoom(1)}
+          className="w-11 border-x border-linen py-1 text-center font-sans text-xs text-charcoal hover:text-sage"
+          title="Reset zoom"
+        >
+          {zoomPct}%
+        </button>
+        <button onClick={() => setZoomClamped(zoom + 0.15)} className="p-1.5 text-charcoal hover:text-sage" title="Zoom in">
+          <ZoomIn className="h-4 w-4" />
+        </button>
+      </div>
+      <button
+        onClick={() => setFullscreen((v) => !v)}
+        className="flex items-center gap-1 rounded-md border border-linen bg-white px-2 py-1.5 font-sans text-xs text-charcoal hover:border-sage"
+        title={fullscreen ? "Exit full screen (Esc)" : "Full screen"}
+      >
+        {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+        <span className="hidden sm:inline">{fullscreen ? "Exit" : "Full screen"}</span>
+      </button>
+    </div>
+  );
+
+  const actionButtons = (
+    <div className="flex flex-wrap items-center gap-2">
+      <button onClick={addTable} className="btn-outline flex items-center gap-2 !py-2 !text-sm">
+        <Plus className="h-4 w-4" />
+        <span className="hidden sm:inline">Add table</span>
+      </button>
+      <button
+        onClick={autoSeat}
+        className="btn-primary flex items-center gap-2 !py-2 !text-sm"
+        disabled={unseatedCount === 0}
+        title="Seat everyone in the pool, keeping families together"
+      >
+        <Sparkles className="h-4 w-4" />
+        <span className="hidden sm:inline">Auto-seat</span>
+      </button>
+      <button onClick={exportCsv} className="btn-outline flex items-center gap-2 !py-2 !text-sm">
+        <Download className="h-4 w-4" />
+        <span className="hidden sm:inline">Export CSV</span>
+      </button>
+    </div>
+  );
+
+  // ---------------- FULL SCREEN LAYOUT ----------------
+  if (fullscreen) {
+    return (
+      <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+        <div className="fixed inset-0 z-50 flex flex-col bg-ivory">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-linen bg-white px-3 py-2">
+            {actionButtons}
+            <div className="flex items-center gap-3">
+              <span className="hidden font-sans text-xs text-warm-gray md:inline">
+                {seatedCount} seated · {unseatedCount} unseated
+              </span>
+              {viewControls}
+            </div>
+          </div>
+          <div className="flex min-h-0 flex-1">
+            {rosterOpen && <div className="h-full w-[260px] shrink-0">{rosterEl}</div>}
+            {floorPlan}
+          </div>
+        </div>
+
+        <DragOverlay dropAnimation={null}>
+          {activeView ? (
+            <div className="pointer-events-none">
+              <ChipBody view={activeView} dragging />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    );
+  }
+
+  // ---------------- NORMAL (in-page) LAYOUT ----------------
   return (
     <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
       {/* Toolbar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
-          <button onClick={addTable} className="btn-outline flex items-center gap-2 !py-2 !text-sm">
-            <Plus className="h-4 w-4" />
-            Add table
-          </button>
-          <button
-            onClick={autoSeat}
-            className="btn-primary flex items-center gap-2 !py-2 !text-sm"
-            disabled={unseatedCount === 0}
-            title="Seat everyone in the pool, keeping families together"
-          >
-            <Sparkles className="h-4 w-4" />
-            Auto-seat first pass
-          </button>
-          <button onClick={exportCsv} className="btn-outline flex items-center gap-2 !py-2 !text-sm">
-            <Download className="h-4 w-4" />
-            Export CSV
-          </button>
+        {actionButtons}
+        <div className="flex items-center gap-2">
+          {demo && (
+            <span className="rounded-full bg-gold/10 px-3 py-1 font-sans text-xs font-medium text-gold">
+              Saving to this device
+            </span>
+          )}
+          {viewControls}
         </div>
-        {demo && (
-          <span className="rounded-full bg-gold/10 px-3 py-1 font-sans text-xs font-medium text-gold">
-            Saving to this device (no database)
-          </span>
-        )}
       </div>
 
       {/* Stat strip */}
@@ -693,108 +892,23 @@ export default function SeatingTab({
         <MiniStat icon={<Armchair className="h-4 w-4 text-charcoal-light" />} label="Seats" value={totalSeats} />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[300px_1fr]">
-        {/* ---------------- Roster rail ---------------- */}
-        <RosterRail
-          groups={rosterGroups}
-          filter={filter}
-          setFilter={setFilter}
-          showDeclined={showDeclined}
-          setShowDeclined={setShowDeclined}
-          query={query}
-          setQuery={setQuery}
-          selectedGuest={selectedGuest}
-          setSelectedGuest={setSelectedGuest}
-        />
+      <div
+        className={
+          rosterOpen
+            ? "mt-6 space-y-4 lg:grid lg:grid-cols-[280px_1fr] lg:gap-6 lg:space-y-0"
+            : "mt-6"
+        }
+      >
+        {rosterOpen && rosterEl}
 
         {/* ---------------- Floor plan ---------------- */}
         <div>
           <p className="mb-2 font-sans text-xs text-warm-gray">
-            Drag guests onto a table, or tap a guest then tap a table. Drag a
+            Drag guests onto a table, or tap a guest then a table. Drag a
             table&apos;s <Move className="inline h-3 w-3" /> handle to move it.
+            Tight on space? Hit <span className="font-medium">Full screen</span>.
           </p>
-          <div className="overflow-x-auto rounded-lg border border-linen bg-white">
-            <div
-              ref={canvasRef}
-              className="relative mx-auto"
-              style={{
-                width: "100%",
-                minWidth: 640,
-                aspectRatio: "16 / 11",
-                background:
-                  "repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,0,0,0.03) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(0,0,0,0.03) 40px)",
-              }}
-            >
-              {/* Head table — a real, assignable long table pinned north */}
-              {headTable && (
-                <HeadTableNode
-                  table={headTable}
-                  guests={seatedByTable.get(headTable.id) ?? []}
-                  onRename={(name) => renameTable(headTable.id, name)}
-                  onTap={() => onTableTap(headTable.id)}
-                  onUnassign={unassign}
-                  hasSelection={Boolean(selectedGuest)}
-                />
-              )}
-
-              {/* Fixed fixtures */}
-              <Fixture
-                className="left-1/2 bottom-[3%] h-[8%] w-[34%] -translate-x-1/2"
-                label="DJ Booth"
-                tone="charcoal"
-              />
-              <Fixture
-                className="left-[3%] bottom-[4%] h-[13%] w-[15%]"
-                label="Bar"
-                tone="gold"
-              />
-              <Fixture
-                className="right-[3%] top-[16%] h-[13%] w-[15%]"
-                label="Bar"
-                tone="gold"
-              />
-              {/* Dance floor — center, between head table and DJ */}
-              <div className="pointer-events-none absolute left-1/2 top-[36%] h-[26%] w-[30%] -translate-x-1/2 rounded-md border-2 border-dashed border-sage/40 bg-sage/5">
-                <span className="absolute inset-0 flex items-center justify-center font-serif text-sm italic text-sage/60">
-                  Dance Floor
-                </span>
-              </div>
-
-              {/* Round guest tables */}
-              {roundTables.map((t) => (
-                <TableNode
-                  key={t.id}
-                  table={t}
-                  guests={seatedByTable.get(t.id) ?? []}
-                  onMoveStart={(e) => startMove(e, t.id)}
-                  onDelete={() => {
-                    if (
-                      window.confirm(
-                        `Delete "${t.name}"? Its guests go back to the list.`
-                      )
-                    )
-                      deleteTable(t.id);
-                  }}
-                  onRename={(name) => renameTable(t.id, name)}
-                  onTap={() => onTableTap(t.id)}
-                  onUnassign={unassign}
-                  hasSelection={Boolean(selectedGuest)}
-                />
-              ))}
-
-              {roundTables.length === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <button
-                    onClick={addTable}
-                    className="btn-primary flex items-center gap-2 !text-sm"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add your first table
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          {floorPlan}
         </div>
       </div>
 
@@ -824,6 +938,7 @@ function RosterRail({
   setQuery,
   selectedGuest,
   setSelectedGuest,
+  heightClass = "max-h-[74vh]",
 }: {
   groups: { hid: number; label: string; members: GuestView[] }[];
   filter: FilterMode;
@@ -834,14 +949,15 @@ function RosterRail({
   setQuery: (q: string) => void;
   selectedGuest: string | null;
   setSelectedGuest: (g: string | null) => void;
+  heightClass?: string;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: "roster" });
   return (
     <div
       ref={setNodeRef}
-      className={`flex max-h-[74vh] flex-col rounded-lg border bg-white transition-colors ${
-        isOver ? "border-sage bg-sage/5" : "border-linen"
-      }`}
+      className={`flex ${heightClass} w-full flex-col border bg-white transition-colors ${
+        heightClass.includes("rounded-none") ? "" : "rounded-lg"
+      } ${isOver ? "border-sage bg-sage/5" : "border-linen"}`}
     >
       <div className="border-b border-linen p-3">
         <div className="flex rounded-lg bg-ivory p-1 font-sans text-xs">
