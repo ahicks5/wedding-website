@@ -773,10 +773,39 @@ export default function SeatingTab({
       query={query}
       setQuery={setQuery}
       selectedGuest={selectedGuest}
-      setSelectedGuest={setSelectedGuest}
-      heightClass={fullscreen ? "h-full rounded-none border-0 border-r" : "max-h-[74vh]"}
+      setSelectedGuest={(g) => {
+        setSelectedGuest(g);
+        // On a phone in full screen, close the drawer once a guest is picked so
+        // the map is visible to tap a table. (sm breakpoint = 640px)
+        if (g && fullscreen && typeof window !== "undefined" && window.innerWidth < 640) {
+          setRosterOpen(false);
+        }
+      }}
+      heightClass={
+        fullscreen
+          ? "h-full rounded-none border-0 border-r"
+          : "max-h-[44vh] lg:max-h-[74vh]"
+      }
     />
   );
+
+  // Floating "you are seating X — tap a table" banner. Stays visible even when
+  // the guest list is hidden or its drawer has closed (key on mobile).
+  const selectionBanner = selectedGuest ? (
+    <div className="flex items-center gap-2 rounded-full border border-sage bg-white px-3 py-1.5 shadow-lg">
+      <span className="font-sans text-xs text-charcoal">
+        Seating <span className="font-semibold">{guestViews.get(selectedGuest)?.name}</span>
+        <span className="text-warm-gray"> — tap a table</span>
+      </span>
+      <button
+        onClick={() => setSelectedGuest(null)}
+        className="rounded-full p-0.5 text-warm-gray hover:text-red-500"
+        title="Cancel"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  ) : null;
 
   // The view toolbar (zoom / roster / full screen), shared by both layouts.
   const viewControls = (
@@ -851,9 +880,26 @@ export default function SeatingTab({
               {viewControls}
             </div>
           </div>
-          <div className="flex min-h-0 flex-1">
-            {rosterOpen && <div className="h-full w-[260px] shrink-0">{rosterEl}</div>}
+          <div className="relative flex min-h-0 flex-1">
+            {rosterOpen && (
+              <>
+                {/* Mobile: dim the map behind a slide-over drawer */}
+                <div
+                  className="absolute inset-0 z-10 bg-charcoal/20 sm:hidden"
+                  onClick={() => setRosterOpen(false)}
+                />
+                <div className="absolute inset-y-0 left-0 z-20 h-full w-[82%] max-w-[300px] shadow-xl sm:static sm:w-[260px] sm:shadow-none">
+                  {rosterEl}
+                </div>
+              </>
+            )}
             {floorPlan}
+
+            {selectionBanner && (
+              <div className="pointer-events-none absolute bottom-4 left-1/2 z-30 -translate-x-1/2">
+                <div className="pointer-events-auto">{selectionBanner}</div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -903,11 +949,13 @@ export default function SeatingTab({
 
         {/* ---------------- Floor plan ---------------- */}
         <div>
-          <p className="mb-2 font-sans text-xs text-warm-gray">
-            Drag guests onto a table, or tap a guest then a table. Drag a
-            table&apos;s <Move className="inline h-3 w-3" /> handle to move it.
-            Tight on space? Hit <span className="font-medium">Full screen</span>.
-          </p>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <p className="font-sans text-xs text-warm-gray">
+              Drag a guest onto a table, or tap a guest then a table. On a phone,{" "}
+              <span className="font-medium">Full screen</span> works best.
+            </p>
+            {selectionBanner}
+          </div>
           {floorPlan}
         </div>
       </div>
