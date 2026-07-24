@@ -19,6 +19,7 @@ import type { Guest, Household, Rsvp } from "@/lib/database.types";
 import { ADULT_ENTREES, KIDS_MEALS, ALTERNATIVE_MEAL } from "@/lib/constants";
 import ChecklistTab from "@/components/admin/ChecklistTab";
 import SeatingTab from "@/components/admin/SeatingTab";
+import RsvpStatusToggle from "@/components/admin/RsvpStatusToggle";
 
 type Tab = "rsvps" | "checklist" | "seating";
 
@@ -264,14 +265,20 @@ export default function AdminDashboard() {
             />
           </div>
         ) : (
-          <RsvpPanel data={data} />
+          <RsvpPanel data={data} password={password} />
         )}
       </div>
     </div>
   );
 }
 
-function RsvpPanel({ data }: { data: AdminData | null }) {
+function RsvpPanel({
+  data,
+  password,
+}: {
+  data: AdminData | null;
+  password: string;
+}) {
   const guests = data?.guests ?? [];
   const households = data?.households ?? [];
   const rsvps = data?.rsvps ?? [];
@@ -370,7 +377,9 @@ function RsvpPanel({ data }: { data: AdminData | null }) {
 
   return (
     <>
-      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <RsvpStatusToggle password={password} />
+
+      <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard
           icon={<Users className="h-5 w-5 text-sage" />}
           label="Total Guests"

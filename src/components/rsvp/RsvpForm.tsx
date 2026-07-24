@@ -205,10 +205,19 @@ export default function RsvpForm() {
           })),
         }),
       });
-      if (!res.ok) throw new Error("Failed to submit");
+      if (!res.ok) {
+        // Surface the server's reason when there is one (e.g. RSVPs have been
+        // closed while the form was open); fall back to a generic message.
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Failed to submit");
+      }
       goTo(CONFIRM, 1);
-    } catch {
-      alert("Something went wrong. Please try again.");
+    } catch (err) {
+      alert(
+        err instanceof Error && err.message
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
     } finally {
       setSubmitting(false);
     }

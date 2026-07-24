@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { getRsvpOpen } from "@/lib/settings";
 
 // Never cache submissions.
 export const dynamic = "force-dynamic";
@@ -26,6 +27,18 @@ interface RsvpBody {
 // submit again to edit their response. Email/phone are stored on the primary
 // contact's row. The imported guests/households tables are never touched here.
 export async function POST(request: NextRequest) {
+  // Hard gate: once the admin closes RSVPs, reject all submissions/edits. This
+  // is the real lock — the RSVP page hiding the form is just the UI half.
+  if (!(await getRsvpOpen())) {
+    return NextResponse.json(
+      {
+        error:
+          "RSVPs are now closed. Please reach out to Lyndsey & Andrew directly if you need to update your response.",
+      },
+      { status: 403 }
+    );
+  }
+
   const body = (await request.json()) as RsvpBody;
   const { guests, primary_guest_id, email, phone, note } = body;
 
